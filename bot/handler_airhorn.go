@@ -30,12 +30,22 @@ func (b *Bot) Airhorn(s *discordgo.Session, m *discordgo.MessageCreate) {
 		// Look for the message sender in that guild's current voice states.
 		for _, vs := range g.VoiceStates {
 			if vs.UserID == m.Author.ID {
+				vc, err := s.ChannelVoiceJoin(g.ID, vs.ChannelID, false, true)
+				if err != nil {
+					l.Errorf("Failed to join voice chat: %v", err)
+					_ = vc.Disconnect()
+					return
+				}
 				b.AudioMutex.Lock()
-				err = b.PlayAudio(s, g.ID, vs.ChannelID, "airhorn")
+				err = b.PlayAudio(vc, "airhorn")
 				if err != nil {
 					l.Errorf("Failed to play audio: %v", err)
 				}
 				b.AudioMutex.Unlock()
+				if err := vc.Disconnect(); err != nil {
+					l.Errorf("Failed to disconnect voice chat: %v", err)
+					return
+				}
 
 				return
 			}
