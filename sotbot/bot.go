@@ -3,6 +3,7 @@ package sotbot
 import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/wneessen/sotbot/handler"
 	"os"
 	"os/signal"
@@ -11,11 +12,21 @@ import (
 
 type Bot struct {
 	AuthToken string
+	Config    *viper.Viper
 }
 
-func NewBot(t string) Bot {
+func NewBot(c *viper.Viper) Bot {
+	l := log.WithFields(log.Fields{
+		"action": "bot.NewBot",
+	})
+	authToken := c.GetString("AuthToken")
+	if authToken == "" {
+		l.Errorf("AuthToken cannot be empty.")
+		os.Exit(1)
+	}
 	bot := Bot{
-		AuthToken: t,
+		AuthToken: authToken,
+		Config:    c,
 	}
 
 	return bot

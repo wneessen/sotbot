@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/wneessen/sotbot/sotbot"
 	"os"
 )
@@ -19,18 +19,24 @@ func init() {
 }
 
 func main() {
-	// Read CLI flags
 	flag.Usage = printHelp
-	//confFile := flag.String("c", "foo", "Path to config file")
-	botToken := flag.String("t", "", "Bot authentication token")
+	confDir := flag.String("c", "", "Add custom config path for sotbot.json file")
 	flag.Parse()
 
-	if *botToken == "" {
-		fmt.Printf("Error: No bot authentication token given.\n\n")
-		flag.Usage()
+	botConf := viper.New()
+	botConf.SetConfigName("sotbot")
+	botConf.SetConfigType("json")
+
+	if *confDir != "" {
+		botConf.AddConfigPath(*confDir)
+	}
+	botConf.AddConfigPath("$HOME/.sotbot")
+	botConf.AddConfigPath("./config")
+	if err := botConf.ReadInConfig(); err != nil {
+		log.Errorf("Failed to read config file: %v", err)
 		os.Exit(1)
 	}
 
-	bot := sotbot.NewBot(*botToken)
+	bot := sotbot.NewBot(botConf)
 	bot.Run()
 }
