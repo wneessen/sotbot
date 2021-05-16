@@ -7,7 +7,7 @@ import (
 
 func printHelp() {
 	const usageText = `Usage:
-    sotbot
+    bot
 
 Options:
     -h                   Show this help text`

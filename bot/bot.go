@@ -1,4 +1,4 @@
-package sotbot
+package bot
 
 import (
 	"github.com/bwmarrin/discordgo"

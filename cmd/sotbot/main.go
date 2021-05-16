@@ -4,7 +4,7 @@ import (
 	"flag"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/wneessen/sotbot/sotbot"
+	"github.com/wneessen/sotbot/bot"
 	"os"
 )
 
@@ -20,7 +20,7 @@ func init() {
 
 func main() {
 	flag.Usage = printHelp
-	confDir := flag.String("c", "", "Add custom config path for sotbot.json file")
+	confDir := flag.String("c", "", "Add custom config path for bot.json file")
 	flag.Parse()
 
 	botConf := viper.New()
@@ -37,6 +37,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	bot := sotbot.NewBot(botConf)
-	bot.Run()
+	botObj := bot.NewBot(botConf)
+	botObj.Run()
 }
