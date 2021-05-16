@@ -1,2 +1,2 @@
-# sotbot
+# SoTbot
 Your humble SoT bot
