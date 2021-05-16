@@ -35,11 +35,13 @@ func (b *Bot) Run() {
 
 	// Add handlers
 	discordObj.AddHandler(handler.BotReadyHandler)
+	discordObj.AddHandler(handler.TellTime)
 
 	// What events do we wanna see?
 	discordObj.Identify.Intents = discordgo.IntentsGuilds |
 		discordgo.IntentsGuildMessages |
-		discordgo.IntentsGuildVoiceStates
+		discordgo.IntentsGuildVoiceStates |
+		discordgo.IntentsDirectMessages
 
 	// Open the websocket and begin listening.
 	err = discordObj.Open()
