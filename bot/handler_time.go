@@ -1,4 +1,4 @@
-package handler
+package bot
 
 import (
 	"fmt"
@@ -7,9 +7,8 @@ import (
 	"time"
 )
 
-// Let's the bot tell you the current date/time when requested via !time
-// command
-func TellTime(s *discordgo.Session, m *discordgo.MessageCreate) {
+// Let's the bot tell you the current date/time when requested via !time command
+func (b *Bot) TellTime(s *discordgo.Session, m *discordgo.MessageCreate) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.TellTime",
 	})

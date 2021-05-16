@@ -1,11 +1,11 @@
-package handler
+package bot
 
 import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 )
 
-func BotReadyHandler(s *discordgo.Session, ev *discordgo.Ready) {
+func (b *Bot) BotReadyHandler(s *discordgo.Session, ev *discordgo.Ready) {
 	l := log.WithFields(log.Fields{
 		"action":    "handler.BotReadyHandler",
 		"sessionID": ev.SessionID,

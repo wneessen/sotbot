@@ -1,3 +1,6 @@
 {
-    "AuthToken": "Put your authentication token here"
+    "AuthToken": "Put your authentication token here",
+    "AudioFiles": {
+        "airhorn": "airhorn.dca"
+    }
 }

@@ -4,15 +4,21 @@ import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/wneessen/sotbot/handler"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 )
 
 type Bot struct {
-	AuthToken string
-	Config    *viper.Viper
+	AuthToken  string
+	Config     *viper.Viper
+	Audio      map[string]Audio
+	AudioMutex *sync.Mutex
+}
+
+type Audio struct {
+	Buffer *[][]byte
 }
 
 func NewBot(c *viper.Viper) Bot {
@@ -25,8 +31,23 @@ func NewBot(c *viper.Viper) Bot {
 		os.Exit(1)
 	}
 	bot := Bot{
-		AuthToken: authToken,
-		Config:    c,
+		AuthToken:  authToken,
+		Config:     c,
+		AudioMutex: &sync.Mutex{},
+	}
+	bot.Audio = make(map[string]Audio)
+
+	for af, fn := range c.GetStringMapString("AudioFiles") {
+		l.Debugf("Loading audio file %q as %q into memory", fn, af)
+
+		audioBuffer := make([][]byte, 0)
+		if err := LoadAudio("./media/audio/"+fn, &audioBuffer); err != nil {
+			l.Errorf("Failed to load audio file into memory: %v", err)
+			break
+		}
+		bot.Audio[af] = Audio{
+			Buffer: &audioBuffer,
+		}
 	}
 
 	return bot
@@ -45,8 +66,9 @@ func (b *Bot) Run() {
 	}
 
 	// Add handlers
-	discordObj.AddHandler(handler.BotReadyHandler)
-	discordObj.AddHandler(handler.TellTime)
+	discordObj.AddHandler(b.BotReadyHandler)
+	discordObj.AddHandler(b.TellTime)
+	discordObj.AddHandler(b.Airhorn)
 
 	// What events do we wanna see?
 	discordObj.Identify.Intents = discordgo.IntentsGuilds |
