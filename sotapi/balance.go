@@ -17,7 +17,7 @@ type UserBalance struct {
 
 func GetBalance(hc *http.Client, rc string) (UserBalance, error) {
 	l := log.WithFields(log.Fields{
-		"action": "sotapi.SetRatCookie",
+		"action": "sotapi.GetBalance",
 	})
 	var userBalance UserBalance
 	apiUrl := "https://www.seaofthieves.com/api/profilev2/balance"

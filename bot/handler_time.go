@@ -21,9 +21,6 @@ func (b *Bot) TellTime(s *discordgo.Session, m *discordgo.MessageCreate) {
 		l.Debugf("Received '!time' request from user %v", m.Author.Username)
 		returnMsg := fmt.Sprintf("%v, the current time is: %v",
 			m.Author.Mention(), time.Now().Format("2006-01-02 15:04:05 MST"))
-		_, err := s.ChannelMessageSend(m.ChannelID, returnMsg)
-		if err != nil {
-			l.Errorf("Failed to respond to author: %v", err)
-		}
+		AnswerUser(s, m, returnMsg)
 	}
 }

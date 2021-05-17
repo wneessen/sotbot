@@ -82,7 +82,6 @@ func (b *Bot) GetBalance(s *discordgo.Session, m *discordgo.MessageCreate) {
 			l.Errorf("Database lookup failed: %v", err)
 			return
 		}
-
 		if userObj.ID <= 0 {
 			replyMsg := fmt.Sprintf("%v, sorry but your are not a registered user.",
 				m.Author.Mention())
@@ -103,7 +102,6 @@ func (b *Bot) GetBalance(s *discordgo.Session, m *discordgo.MessageCreate) {
 				m.Author.Mention(), err)
 			AnswerUser(s, m, replyMsg)
 			return
-
 		}
 
 		p := message.NewPrinter(language.German)

@@ -92,12 +92,14 @@ func (b *Bot) Run() {
 	// Add handlers
 	discordObj.AddHandler(b.BotReadyHandler)
 	discordObj.AddHandler(b.TellTime)
+	discordObj.AddHandler(b.TellVersion)
 	discordObj.AddHandler(b.Airhorn)
 	discordObj.AddHandler(b.CurrentUserIsRegistered)
 	discordObj.AddHandler(b.RegisterUser)
 	discordObj.AddHandler(b.UnRegisterUser)
 	discordObj.AddHandler(b.SetRatCookie)
 	discordObj.AddHandler(b.GetBalance)
+	discordObj.AddHandler(b.LatestAchievement)
 
 	// What events do we wanna see?
 	discordObj.Identify.Intents = discordgo.IntentsGuilds |
