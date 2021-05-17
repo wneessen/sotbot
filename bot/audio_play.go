@@ -15,7 +15,7 @@ func (b *Bot) PlayAudio(vc *discordgo.VoiceConnection, a string) error {
 	if a == "" {
 		return fmt.Errorf("Audio file %q not found in config", a)
 	}
-	time.Sleep(250 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 	if err := vc.Speaking(true); err != nil {
 		l.Errorf("Failed to enable voice chat speaking mode: %v", err)
 	}
@@ -25,7 +25,7 @@ func (b *Bot) PlayAudio(vc *discordgo.VoiceConnection, a string) error {
 	if err := vc.Speaking(false); err != nil {
 		l.Errorf("Failed to disable voice chat speaking mode: %v", err)
 	}
-	time.Sleep(250 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	return nil
 }
