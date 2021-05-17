@@ -5,7 +5,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/wneessen/sotbot/database"
+	"github.com/wneessen/sotbot/httpclient"
 	"gorm.io/gorm"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -17,6 +19,7 @@ type Bot struct {
 	Config     *viper.Viper
 	Audio      map[string]Audio
 	AudioMutex *sync.Mutex
+	HttpClient *http.Client
 	Db         *gorm.DB
 }
 
@@ -63,6 +66,14 @@ func NewBot(c *viper.Viper) Bot {
 	}
 	bot.Db = dbObj
 
+	// Create a HTTP client object
+	hc, err := httpclient.NewHttpClient()
+	if err != nil {
+		l.Errorf("Failed to create HTTP client: %v", err)
+		os.Exit(1)
+	}
+	bot.HttpClient = hc
+
 	return bot
 }
 
@@ -84,6 +95,9 @@ func (b *Bot) Run() {
 	discordObj.AddHandler(b.Airhorn)
 	discordObj.AddHandler(b.CurrentUserIsRegistered)
 	discordObj.AddHandler(b.RegisterUser)
+	discordObj.AddHandler(b.UnRegisterUser)
+	discordObj.AddHandler(b.SetRatCookie)
+	discordObj.AddHandler(b.GetBalance)
 
 	// What events do we wanna see?
 	discordObj.Identify.Intents = discordgo.IntentsGuilds |

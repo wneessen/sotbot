@@ -25,7 +25,10 @@ func ConnectDB(d, ll string) (*gorm.DB, error) {
 		return nil, fmt.Errorf("unable to connect to database: %v", err)
 	}
 
-	if err := db.AutoMigrate(&models.RegisteredUser{}); err != nil {
+	if err := db.AutoMigrate(
+		&models.RegisteredUser{},
+		&models.UserPref{},
+	); err != nil {
 		l.Errorf("Database automigration failed: %v", err)
 	}
 
