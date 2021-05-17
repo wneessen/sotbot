@@ -24,7 +24,7 @@ func NewHttpClient() (*http.Client, error) {
 	}
 	httpClient := &http.Client{
 		Transport: httpTransport,
-		Timeout:   2 * time.Second,
+		Timeout:   5 * time.Second,
 		Jar:       cookieJar,
 	}
 
