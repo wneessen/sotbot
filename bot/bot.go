@@ -4,6 +4,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/wneessen/sotbot/database"
+	"gorm.io/gorm"
 	"os"
 	"os/signal"
 	"sync"
@@ -15,6 +17,7 @@ type Bot struct {
 	Config     *viper.Viper
 	Audio      map[string]Audio
 	AudioMutex *sync.Mutex
+	Db         *gorm.DB
 }
 
 type Audio struct {
@@ -25,7 +28,7 @@ func NewBot(c *viper.Viper) Bot {
 	l := log.WithFields(log.Fields{
 		"action": "bot.NewBot",
 	})
-	authToken := c.GetString("AuthToken")
+	authToken := c.GetString("authtoken")
 	if authToken == "" {
 		l.Errorf("AuthToken cannot be empty.")
 		os.Exit(1)
@@ -37,7 +40,8 @@ func NewBot(c *viper.Viper) Bot {
 	}
 	bot.Audio = make(map[string]Audio)
 
-	for af, fn := range c.GetStringMapString("AudioFiles") {
+	// Search and load audio files
+	for af, fn := range c.GetStringMapString("audiofiles") {
 		l.Debugf("Loading audio file %q as %q into memory", fn, af)
 
 		audioBuffer := make([][]byte, 0)
@@ -49,6 +53,15 @@ func NewBot(c *viper.Viper) Bot {
 			Buffer: &audioBuffer,
 		}
 	}
+
+	// Connect to database file
+	dbObj, err := database.ConnectDB(c.GetString("dbfile"),
+		c.GetString("loglevel"))
+	if err != nil {
+		l.Errorf("Failed to load database file: %v", err)
+		os.Exit(1)
+	}
+	bot.Db = dbObj
 
 	return bot
 }
@@ -69,6 +82,8 @@ func (b *Bot) Run() {
 	discordObj.AddHandler(b.BotReadyHandler)
 	discordObj.AddHandler(b.TellTime)
 	discordObj.AddHandler(b.Airhorn)
+	discordObj.AddHandler(b.CurrentUserIsRegistered)
+	discordObj.AddHandler(b.RegisterUser)
 
 	// What events do we wanna see?
 	discordObj.Identify.Intents = discordgo.IntentsGuilds |

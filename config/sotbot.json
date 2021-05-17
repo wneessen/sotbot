@@ -1,6 +1,7 @@
 {
-    "AuthToken": "Put your authentication token here",
-    "AudioFiles": {
+    "authtoken": "Put your authentication token here",
+    "audiofiles": {
         "airhorn": "airhorn.dca"
-    }
+    },
+    "dbfile": "/home/wneessen/.sotbot/sotbot.db"
 }

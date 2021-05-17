@@ -37,6 +37,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	bot.SetLogLevel(botConf.GetString("loglevel"))
+
 	botObj := bot.NewBot(botConf)
 	botObj.Run()
 }
