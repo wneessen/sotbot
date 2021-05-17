@@ -1,9 +1,8 @@
 ## Dockerfile for the Sea of Thieves Bot
 ## 
-FROM        archlinux:base
+FROM        archlinux
 LABEL       maintainer="wn@neessen.net"
 RUN         pacman -Syu --noconfirm --noprogressbar
-RUN         pacman -S --noconfirm --noprogressbar sqlite
 RUN         /usr/bin/groupadd -r sotbot && /usr/bin/useradd -r -g sotbot -c "Sea of Thieves Bot" -m -s /bin/bash -d /opt/sotbot sotbot
 COPY        ["LICENSE", "README.md", "/opt/sotbot/"]
 COPY        ["bin", "/opt/sotbot/bin"]
