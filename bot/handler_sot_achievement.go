@@ -19,10 +19,7 @@ func (b *Bot) LatestAchievement(s *discordgo.Session, m *discordgo.MessageCreate
 	}
 
 	if m.Message.Content == "!achievement" {
-		l.Debugf("Received '!version' request from user %v", m.Author.Username)
-		/*
-			imgUrl := "https://images-eds-ssl.xboxlive.com/image?url=27S1DHqE.cHkmFg4nspsdwUfEQl.YbJWVtgsayVkDeAN8o0AX2FZkWa.QC_VsQfgnq.iK5HBDxvraTdNMtMwYo5K9qMes39hQf9fgyqXKvnwqAwSesr1Rz.Y2Tz8CA60SyQ3rylY4KRl1_T1vb5zOw--&format=png&w=480"
-		*/
+		l.Debugf("Received '!achievement' request from user %v", m.Author.Username)
 		userObj, err := database.GetUser(b.Db, m.Author.ID)
 		if err != nil {
 			l.Errorf("Database lookup failed: %v", err)
@@ -49,7 +46,8 @@ func (b *Bot) LatestAchievement(s *discordgo.Session, m *discordgo.MessageCreate
 			AnswerUser(s, m, replyMsg)
 			return
 		}
-		embedTitle := fmt.Sprintf("Your latest achievement: %v", userAchievement.Name)
+		embedTitle := fmt.Sprintf("%v, your latest achievement is: %v",
+			m.Author.Username, userAchievement.Name)
 		messageEmbed := discordgo.MessageEmbed{
 			Title:       embedTitle,
 			Description: userAchievement.Description,
