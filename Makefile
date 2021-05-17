@@ -11,9 +11,11 @@ else
 endif
 
 TARGETS			:= build-prod
-DOCKERTARGETS	:= build-prod dockerize
+DOCKERTARGETS	:= build-prod dockerize docker-publish
 
 all: $(TARGETS)
+
+docker: $(DOCKERTARGETS)
 
 test:
 	go test $(MODNAME)
@@ -26,3 +28,7 @@ run-prod:
 
 dockerize:
 	@sudo docker build -t sotbot:v$(CURVER) .
+
+docker-publish:
+        @sudo docker tag sotbot:v$(CURVER) hub.docker.com/wneessen/sotbot:latest
+        @sudo docker push hub.docker.com/wneessen/sotbot:latest
