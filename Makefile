@@ -10,8 +10,8 @@ else
 	OUTFILE	:= $(BUILDDIR)/sotbot
 endif
 
-TARGETS			:= build-prod
-DOCKERTARGETS	:= build-prod dockerize docker-publish
+TARGETS			:= build-local
+DOCKERTARGETS	:= build-docker dockerize docker-publish
 
 all: $(TARGETS)
 
@@ -20,7 +20,10 @@ docker: $(DOCKERTARGETS)
 test:
 	go test $(MODNAME)
 
-build-prod:
+build-local:
+	/usr/bin/env CGO_ENABLED=1 go build -o $(OUTFILE) -ldflags="-s -w" $(MODNAME)/cmd/sotbot
+
+build-docker:
 	/usr/bin/env CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o $(OUTFILE) -ldflags="-s -w" $(MODNAME)/cmd/sotbot
 
 run-prod:
