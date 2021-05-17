@@ -1,24 +1,15 @@
 package bot
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/database"
-	"github.com/wneessen/sotbot/httpclient"
+	"github.com/wneessen/sotbot/sotapi"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"strings"
 )
-
-type ApiBalance struct {
-	GamerTag     string `json:"gamertag"`
-	Title        string `json:"title"`
-	Doubloons    int    `json:"doubloons"`
-	Gold         int    `json:"gold"`
-	AncientCoins int    `json:"ancientCoins"`
-}
 
 // Set a SoT RAT cookie
 func (b *Bot) SetRatCookie(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -106,23 +97,13 @@ func (b *Bot) GetBalance(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		apiUrl := "https://www.seaofthieves.com/api/profilev2/balance"
-		l.Debugf("Fetching balance from API...")
-		httpResp, err := httpclient.HttpReqGet(apiUrl, b.HttpClient, userRatCookie, "")
+		userBalance, err := sotapi.GetBalance(b.HttpClient, userRatCookie)
 		if err != nil {
-			l.Errorf("Failed to fetch balance from API: %v", err)
-			replyMsg := fmt.Sprintf("%v, sorry an error occured while fetching your SoT balance from API.",
-				m.Author.Mention())
+			replyMsg := fmt.Sprintf("Sorry, %v but there was an error fetching your balance from the SoT API: %v",
+				m.Author.Mention(), err)
 			AnswerUser(s, m, replyMsg)
 			return
-		}
-		var userBalance ApiBalance
-		if err := json.Unmarshal(httpResp, &userBalance); err != nil {
-			l.Errorf("Failed to unmarshal API response: %v", err)
-			replyMsg := fmt.Sprintf("%v, sorry I wasn't able to understand the API response JSON.",
-				m.Author.Mention())
-			AnswerUser(s, m, replyMsg)
-			return
+
 		}
 
 		p := message.NewPrinter(language.German)
