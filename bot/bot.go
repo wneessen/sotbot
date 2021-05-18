@@ -117,12 +117,15 @@ func (b *Bot) Run() {
 		return
 	}
 
+	// Initial one-time jobs
+	b.UpdateSotBalance(time.Now())
+
 	// We need a signal channel
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc)
 
 	// We want timed events as well
-	updateBalanceTimer := time.NewTicker(1 * time.Hour)
+	updateBalanceTimer := time.NewTicker(3 * time.Hour)
 	defer updateBalanceTimer.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
