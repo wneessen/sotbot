@@ -5,8 +5,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/database"
+	"github.com/wneessen/sotbot/user"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -44,10 +44,7 @@ func (b *Bot) CurrentUserIsRegistered(s *discordgo.Session, m *discordgo.Message
 			return
 		}
 
-		returnMsg = "You are a registered user. Usertype: Normal user"
-		if userObj.IsAdmin {
-			returnMsg = "You are a registered user. Usertype: Admin"
-		}
+		returnMsg = "You are a registered user."
 		AnswerUser(s, m, returnMsg)
 	}
 }
@@ -73,19 +70,16 @@ func (b *Bot) RegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if strings.HasPrefix(m.Message.Content, "!register") {
 		l.Debugf("Received '!register' request from user %v", m.Author.Username)
-		reqUser, err := database.GetUser(b.Db, m.Author.ID)
-		if err != nil {
-			l.Errorf("Database lookup failed: %v", err)
+
+		if !user.IsAdmin(s, m.Author.ID, m.ChannelID) {
+			l.Debugf("User is not an admin user")
 			return
 		}
-		if !reqUser.IsAdmin {
-			l.Errorf("User %q is not an admin user.", m.Author.Username)
-			return
-		}
-		wrongFormatMsg := fmt.Sprintf("%v, incorrect request format. Usage: !register <@user> <isadmin_bool>",
+
+		wrongFormatMsg := fmt.Sprintf("%v, incorrect request format. Usage: !register <@user>",
 			m.Author.Mention())
-		msgArray := strings.SplitN(m.Message.Content, " ", 3)
-		if len(msgArray) != 3 {
+		msgArray := strings.SplitN(m.Message.Content, " ", 2)
+		if len(msgArray) != 2 {
 			AnswerUser(s, m, wrongFormatMsg)
 			return
 		}
@@ -113,19 +107,7 @@ func (b *Bot) RegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		var validBool = regexp.MustCompile(`^(1|0|true|false)$`)
-		if !validBool.MatchString(msgArray[2]) {
-			AnswerUser(s, m, wrongFormatMsg)
-			return
-		}
-		isAdmin, err := strconv.ParseBool(msgArray[2])
-		if err != nil {
-			l.Errorf("Failed to parse bool: %v", err)
-			AnswerUser(s, m, wrongFormatMsg)
-			return
-		}
-
-		if err := database.CreateUser(b.Db, validUserMatches[1], isAdmin); err != nil {
+		if err := database.CreateUser(b.Db, validUserMatches[1]); err != nil {
 			l.Errorf("Failed to store user in database: %v", err)
 			replyMsg := fmt.Sprintf("%v, unfortunately I was not able to store the user in the database",
 				m.Author.Mention())
@@ -160,15 +142,12 @@ func (b *Bot) UnRegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if strings.HasPrefix(m.Message.Content, "!unregister") {
 		l.Debugf("Received '!unregister' request from user %v", m.Author.Username)
-		reqUser, err := database.GetUser(b.Db, m.Author.ID)
-		if err != nil {
-			l.Errorf("Database lookup failed: %v", err)
+
+		if !user.IsAdmin(s, m.Author.ID, m.ChannelID) {
+			l.Debugf("User is not an admin user")
 			return
 		}
-		if !reqUser.IsAdmin {
-			l.Errorf("User %q is not an admin user.", m.Author.Username)
-			return
-		}
+
 		wrongFormatMsg := fmt.Sprintf("%v, incorrect request format. Usage: !unregister <@user>",
 			m.Author.Mention())
 		msgArray := strings.SplitN(m.Message.Content, " ", 2)

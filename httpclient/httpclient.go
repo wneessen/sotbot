@@ -7,7 +7,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"net/http/cookiejar"
-	"strings"
 	"time"
 )
 
@@ -72,8 +71,9 @@ func HttpReqGet(u string, hc *http.Client, rc string, ref string) ([]byte, error
 			l.Printf("error while closing response body: %v", err)
 		}
 	}()
-	if !strings.HasPrefix(serverResp.Header.Get("Content-Type"), "application/json") {
-		return []byte{}, fmt.Errorf("API returned non-JSON response")
+
+	if serverResp.StatusCode != 200 {
+		return []byte{}, fmt.Errorf("%v", serverResp.StatusCode)
 	}
 
 	// Read the response body

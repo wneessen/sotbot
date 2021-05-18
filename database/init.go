@@ -28,6 +28,8 @@ func ConnectDB(d, ll string) (*gorm.DB, error) {
 	if err := db.AutoMigrate(
 		&models.RegisteredUser{},
 		&models.UserPref{},
+		&models.SotBalance{},
+		&models.SotBalanceHistory{},
 	); err != nil {
 		l.Errorf("Database automigration failed: %v", err)
 	}

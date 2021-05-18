@@ -2,6 +2,5 @@ package models
 
 type RegisteredUser struct {
 	General
-	UserId  string
-	IsAdmin bool
+	UserId string `gorm:"unique"`
 }

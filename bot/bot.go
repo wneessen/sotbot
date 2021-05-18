@@ -12,6 +12,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 )
 
 type Bot struct {
@@ -21,6 +22,7 @@ type Bot struct {
 	AudioMutex *sync.Mutex
 	HttpClient *http.Client
 	Db         *gorm.DB
+	Session    *discordgo.Session
 }
 
 type Audio struct {
@@ -88,35 +90,40 @@ func (b *Bot) Run() {
 		l.Errorf("Error creating discord session: %v", err)
 		return
 	}
+	b.Session = discordObj
 
 	// Add handlers
-	discordObj.AddHandler(b.BotReadyHandler)
-	discordObj.AddHandler(b.TellTime)
-	discordObj.AddHandler(b.TellVersion)
-	discordObj.AddHandler(b.Airhorn)
-	discordObj.AddHandler(b.CurrentUserIsRegistered)
-	discordObj.AddHandler(b.RegisterUser)
-	discordObj.AddHandler(b.UnRegisterUser)
-	discordObj.AddHandler(b.SetRatCookie)
-	discordObj.AddHandler(b.GetBalance)
-	discordObj.AddHandler(b.LatestAchievement)
+	b.Session.AddHandler(b.BotReadyHandler)
+	b.Session.AddHandler(b.TellTime)
+	b.Session.AddHandler(b.TellVersion)
+	b.Session.AddHandler(b.Airhorn)
+	b.Session.AddHandler(b.CurrentUserIsRegistered)
+	b.Session.AddHandler(b.RegisterUser)
+	b.Session.AddHandler(b.UnRegisterUser)
+	b.Session.AddHandler(b.SetRatCookie)
+	b.Session.AddHandler(b.GetBalance)
+	b.Session.AddHandler(b.LatestAchievement)
 
 	// What events do we wanna see?
-	discordObj.Identify.Intents = discordgo.IntentsGuilds |
+	b.Session.Identify.Intents = discordgo.IntentsGuilds |
 		discordgo.IntentsGuildMessages |
 		discordgo.IntentsGuildVoiceStates |
 		discordgo.IntentsDirectMessages
 
 	// Open the websocket and begin listening.
-	err = discordObj.Open()
+	err = b.Session.Open()
 	if err != nil {
-		l.Errorf("Error opening discoard session: %v", err)
+		l.Errorf("Error opening discord session: %v", err)
 		return
 	}
 
 	// We need a signal channel
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc)
+
+	// We want timed events as well
+	updateBalanceTimer := time.NewTicker(1 * time.Hour)
+	defer updateBalanceTimer.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
 	l.Infof("Bot is ready and connected. Press CTRL-C to exit.")
@@ -130,12 +137,14 @@ func (b *Bot) Run() {
 				l.Infof("received %q signal. Exiting.", rs)
 
 				// Cleanly close down the Discord session.
-				if err := discordObj.Close(); err != nil {
+				if err := b.Session.Close(); err != nil {
 					l.Errorf("Failed to gracefully close discord session: %v", err)
 				}
 
 				os.Exit(0)
 			}
+		case curTick := <-updateBalanceTimer.C:
+			b.UpdateSotBalance(curTick)
 		}
 	}
 }

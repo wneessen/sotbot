@@ -21,10 +21,19 @@ func GetUser(d *gorm.DB, u string) (models.RegisteredUser, error) {
 	return userObj, nil
 }
 
-func CreateUser(d *gorm.DB, u string, a bool) error {
+func GetUsers(d *gorm.DB) ([]models.RegisteredUser, error) {
+	userList := []models.RegisteredUser{}
+	dbTx := d.Find(&userList)
+	if dbTx.Error != nil {
+		return userList, dbTx.Error
+	}
+
+	return userList, nil
+}
+
+func CreateUser(d *gorm.DB, u string) error {
 	userObj := models.RegisteredUser{
-		UserId:  u,
-		IsAdmin: a,
+		UserId: u,
 	}
 	dbTx := d.Create(&userObj)
 	if dbTx.Error != nil {
@@ -73,12 +82,30 @@ func UserSetPref(d *gorm.DB, u uint, k, v string) error {
 	return nil
 }
 
+func UserDelPref(d *gorm.DB, u uint, k string) error {
+	userPref := userGetPref(d, u, k)
+	if userPref.ID <= 0 {
+		return nil
+	}
+
+	dbTx := d.Delete(&userPref)
+	if dbTx.Error != nil {
+		return dbTx.Error
+	}
+	return nil
+}
+
 func UserGetPrefString(d *gorm.DB, u uint, k string) string {
+	userPref := userGetPref(d, u, k)
+	return userPref.Value
+}
+
+func userGetPref(d *gorm.DB, u uint, k string) models.UserPref {
 	userPref := models.UserPref{}
 	d.Where(models.UserPref{
 		UserID: u,
 		Key:    k,
 	}).First(&userPref)
 
-	return userPref.Value
+	return userPref
 }
