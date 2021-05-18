@@ -27,7 +27,9 @@ func UpdateBalance(d *gorm.DB, u uint, b *sotapi.UserBalance) error {
 		UserID: u,
 	}).First(&oldBalance)
 
-	if oldBalance.ID > 0 {
+	if oldBalance.ID > 0 && (oldBalance.Gold != b.Gold ||
+		oldBalance.Doubloons != b.Doubloons ||
+		oldBalance.AncientCoins != b.AncientCoins) {
 		historyBalance := models.SotBalanceHistory{
 			UserID:       oldBalance.UserID,
 			Gold:         oldBalance.Gold,
