@@ -125,7 +125,7 @@ func (b *Bot) Run() {
 	signal.Notify(sc)
 
 	// We want timed events as well
-	updateBalanceTimer := time.NewTicker(3 * time.Hour)
+	updateBalanceTimer := time.NewTicker(1 * time.Hour)
 	defer updateBalanceTimer.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.

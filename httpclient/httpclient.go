@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"github.com/wneessen/sotbot/version"
 	"net/http"
 	"net/http/cookiejar"
 	"time"
@@ -93,6 +94,6 @@ func HttpReqGet(u string, hc *http.Client, rc string, ref string) ([]byte, error
 
 // Set package specific HTTP header
 func setReqHeader(h *http.Request) {
-	h.Header.Set("User-Agent", "curl/7.76.1")
+	h.Header.Set("User-Agent", fmt.Sprintf("SoT Discord Bot v%v", version.Version))
 	h.Header.Set("Accept", "*/*")
 }
