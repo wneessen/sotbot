@@ -103,6 +103,7 @@ func (b *Bot) Run() {
 	b.Session.AddHandler(b.SetRatCookie)
 	b.Session.AddHandler(b.GetBalance)
 	b.Session.AddHandler(b.LatestAchievement)
+	b.Session.AddHandler(b.RandomFact)
 
 	// What events do we wanna see?
 	b.Session.Identify.Intents = discordgo.IntentsGuilds |
