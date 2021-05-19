@@ -61,10 +61,25 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 			}
 
 			p := message.NewPrinter(language.German)
-			dmText := fmt.Sprintf("%v, looks like you recently played SoT. Your new balance is: %v gold, %v "+
-				"doubloons and %v ancient coins", discordUser.Mention(), p.Sprintf("%d", userBalance.Gold),
-				p.Sprintf("%d", userBalance.Doubloons), p.Sprintf("%d", userBalance.AncientCoins))
-			DmUser(s, reqUser.UserId, dmText)
+			if b.Config.GetBool("sot_play_dm_user") {
+				dmText := fmt.Sprintf("%v, you played SoT recently. Your new balance is: %v gold, %v "+
+					"doubloons and %v ancient coins", discordUser.Mention(), p.Sprintf("%d", userBalance.Gold),
+					p.Sprintf("%d", userBalance.Doubloons), p.Sprintf("%d", userBalance.AncientCoins))
+				DmUser(s, reqUser.UserId, dmText)
+			}
+
+			if b.Config.GetBool("sot_play_announce") {
+				balDiff := database.GetBalanceDifference(b.Db, reqUser.ID)
+				if balDiff.Gold != 0 || balDiff.AncientCoins != 0 || balDiff.Doubloons != 0 {
+					msg := fmt.Sprintf("Since their last trip to the Sea of Thieves, %v earned/spent: %v gold, "+
+						"%v doubloons and %v ancient coins. Their new balance is: %v gold, %v doubloons and %v"+
+						" ancient coins.", discordUser.Mention(), p.Sprintf("%d", balDiff.Gold),
+						p.Sprintf("%d", balDiff.Doubloons), p.Sprintf("%d", balDiff.AncientCoins),
+						p.Sprintf("%d", userBalance.Gold), p.Sprintf("%d", userBalance.Doubloons),
+						p.Sprintf("%d", userBalance.AncientCoins))
+					b.Announce(msg)
+				}
+			}
 		}
 	}
 }

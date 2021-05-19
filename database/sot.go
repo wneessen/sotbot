@@ -22,6 +22,39 @@ func GetBalance(d *gorm.DB, u uint) (models.SotBalance, error) {
 	return balanceObj, nil
 }
 
+func GetLatestHistoryBalance(d *gorm.DB, u uint) models.SotBalanceHistory {
+	historyObj := models.SotBalanceHistory{}
+	d.Where(models.SotBalanceHistory{
+		UserID: u,
+	}).Last(&historyObj)
+
+	return historyObj
+}
+
+func GetBalanceDifference(d *gorm.DB, u uint) models.SotBalance {
+	returnBalance := models.SotBalance{}
+	curBalance, err := GetBalance(d, u)
+	if err != nil {
+		return returnBalance
+	}
+
+	histBalance := GetLatestHistoryBalance(d, u)
+	if histBalance.ID <= 0 {
+		returnBalance.Gold = 0
+		returnBalance.AncientCoins = 0
+		returnBalance.Doubloons = 0
+		returnBalance.LastUpdated = time.Now().Unix()
+		return returnBalance
+	}
+
+	returnBalance.Gold = curBalance.Gold - histBalance.Gold
+	returnBalance.AncientCoins = curBalance.AncientCoins - histBalance.AncientCoins
+	returnBalance.Doubloons = curBalance.Doubloons - histBalance.Doubloons
+	returnBalance.LastUpdated = histBalance.LastUpdated
+
+	return returnBalance
+}
+
 func UpdateBalance(d *gorm.DB, u uint, b *sotapi.UserBalance) error {
 	oldBalance := models.SotBalance{}
 	d.Where(models.SotBalance{

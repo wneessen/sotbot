@@ -16,13 +16,14 @@ import (
 )
 
 type Bot struct {
-	AuthToken  string
-	Config     *viper.Viper
-	Audio      map[string]Audio
-	AudioMutex *sync.Mutex
-	HttpClient *http.Client
-	Db         *gorm.DB
-	Session    *discordgo.Session
+	AuthToken    string
+	Config       *viper.Viper
+	Audio        map[string]Audio
+	AudioMutex   *sync.Mutex
+	HttpClient   *http.Client
+	Db           *gorm.DB
+	Session      *discordgo.Session
+	AnnounceChan *discordgo.Channel
 }
 
 type Audio struct {
@@ -91,6 +92,17 @@ func (b *Bot) Run() {
 		return
 	}
 	b.Session = discordObj
+
+	// Do we have an announcement channel configured?
+	configAnnounce := b.Config.GetString("announcechan")
+	if configAnnounce != "" {
+		chanObj, err := b.Session.Channel(configAnnounce)
+		if err != nil {
+			l.Errorf("Failed to look up discord channel: %v", err)
+		} else {
+			b.AnnounceChan = chanObj
+		}
+	}
 
 	// Add handlers
 	b.Session.AddHandler(b.BotReadyHandler)
