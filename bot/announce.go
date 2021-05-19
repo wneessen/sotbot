@@ -9,7 +9,7 @@ func (b *Bot) Announce(m string) {
 		"action": "bot.Announce",
 	})
 	if b.AnnounceChan != nil {
-		_, err := b.Session.ChannelMessageSend(b.AnnounceChan.ID, m)
+		_, err := b.Session.ChannelMessageSend(b.AnnounceChan.ID, RandomArrr()+"! "+m)
 		if err != nil {
 			l.Errorf("Failed to make announcement: %v", err)
 		}

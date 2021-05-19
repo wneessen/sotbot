@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func DmUser(s *discordgo.Session, u string, msg string) {
+func DmUser(s *discordgo.Session, u, msg, mention string) {
 	l := log.WithFields(log.Fields{
 		"action": "bot.DmUser",
 	})
@@ -16,9 +16,15 @@ func DmUser(s *discordgo.Session, u string, msg string) {
 		return
 	}
 
-	_, err = s.ChannelMessageSend(st.ID, msg)
+	if mention != "" {
+		_, err = s.ChannelMessageSend(st.ID, RandomArrr()+" "+mention+"! "+msg)
+		if err != nil {
+			l.Errorf("Failed to notify user: %v", err)
+		}
+		return
+	}
+	_, err = s.ChannelMessageSend(st.ID, RandomArrr()+"! "+msg)
 	if err != nil {
 		l.Errorf("Failed to notify user: %v", err)
-		return
 	}
 }

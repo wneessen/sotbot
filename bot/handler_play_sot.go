@@ -62,10 +62,10 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 
 			p := message.NewPrinter(language.German)
 			if b.Config.GetBool("sot_play_dm_user") {
-				dmText := fmt.Sprintf("%v, you played SoT recently. Your new balance is: %v gold, %v "+
-					"doubloons and %v ancient coins", discordUser.Mention(), p.Sprintf("%d", userBalance.Gold),
+				dmText := fmt.Sprintf("you played SoT recently. Your new balance is: %v gold, %v "+
+					"doubloons and %v ancient coins", p.Sprintf("%d", userBalance.Gold),
 					p.Sprintf("%d", userBalance.Doubloons), p.Sprintf("%d", userBalance.AncientCoins))
-				DmUser(s, reqUser.UserId, dmText)
+				DmUser(s, reqUser.UserId, dmText, m.User.Mention())
 			}
 
 			if b.Config.GetBool("sot_play_announce") {

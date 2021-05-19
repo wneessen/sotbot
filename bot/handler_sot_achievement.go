@@ -26,24 +26,22 @@ func (b *Bot) LatestAchievement(s *discordgo.Session, m *discordgo.MessageCreate
 			return
 		}
 		if userObj.ID <= 0 {
-			replyMsg := fmt.Sprintf("%v, sorry but your are not a registered user.",
-				m.Author.Mention())
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("Sorry but your are not a registered user.")
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
 		userRatCookie := database.UserGetPrefString(b.Db, userObj.ID, "rat_cookie")
 		if userRatCookie == "" {
-			replyMsg := fmt.Sprintf("%v, sorry but you have no RAT cookie set. Try !setrat in the DMs",
-				m.Author.Mention())
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("Sorry but you have no RAT cookie set. Try !setrat in the DMs")
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
 		userAchievement, err := sotapi.GetLatestAchievement(b.HttpClient, userRatCookie)
 		if err != nil {
 			l.Errorf("An error occured fetching user achievements: %v", err)
-			replyMsg := fmt.Sprintf("Sorry, %v but there was an error fetching your achievements"+
-				" from the SoT API: %v", m.Author.Mention(), err)
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("Sorry but there was an error fetching your achievements"+
+				" from the SoT API: %v", err)
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
 		embedTitle := fmt.Sprintf("%v, your latest achievement is: %v",

@@ -19,8 +19,7 @@ func (b *Bot) TellTime(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if m.Message.Content == "!time" {
 		l.Debugf("Received '!time' request from user %v", m.Author.Username)
-		returnMsg := fmt.Sprintf("%v, the current time is: %v",
-			m.Author.Mention(), time.Now().Format("2006-01-02 15:04:05 MST"))
-		AnswerUser(s, m, returnMsg)
+		returnMsg := fmt.Sprintf("The current time is: %v", time.Now().Format("2006-01-02 15:04:05 MST"))
+		AnswerUser(s, m, returnMsg, m.Author.Mention())
 	}
 }

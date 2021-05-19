@@ -28,28 +28,24 @@ func (b *Bot) GetBalance(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 		if userObj.ID <= 0 {
-			replyMsg := fmt.Sprintf("%v, sorry but your are not a registered user.",
-				m.Author.Mention())
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("Sorry but your are not a registered user.")
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
 
 		b.UserUpdateSotBalance(&userObj)
 		userBalance, err := database.GetBalance(b.Db, userObj.ID)
 		if err != nil {
-			replyMsg := fmt.Sprintf("Sorry, %v but there was an error fetching your balance from the SoT API: %v",
+			replyMsg := fmt.Sprintf("Sorry but there was an error fetching your balance from the SoT API: %v",
 				m.Author.Mention(), err)
-			AnswerUser(s, m, replyMsg)
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
 
 		p := message.NewPrinter(language.German)
-		replyMsg := fmt.Sprintf("%v, your current SoT balance is: %v gold, %v doubloons and %v ancient coins",
-			m.Author.Mention(),
-			p.Sprintf("%d", userBalance.Gold),
-			p.Sprintf("%d", userBalance.Doubloons),
-			p.Sprintf("%d", userBalance.AncientCoins),
-		)
-		AnswerUser(s, m, replyMsg)
+		replyMsg := fmt.Sprintf("Your current SoT balance is: %v gold, %v doubloons and %v ancient coins",
+			p.Sprintf("%d", userBalance.Gold), p.Sprintf("%d", userBalance.Doubloons),
+			p.Sprintf("%d", userBalance.AncientCoins))
+		AnswerUser(s, m, replyMsg, m.Author.Mention())
 	}
 }

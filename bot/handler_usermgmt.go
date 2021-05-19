@@ -40,12 +40,12 @@ func (b *Bot) CurrentUserIsRegistered(s *discordgo.Session, m *discordgo.Message
 		var returnMsg string
 		if userObj.ID <= 0 {
 			returnMsg = "Sorry, you are not a registered user."
-			AnswerUser(s, m, returnMsg)
+			AnswerUser(s, m, returnMsg, m.Author.Mention())
 			return
 		}
 
 		returnMsg = "You are a registered user."
-		AnswerUser(s, m, returnMsg)
+		AnswerUser(s, m, returnMsg, m.Author.Mention())
 	}
 }
 
@@ -76,48 +76,43 @@ func (b *Bot) RegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		wrongFormatMsg := fmt.Sprintf("%v, incorrect request format. Usage: !register <@user>",
-			m.Author.Mention())
+		wrongFormatMsg := fmt.Sprintf("Incorrect request format. Usage: !register <@user>")
 		msgArray := strings.SplitN(m.Message.Content, " ", 2)
 		if len(msgArray) != 2 {
-			AnswerUser(s, m, wrongFormatMsg)
+			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
 		}
 		var validUser = regexp.MustCompile(`^\<@[\!&]*(\d+)>$`)
 		if !validUser.MatchString(msgArray[1]) {
-			AnswerUser(s, m, wrongFormatMsg)
+			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
 		}
 		validUserMatches := validUser.FindStringSubmatch(msgArray[1])
 		if len(validUserMatches) < 2 {
-			AnswerUser(s, m, wrongFormatMsg)
+			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
 		}
 		dbUser, err := database.GetUser(b.Db, validUserMatches[1])
 		if err != nil {
 			l.Errorf("Failed to look up user in database: %v", err)
-			replyMsg := fmt.Sprintf("%v, unfortunately I was not able to store the user in the database",
-				m.Author.Mention())
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("Unfortunately I was not able to store the user in the database")
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 		}
 		if dbUser.ID > 0 {
-			replyMsg := fmt.Sprintf("%v, user %v is already registered.",
-				m.Author.Mention(), validUserMatches[0])
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("User %v is already registered.", validUserMatches[0])
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
 
 		if err := database.CreateUser(b.Db, validUserMatches[1]); err != nil {
 			l.Errorf("Failed to store user in database: %v", err)
-			replyMsg := fmt.Sprintf("%v, unfortunately I was not able to store the user in the database",
-				m.Author.Mention())
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("Unfortunately I was not able to store the user in the database")
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 
 		}
 
-		replyMsg := fmt.Sprintf("%v, user %v successfully registered.",
-			m.Author.Mention(), validUserMatches[0])
-		AnswerUser(s, m, replyMsg)
+		replyMsg := fmt.Sprintf("User %v successfully registered.", validUserMatches[0])
+		AnswerUser(s, m, replyMsg, m.Author.Mention())
 	}
 }
 
@@ -148,47 +143,42 @@ func (b *Bot) UnRegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		wrongFormatMsg := fmt.Sprintf("%v, incorrect request format. Usage: !unregister <@user>",
-			m.Author.Mention())
+		wrongFormatMsg := fmt.Sprintf("Incorrect request format. Usage: !unregister <@user>")
 		msgArray := strings.SplitN(m.Message.Content, " ", 2)
 		if len(msgArray) != 2 {
-			AnswerUser(s, m, wrongFormatMsg)
+			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
 		}
 		var validUser = regexp.MustCompile(`^\<@[\!&]*(\d+)>$`)
 		if !validUser.MatchString(msgArray[1]) {
-			AnswerUser(s, m, wrongFormatMsg)
+			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
 		}
 		validUserMatches := validUser.FindStringSubmatch(msgArray[1])
 		if len(validUserMatches) < 2 {
-			AnswerUser(s, m, wrongFormatMsg)
+			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
 		}
 		dbUser, err := database.GetUser(b.Db, validUserMatches[1])
 		if err != nil {
 			l.Errorf("Failed to look up user in database: %v", err)
-			replyMsg := fmt.Sprintf("%v, unfortunately I was not able to unregister the user.",
-				m.Author.Mention())
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("Unfortunately I was not able to unregister the user.")
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 		}
 		if dbUser.ID <= 0 {
-			replyMsg := fmt.Sprintf("%v, user %v is not registered.",
-				m.Author.Mention(), validUserMatches[0])
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("User %v is not registered.", validUserMatches[0])
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
 
 		if err := database.DeleteUser(b.Db, &dbUser); err != nil {
 			l.Errorf("Failed to delete user in database: %v", err)
-			replyMsg := fmt.Sprintf("%v, unfortunately I was not able to unregister the user.",
-				m.Author.Mention())
-			AnswerUser(s, m, replyMsg)
+			replyMsg := fmt.Sprintf("Unfortunately I was not able to unregister the user.")
+			AnswerUser(s, m, replyMsg, m.Author.Mention())
 
 		}
 
-		replyMsg := fmt.Sprintf("%v, user %v successfully unregistered.",
-			m.Author.Mention(), validUserMatches[0])
-		AnswerUser(s, m, replyMsg)
+		replyMsg := fmt.Sprintf("User %v successfully unregistered.", validUserMatches[0])
+		AnswerUser(s, m, replyMsg, m.Author.Mention())
 	}
 }

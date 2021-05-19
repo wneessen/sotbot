@@ -19,8 +19,8 @@ func (b *Bot) TellVersion(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if m.Message.Content == "!version" {
 		l.Debugf("Received '!version' request from user %v", m.Author.Username)
-		returnMsg := fmt.Sprintf("%v, I am SoTBot Version v%v (built on: %v, built by: %v)",
-			m.Author.Mention(), version.Version, version.BuildDate, version.BuildUser)
-		AnswerUser(s, m, returnMsg)
+		returnMsg := fmt.Sprintf("I am SoTBot Version v%v (built on: %v, built by: %v)", version.Version,
+			version.BuildDate, version.BuildUser)
+		AnswerUser(s, m, returnMsg, m.Author.Mention())
 	}
 }

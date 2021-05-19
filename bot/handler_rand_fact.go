@@ -19,6 +19,6 @@ func (b *Bot) RandomFact(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			l.Errorf("Could not fetch random fact: %v", err)
 		}
-		AnswerUser(s, m, randFact.Text)
+		AnswerUser(s, m, randFact.Text, m.Author.Mention())
 	}
 }

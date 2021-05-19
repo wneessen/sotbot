@@ -77,7 +77,7 @@ func (b *Bot) UserNotifyFailedToken(u *models.RegisteredUser) {
 	dmText := fmt.Sprintf("Hey! My last attempt to communicate with the SoT API failed. " +
 		"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
 		"update your cookie.")
-	DmUser(b.Session, u.UserId, dmText)
+	DmUser(b.Session, u.UserId, dmText, "")
 
 	if err := database.UserSetPref(b.Db, u.ID, "failed_rat_notify", time.Now().String()); err != nil {
 		l.Errorf("Failed to update user preference in DB: %v", err)
