@@ -104,12 +104,18 @@ func (b *Bot) Run() {
 	b.Session.AddHandler(b.GetBalance)
 	b.Session.AddHandler(b.LatestAchievement)
 	b.Session.AddHandler(b.RandomFact)
+	b.Session.AddHandler(b.UserPlaysSot)
+
+	// Dev only handler
+	//b.Session.AddHandler(b.DevTestHandler)
 
 	// What events do we wanna see?
 	b.Session.Identify.Intents = discordgo.IntentsGuilds |
 		discordgo.IntentsGuildMessages |
 		discordgo.IntentsGuildVoiceStates |
-		discordgo.IntentsDirectMessages
+		discordgo.IntentsDirectMessages |
+		discordgo.IntentsGuildPresences |
+		discordgo.IntentsGuildMembers
 
 	// Open the websocket and begin listening.
 	err = b.Session.Open()
@@ -119,15 +125,15 @@ func (b *Bot) Run() {
 	}
 
 	// Initial one-time jobs
-	b.UpdateSotBalance(time.Now())
+	b.UpdateSotBalances()
 
 	// We need a signal channel
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc)
 
 	// We want timed events as well
-	updateBalanceTimer := time.NewTicker(1 * time.Hour)
-	defer updateBalanceTimer.Stop()
+	aliveTimer := time.NewTicker(1 * time.Hour)
+	defer aliveTimer.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
 	l.Infof("Bot is ready and connected. Press CTRL-C to exit.")
@@ -147,8 +153,8 @@ func (b *Bot) Run() {
 
 				os.Exit(0)
 			}
-		case curTick := <-updateBalanceTimer.C:
-			b.UpdateSotBalance(curTick)
+		case curTick := <-aliveTimer.C:
+			l.Infof("I am still alive. The time is %v", curTick.Format("2006-01-02 15:04:05"))
 		}
 	}
 }

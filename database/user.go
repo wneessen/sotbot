@@ -88,7 +88,7 @@ func UserDelPref(d *gorm.DB, u uint, k string) error {
 		return nil
 	}
 
-	dbTx := d.Delete(&userPref)
+	dbTx := d.Unscoped().Delete(&userPref)
 	if dbTx.Error != nil {
 		return dbTx.Error
 	}

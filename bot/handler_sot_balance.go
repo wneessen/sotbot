@@ -34,6 +34,7 @@ func (b *Bot) GetBalance(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
+		b.UserUpdateSotBalance(&userObj)
 		userBalance, err := database.GetBalance(b.Db, userObj.ID)
 		if err != nil {
 			replyMsg := fmt.Sprintf("Sorry, %v but there was an error fetching your balance from the SoT API: %v",
