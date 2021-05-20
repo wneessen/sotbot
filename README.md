@@ -11,13 +11,23 @@ machine running the bot.
 
 To build the bot from the sources, you need to have Go installed
 
-## Installation
-
-TBD
+## Binary release
+Binary releases will follow soon. For now please build from source
 
 ## Building from source
 There is a `Makefile` included in the project. Just run `make` and your Bot binary will be built in
 as `./bin/sotbot`
+
+## Dicord bot token
+You need to create a Discord bot in the Discord developer portal and then invite the bot to your discord 
+server. For the bot to work properly, it needs to have a specific set of permissions. This is the minimal set
+of permissions the bot requires:
+![!Screenshot Discord bot permissions](documentation/permissions.png)
+
+To automatically track when a user is playing SoT, the bot also needs to see presence changes. This is a special
+permission that need to specifically be enabled for your bot. If you don't enable this feature, the auto tracking
+will not be working.
+![Screenshot Discord bot privilege](documentation/privilege.png)
 
 ## Configuration
 For the bot to run, you need a valid configuration file. The filename of the config needs to be `sotbot.json`. An 
