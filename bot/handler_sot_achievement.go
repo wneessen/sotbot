@@ -11,7 +11,7 @@ import (
 // Just a test handler
 func (b *Bot) LatestAchievement(s *discordgo.Session, m *discordgo.MessageCreate) {
 	l := log.WithFields(log.Fields{
-		"action": "handler.TestHandler",
+		"action": "handler.LatestAchievement",
 	})
 
 	if m.Author.ID == s.State.User.ID {

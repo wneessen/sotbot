@@ -9,9 +9,9 @@ import (
 )
 
 // Just a test handler
-func (b *Bot) SeasonProgress(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (b *Bot) SotSeasonProgress(s *discordgo.Session, m *discordgo.MessageCreate) {
 	l := log.WithFields(log.Fields{
-		"action": "handler.TestHandler",
+		"action": "handler.SotSeasonProgress",
 	})
 
 	if m.Author.ID == s.State.User.ID {
