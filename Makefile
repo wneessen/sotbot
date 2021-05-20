@@ -1,6 +1,6 @@
 MODNAME		:= github.com/wneessen/sotbot
 SPACE		:= $(null) $(null)
-CURVER		:= 1.2.1
+CURVER		:= 1.3.0
 BUILDDIR	:= ./bin
 TZ			:= UTC
 BUILDVER    := -X github.com/wneessen/sotbot/version.Version=$(CURVER)

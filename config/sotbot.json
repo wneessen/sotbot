@@ -1,7 +1,12 @@
 {
     "authtoken": "Put your authentication token here",
     "audiofiles": {
-        "airhorn": "airhorn.dca"
+        "airhorn": "airhorn.dca",
+        "fart": "fart.dca",
+        "pirate": "pirate.dca"
     },
-    "dbfile": "/home/wneessen/.sotbot/sotbot.db"
+    "dbfile": "/home/sotbot/.sotbot/sotbot.db",
+    "announcechan": "123456789012345678",
+    "sot_play_announce": true,
+    "sot_play_dm_user": false
 }

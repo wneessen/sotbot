@@ -11,3 +11,11 @@ $ ./bot -t <auth_token>
 ```shell
 $ go run github.com/wneessen/bot/cmd/bot -t <auth_token>
 ```
+
+Converting a MP3 to DCA:
+```shell
+$ ffmpeg -i file.mp3 -f s16le pipe:1 | dca >./media/audio/file.dca
+```
+
+## Attribution
+Angry pirate sound: https://soundbible.com/858-Angry-Pirate.html

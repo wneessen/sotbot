@@ -108,7 +108,7 @@ func (b *Bot) Run() {
 	b.Session.AddHandler(b.BotReadyHandler)
 	b.Session.AddHandler(b.TellTime)
 	b.Session.AddHandler(b.TellVersion)
-	b.Session.AddHandler(b.Airhorn)
+	b.Session.AddHandler(b.PlaySound)
 	b.Session.AddHandler(b.CurrentUserIsRegistered)
 	b.Session.AddHandler(b.RegisterUser)
 	b.Session.AddHandler(b.UnRegisterUser)

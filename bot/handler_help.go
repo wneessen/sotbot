@@ -20,7 +20,7 @@ func (b *Bot) DmHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
 		l.Debugf("Received '!help' request from user %v", m.Author.Username)
 		helpMsg := `General channel commands:
    !version                  - Provide some info about myself
-   !airhorn                  - Jump into the voice chat of the requesting user and play an airhorn sound
+   !play <sound_name>        - Jump into the voice chat of the requesting user and play the requested sound
    !time                     - Replies with the current time
    !fact                     - Replies with a random useless fact
    !code                     - Replies with a random SoT pirate code article
