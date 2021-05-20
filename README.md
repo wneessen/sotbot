@@ -13,9 +13,48 @@ To build the bot from the sources, you need to have Go installed
 
 ## Installation
 
+TBD
+
 ## Building from source
 There is a `Makefile` included in the project. Just run `make` and your Bot binary will be built in
 as `./bin/sotbot`
+
+## Configuration
+For the bot to run, you need a valid configuration file. The filename of the config needs to be `sotbot.json`. An 
+example config can be found in the `./config` directory of this repository. By default the bot checks 2 default
+directories for this file, in this order: `$HOME/.sotbot/sotbot.json` and `./config/sotbot.json`.
+
+The config currently supports the following format:
+```json
+{
+    "authtoken": "Put your authentication token here",
+    "audiofiles": {
+        "airhorn": "airhorn.dca",
+        "fart": "fart.dca",
+        "pirate": "pirate.dca"
+    },
+    "dbfile": "/home/sotbot/.sotbot/sotbot.db",
+    "announcechan": "123456789012345678",
+    "sot_play_announce": true,
+    "sot_play_dm_user": false
+}
+```
+
+#### config parameters
+* `authtoken`: this is your discord bot token, that you need to aquire from the development portal
+* `audiofiles`: this is an associated array of audio files that can be played using the `!play` command.
+  the files for this need to be placed in the `./media/audio/` directory of the bot. please keep in mind
+  that the bot will load all defined audio files into ram, so the more files you add, the more ram the
+  bot will consume.
+* `dbfile`: The path where the SQLite3 database file of the bot will be stored. Keep in mind, that the DB
+  will store user information like authentication cookies unencrypted.
+* `announcechan`: The channel ID of the official announcement channel for the bot. Any feature that uses
+  the "announce" feature of the bot, will be sent to this channel
+* `sot_play_announce`: If set to `true`, user tracking is enabled and the user is registered, the bot will 
+  announce when a user played SoT to the official announcement channel and will also tell the difference in 
+  balance they made during the last playing session
+* `sot_play_dm_user`: If set to `true`, user tracking is enabled and the user is registered, the bot will
+  DM the user after they played SoT and provide them with their new balance
 
 ## Features
 SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. Lots of its commands are SoT-based, but
@@ -55,6 +94,23 @@ encrypted way. Therefore, before storing your cookie in the bot's DB, please mak
 you are doing. Maybe at some time, RARE decides to offer an API which offers OAuth2, so we can allow the bot
 having access to the API data without having to store/renew the cookie.
 
+#### RAT Cookie registration
+Once you have you user registered and obtained a valid cookie using the `SoT-RAT-Extractor`, you have to store
+it in the bot's database. To do so, you have to DM the bot and use the `!setrat` command followed by the 
+extracted cookie. Please keep in mind that this only works in the DMs and will not work in a public channel
+for security reasons.
+
+Example:
+![Screenshot !setrat](documentation/ratcookie.png)
+
+*Note:* As mentioned already, the cookie situation is not perfect and the cookie will expire after 14 days. This
+means that after 14 days, the bot will not be able to access the API anymore until you update your cookie. When
+the bot runs into 3 continous failed API request, the bot will notify you in a DM about the fact that your cookie
+has likely expired and you need to renew it. Once done, it will not notify you anymore unless you used the 
+`!setrat` command again to update your cookie. This will reset the "notified" flag for the user. When the "notified"
+flag is set, the bot will also not try to access the API anymore to avoid too many failed requests until the 
+"notifed" flag was removed.
+
 #### User balance
 With the `!balance` command, the Bot will query you current balance of Gold, Ancient Coins and Doubloons from 
 the API and will output it to you in the channel you requested it.
@@ -73,9 +129,65 @@ with the current balance - this is also configurable.
 Example:
 ![Screenshot auto_balance](documentation/auto_balance.png)
 
-## Helpful commands
+#### Latest achievement
+Using the `!achievement` command, the bot will fetch your achievements list from the API and present you with
+your latest completed achievement.
 
-Converting a MP3 file to a bot-compatible DCA file:
+Example:
+![Screenshot !achievement](documentation/achievement.png)
+
+#### Season progress
+When you enter the `!season` command, the bot will fetch your season progress and present you with a little 
+summary of it.
+
+Example:
+![Screenshot !season](documentation/season.png)
+
+#### Faction/Company reputation
+The `!rep` command, followed by one of the supported faction names, will let the bot fetch your current reputation
+and XP level with the requested faction/company.
+
+Supported factions:
+  * athena
+  * bilge
+  * hoarder
+  * hunter
+  * merchant
+  * order 
+  * reaper
+  * seadog
+
+Example:
+![Screenshot !rep merchant](documentation/reputation.png)
+
+#### The pirate code
+When you issue a `!code` in the channel, the bot will present you with a random article from the SoT's pirate
+code.
+
+Example:
+![Screenshot !code](documentation/code.png)
+
+### Play sound feature
+With the `!play` feature, when you are active in a voice channel, you can have the bot join and play a predefined
+sound. The bot is "shipped" with predefined sounds in the config (see `audiofiles` in `sotbot.json`). So using 
+the command `!play airhorn` will have your bot look up, which voice chat you are currently in, try to join the
+voice chat and play that sound. Then immediately leave the voice chat again.
+
+### Time feature
+Using the `!time` command, the bot will present you with the current date and time.
+
+Example:
+![Screenshot !time](documentation/time.png)
+
+### Useless facts
+The `!fact` command will have the bot fetch a random useless fact from the uselessfacts API and respond with it
+back to you.
+
+Example:
+![Screenshot !fact](documentation/fact.png)
+
+## Helpful stuff
+### Converting a MP3 file to a bot-compatible DCA file
 You first need to install [ffmpeg](https://ffmpeg.org/) and [dca](https://github.com/bwmarrin/dca). Then run:
 ```shell
 $ ffmpeg -i file.mp3 -f s16le pipe:1 | dca >./media/audio/file.dca
