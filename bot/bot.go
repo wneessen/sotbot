@@ -117,6 +117,7 @@ func (b *Bot) Run() {
 	b.Session.AddHandler(b.LatestAchievement)
 	b.Session.AddHandler(b.RandomFact)
 	b.Session.AddHandler(b.UserPlaysSot)
+	b.Session.AddHandler(b.SeasonProgress)
 
 	// Dev only handler
 	//b.Session.AddHandler(b.DevTestHandler)
