@@ -38,9 +38,13 @@ func (b *Bot) UserUpdateSotBalance(u *models.RegisteredUser) {
 		return
 	}
 
-	brokenCookie := database.UserGetPrefString(b.Db, u.ID, "failed_rat_notify")
-	if brokenCookie != "" {
-		l.Debugf("User's RAT cookie was broken at last attempt. Skipping.")
+	failedRatTries, err := database.GetFailedRatCookieTries(b.Db, u.ID)
+	if err != nil {
+		l.Errorf("Failed to fetch failed_rat_tries from DB: %v", err)
+		return
+	}
+	if failedRatTries > 3 {
+		l.Errorf("API requests with user's RAT cookie failed for more than 3 times. Skipping.")
 		return
 	}
 
@@ -48,16 +52,27 @@ func (b *Bot) UserUpdateSotBalance(u *models.RegisteredUser) {
 	if err != nil {
 		if err.Error() == "403" {
 			l.Errorf("Was not allowed to fetch user balance from API. Token likely invalid.")
-			b.UserNotifyFailedToken(u)
+			newFailedTries, err := database.IncreaseFailedRatCookieTries(b.Db, u.ID)
+			if err != nil {
+				l.Errorf("Failed to increase rat_fails counter in DB: %v", err)
+				return
+			}
+			if newFailedTries > 3 {
+				b.UserNotifyFailedToken(u)
+			}
+
 			return
 		}
 		l.Errorf("Failed to fetch user balance from API: %v", err)
 		return
 	}
 
+	if err := database.UserDelPref(b.Db, u.ID, "failed_rat_tries"); err != nil {
+		l.Errorf("Failed to delete 'failed_rat_tries' userpref in DB: %v", err)
+	}
+
 	if err := database.UpdateBalance(b.Db, u.ID, &userBalance); err != nil {
 		l.Errorf("Balance database update failed: %v", err)
-		return
 	}
 }
 
@@ -74,7 +89,7 @@ func (b *Bot) UserNotifyFailedToken(u *models.RegisteredUser) {
 		return
 	}
 
-	dmText := fmt.Sprintf("Hey! My last attempt to communicate with the SoT API failed. " +
+	dmText := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
 		"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
 		"update your cookie.")
 	DmUser(b.Session, u.UserId, dmText, "")

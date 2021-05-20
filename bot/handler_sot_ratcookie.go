@@ -60,6 +60,10 @@ func (b *Bot) SetRatCookie(s *discordgo.Session, m *discordgo.MessageCreate) {
 			l.Errorf("Failed to delete 'failed_rat_notify' preference: %v", err)
 		}
 
+		if err := database.UserDelPref(b.Db, userObj.ID, "failed_rat_tries"); err != nil {
+			l.Errorf("Failed to delete 'failed_rat_tries' userpref in DB: %v", err)
+		}
+
 		replyMsg := fmt.Sprintf("Thanks for setting/updating your RAT cookie.")
 		AnswerUser(s, m, replyMsg, m.Author.Mention())
 	}
