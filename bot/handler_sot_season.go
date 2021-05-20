@@ -44,10 +44,10 @@ func (b *Bot) SotSeasonProgress(s *discordgo.Session, m *discordgo.MessageCreate
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
-		userMsg := fmt.Sprintf("You are currently sailing in %v. Your renown level is %d (Tier: %d). "+
+		userMsg := fmt.Sprintf("You are currently sailing in %v. Your renown level is %v (Tier: %d). "+
 			"Of the total amount of %d season challanges, so far, you completed %d.", userAchievement.SeasonTitle,
-			userAchievement.LevelProgress, userAchievement.Tier, userAchievement.TotalChallenges,
-			userAchievement.CompletedChallenges)
+			fmt.Sprintf("%.1f", userAchievement.LevelProgress), userAchievement.Tier,
+			userAchievement.TotalChallenges, userAchievement.CompletedChallenges)
 		AnswerUser(s, m, userMsg, m.Author.Mention())
 	}
 }
