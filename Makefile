@@ -1,6 +1,9 @@
 MODNAME		:= github.com/wneessen/sotbot
 SPACE		:= $(null) $(null)
 CURVER		:= 1.3.2
+CURARCH		:= $(shell uname -m | tr 'A-Z' 'a-z')
+CUROS		:= $(shell uname -s | tr 'A-Z' 'a-z')
+BUILDARCH	:= $(CUROS)_$(CURARCH)
 BUILDDIR	:= ./bin
 TZ			:= UTC
 BUILDVER    := -X github.com/wneessen/sotbot/version.Version=$(CURVER)
@@ -8,8 +11,9 @@ CURUSER     := $(shell whoami)
 BUILDUSER   := -X github.com/wneessen/sotbot/version.BuildUser=$(subst $(SPACE),_,$(CURUSER))
 CURDATE     := $(shell date +'%Y-%m-%d %H:%M:%S')
 BUILDDATE   := -X github.com/wneessen/sotbot/version.BuildDate=$(subst $(SPACE),_,$(CURDATE))
-CURARCH		:= $(shell uname -sm | tr 'A-Z' 'a-z' | tr ' ' '-')
-OUTFILE 	:= sotbot_$(CURARCH)_v$(CURVER)
+VEROS		:= -X github.com/wneessen/sotbot/version.BuildOs=$(subst $(SPACE),_,$(CUROS))
+VERARCH		:= -X github.com/wneessen/sotbot/version.BuildArch=$(subst $(SPACE),_,$(CURARCH))
+OUTFILE 	:= sotbot_$(CUROS)_$(CURARCH)_v$(CURVER)
 TARGETS		:= clean build
 
 all: $(TARGETS)
@@ -17,25 +21,24 @@ all: $(TARGETS)
 test:
 	go test $(MODNAME)
 
-build: build-$(CURARCH)
-clean: clean-$(CURARCH)
-release: clean build release-$(CURARCH) clean
-
-build-linux-x86_64:
-	/usr/bin/env CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o $(BUILDDIR)/v$(CURVER)/linux/amd64/sotbot -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER)" $(MODNAME)/cmd/sotbot
-	ln -s v$(CURVER)/linux/amd64/sotbot $(BUILDDIR)/sotbot
+build: build
+clean: clean
+release: clean build release clean
 
 run:
-	/usr/bin/env CGO_ENABLED=1 go run -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER)" $(MODNAME)/cmd/sotbot
+	/usr/bin/env CGO_ENABLED=1 go run -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER) $(VERARCH) $(VEROS)" $(MODNAME)/cmd/sotbot
 
-clean-linux-x86_64:
-	rm -rf bin/v$(CURVER)
+build:
+	/usr/bin/env CGO_ENABLED=1 go build -o $(BUILDDIR)/v$(CURVER)/$(CUROS)/$(CURARCH)/sotbot -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER) $(VERARCH) $(VEROS)" $(MODNAME)/cmd/sotbot
+	ln -s v$(CURVER)/$(CUROS)/$(CURARCH)/sotbot $(BUILDDIR)/sotbot
+
+clean:
+	rm -rf bin/v$(CURVER)/$(CUROS)/$(CURARCH)
 	rm -f $(BUILDDIR)/sotbot
-	rm -rf releases/v$(CURVER)
+	rm -f releases/v$(CURVER)/$(OUTFILE).tar.gz releases/v$(CURVER)/$(OUTFILE).tar.gz.sha256
 
-release-linux-x86_64:
-	cp -r LICENSE README.md documentation media config bin/v$(CURVER)/linux/amd64/
+release:
+	cp -r LICENSE README.md documentation media config bin/v$(CURVER)/$(CUROS)/$(CURARCH)/
 	mkdir -p releases/v$(CURVER)/
-	tar czf releases/v$(CURVER)/$(OUTFILE).tar.gz bin/v$(CURVER)/linux/amd64/
-	sha256sum releases/v$(CURVER)/$(OUTFILE).tar.gz > releases/v$(CURVER)/$(OUTFILE).tar.gz.sha256
-
+	tar czf releases/v$(CURVER)/$(OUTFILE).tar.gz bin/v$(CURVER)/$(CUROS)/$(CURARCH)/
+	minisign -Sm releases/v$(CURVER)/$(OUTFILE).tar.gz -t "SoTBot v$(CURVER) - OS: $(CUROS) // Arch: $(CURARCH)"

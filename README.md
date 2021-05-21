@@ -12,8 +12,20 @@ machine running the bot.
 To build the bot from the sources, you need to have Go installed
 
 ## Binary release
-Pre-compiled binaries for Linux (x86_64 architecture) are attached with to every release on the Github release
-page or can be found in the [releases](/releases) folder. Other platforms might follow soon.
+Pre-compiled binaries for Linux/x86_64 and Darwin/amd64 are attached with to every release on the 
+Github release page or can be found in the [releases](/releases) folder. Other platforms might follow soon.
+
+The release files are digitally signed with the excellent [Minisign](https://jedisct1.github.io/minisign/) by
+Frank Denis. To verify the signature just use the following command
+```shell
+$ minisign -Vm <release_file>.tar.gz -P RWRleNjCzit8IXBZpfsdFsJlG4U8R68OoOE+bmjWkwa1mxtsrjxeFpbW
+
+Signature and comment signature verified
+Trusted comment: SoTBot v1.3.2 - OS: darin // Arch: amd64
+```
+The projects Minisign public key is also available in this repository as [minisign.pub](minisign.pub)
+
+Please make sure to verify the signature before using any binary release.
 
 ## Building from source
 There is a `Makefile` included in the project. Just run `make` and your Bot binary will be built in
@@ -196,6 +208,12 @@ back to you.
 
 Example:
 ![Screenshot !fact](documentation/fact.png)
+
+### Version feature
+When requested the `!version` command, the bot will respond with it's current version and some build information.
+
+Example:
+![Screenshot !version](documentation/version.png)
 
 ## Helpful stuff
 ### Converting a MP3 file to a bot-compatible DCA file
