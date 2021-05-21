@@ -106,7 +106,7 @@ func (b *Bot) RegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		if err := database.CreateUser(b.Db, validUserMatches[1]); err != nil {
 			l.Errorf("Failed to store user in database: %v", err)
-			replyMsg := fmt.Sprintf("Unfortunately I was not able to store the user in the database")
+			replyMsg := "Unfortunately I was not able to store the user in the database"
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 
 		}
@@ -143,7 +143,7 @@ func (b *Bot) UnRegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		wrongFormatMsg := fmt.Sprintf("Incorrect request format. Usage: !unregister <@user>")
+		wrongFormatMsg := "Incorrect request format. Usage: !unregister <@user>"
 		msgArray := strings.SplitN(m.Message.Content, " ", 2)
 		if len(msgArray) != 2 {
 			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
@@ -162,7 +162,7 @@ func (b *Bot) UnRegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 		dbUser, err := database.GetUser(b.Db, validUserMatches[1])
 		if err != nil {
 			l.Errorf("Failed to look up user in database: %v", err)
-			replyMsg := fmt.Sprintf("Unfortunately I was not able to unregister the user.")
+			replyMsg := "Unfortunately I was not able to unregister the user."
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 		}
 		if dbUser.ID <= 0 {
