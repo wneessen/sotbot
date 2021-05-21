@@ -130,8 +130,7 @@ func (b *Bot) Run() {
 		discordgo.IntentsGuildMessages |
 		discordgo.IntentsGuildVoiceStates |
 		discordgo.IntentsDirectMessages |
-		discordgo.IntentsGuildPresences |
-		discordgo.IntentsGuildMembers
+		discordgo.IntentsGuildPresences
 
 	// Open the websocket and begin listening.
 	err = b.Session.Open()
