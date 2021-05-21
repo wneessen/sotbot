@@ -26,7 +26,7 @@ func (b *Bot) SotSeasonProgress(s *discordgo.Session, m *discordgo.MessageCreate
 			return
 		}
 		if userObj.ID <= 0 {
-			replyMsg := fmt.Sprintf("Sorry but your are not a registered user.")
+			replyMsg := "Sorry but your are not a registered user."
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
