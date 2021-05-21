@@ -12,7 +12,8 @@ machine running the bot.
 To build the bot from the sources, you need to have Go installed
 
 ## Binary release
-Binary releases will follow soon. For now please build from source
+Pre-compiled binaries for Linux (x86_64 architecture) are attached with to every release on the Github release
+page or can be found in the [releases](/releases) folder. Other platforms might follow soon.
 
 ## Building from source
 There is a `Makefile` included in the project. Just run `make` and your Bot binary will be built in
