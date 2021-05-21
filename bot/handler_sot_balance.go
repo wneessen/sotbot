@@ -28,7 +28,7 @@ func (b *Bot) GetBalance(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 		if userObj.ID <= 0 {
-			replyMsg := fmt.Sprintf("Sorry but your are not a registered user.")
+			replyMsg := "Sorry but your are not a registered user."
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
@@ -37,7 +37,7 @@ func (b *Bot) GetBalance(s *discordgo.Session, m *discordgo.MessageCreate) {
 		userBalance, err := database.GetBalance(b.Db, userObj.ID)
 		if err != nil {
 			replyMsg := fmt.Sprintf("Sorry but there was an error fetching your balance from the SoT API: %v",
-				m.Author.Mention(), err)
+				err)
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}

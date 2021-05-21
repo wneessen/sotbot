@@ -26,13 +26,13 @@ func (b *Bot) SotSeasonProgress(s *discordgo.Session, m *discordgo.MessageCreate
 			return
 		}
 		if userObj.ID <= 0 {
-			replyMsg := fmt.Sprintf("Sorry but your are not a registered user.")
+			replyMsg := "Sorry but your are not a registered user."
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
 		userRatCookie := database.UserGetPrefString(b.Db, userObj.ID, "rat_cookie")
 		if userRatCookie == "" {
-			replyMsg := fmt.Sprintf("Sorry but you have no RAT cookie set. Try !setrat in the DMs")
+			replyMsg := "Sorry but you have no RAT cookie set. Try !setrat in the DMs"
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
