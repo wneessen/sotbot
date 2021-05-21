@@ -76,13 +76,13 @@ func (b *Bot) RegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		wrongFormatMsg := fmt.Sprintf("Incorrect request format. Usage: !register <@user>")
+		wrongFormatMsg := "Incorrect request format. Usage: !register <@user>"
 		msgArray := strings.SplitN(m.Message.Content, " ", 2)
 		if len(msgArray) != 2 {
 			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
 		}
-		var validUser = regexp.MustCompile(`^\<@[\!&]*(\d+)>$`)
+		var validUser = regexp.MustCompile(`^<@[!&]*(\d+)>$`)
 		if !validUser.MatchString(msgArray[1]) {
 			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
@@ -95,7 +95,7 @@ func (b *Bot) RegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 		dbUser, err := database.GetUser(b.Db, validUserMatches[1])
 		if err != nil {
 			l.Errorf("Failed to look up user in database: %v", err)
-			replyMsg := fmt.Sprintf("Unfortunately I was not able to store the user in the database")
+			replyMsg := "Unfortunately I was not able to store the user in the database"
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 		}
 		if dbUser.ID > 0 {
@@ -149,7 +149,7 @@ func (b *Bot) UnRegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
 		}
-		var validUser = regexp.MustCompile(`^\<@[\!&]*(\d+)>$`)
+		var validUser = regexp.MustCompile(`^<@[!&]*(\d+)>$`)
 		if !validUser.MatchString(msgArray[1]) {
 			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
 			return
