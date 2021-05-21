@@ -173,7 +173,7 @@ func (b *Bot) UnRegisterUser(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		if err := database.DeleteUser(b.Db, &dbUser); err != nil {
 			l.Errorf("Failed to delete user in database: %v", err)
-			replyMsg := fmt.Sprintf("Unfortunately I was not able to unregister the user.")
+			replyMsg := "Unfortunately I was not able to unregister the user."
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 
 		}
