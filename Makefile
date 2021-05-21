@@ -19,12 +19,12 @@ test:
 build:
 	/usr/bin/env CGO_ENABLED=1 go build -o $(BUILDDIR)/v$(CURVER)/sotbot -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER)" $(MODNAME)/cmd/sotbot
 	rm $(BUILDDIR)/sotbot
-	ln -s $(BUILDDIR)/v$(CURVER)/sotbot $(BUILDDIR)/sotbot
+	ln -s v$(CURVER)/sotbot $(BUILDDIR)/sotbot
 
 build-linux-amd64:
 	/usr/bin/env CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o $(BUILDDIR)/v$(CURVER)/linux/amd64/sotbot -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER)" $(MODNAME)/cmd/sotbot
 	rm $(BUILDDIR)/sotbot
-	ln -s $(BUILDDIR)/v$(CURVER)/linux/amd64/sotbot $(BUILDDIR)/sotbot
+	ln -s v$(CURVER)/linux/amd64/sotbot $(BUILDDIR)/sotbot
 
 run:
 	/usr/bin/env CGO_ENABLED=1 go run -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER)" $(MODNAME)/cmd/sotbot
