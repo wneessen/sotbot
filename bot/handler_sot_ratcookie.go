@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"fmt"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/database"
@@ -42,7 +41,7 @@ func (b *Bot) SetRatCookie(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		wrongFormatMsg := fmt.Sprintf("Incorrect request format. Usage: !setrat <ratcookie>")
+		wrongFormatMsg := "Incorrect request format. Usage: !setrat <ratcookie>"
 		msgArray := strings.SplitN(m.Message.Content, " ", 2)
 		if len(msgArray) != 2 {
 			AnswerUser(s, m, wrongFormatMsg, m.Author.Mention())
@@ -51,7 +50,7 @@ func (b *Bot) SetRatCookie(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		if err := database.UserSetPref(b.Db, userObj.ID, "rat_cookie", msgArray[1]); err != nil {
 			l.Errorf("Failed to store RAT cookie in DB: %v", err)
-			replyMsg := fmt.Sprintf("Sorry, I couldn't store/update your cookie in the DB.")
+			replyMsg := "Sorry, I couldn't store/update your cookie in the DB."
 			AnswerUser(s, m, replyMsg, m.Author.Mention())
 			return
 		}
@@ -64,7 +63,7 @@ func (b *Bot) SetRatCookie(s *discordgo.Session, m *discordgo.MessageCreate) {
 			l.Errorf("Failed to delete 'failed_rat_tries' userpref in DB: %v", err)
 		}
 
-		replyMsg := fmt.Sprintf("Thanks for setting/updating your RAT cookie.")
+		replyMsg := "Thanks for setting/updating your RAT cookie."
 		AnswerUser(s, m, replyMsg, m.Author.Mention())
 	}
 }
