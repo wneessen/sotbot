@@ -16,7 +16,7 @@ func UrbanDict(h *http.Client, w string) (*discordgo.MessageEmbed, error) {
 
 	urbanDict, err := api.GetUrbanDict(h, w)
 	if err != nil {
-		l.Errorf("Could not fetch random fact: %v", err)
+		l.Errorf("Could not fetch UD response: %v", err)
 		return &discordgo.MessageEmbed{}, err
 	}
 

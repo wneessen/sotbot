@@ -144,6 +144,17 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.Embed(s, chanInfo.ID, em)
 		return
 
+	// Get a random movie recommendation
+	case command == "!movie" && cmdNum == 1:
+		em, err := handler.TmdbRandMovie(b.HttpClient, b.Config.GetString("tmdb_api_key"))
+		if err != nil {
+			re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+			response.AnswerUser(s, m, re, true)
+			return
+		}
+		response.Embed(s, chanInfo.ID, em)
+		return
+
 	// SoT: Show user's balance
 	case (command == "!balance" || command == "!bal") && cmdNum == 1:
 		if !userObj.IsRegistered() {
