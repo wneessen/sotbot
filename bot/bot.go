@@ -122,6 +122,7 @@ func (b *Bot) Run() {
 	b.Session.AddHandler(b.SotReputation)
 	b.Session.AddHandler(b.SotStats)
 	b.Session.AddHandler(b.DmHelp)
+	b.Session.AddHandler(b.TellMemUsage)
 
 	// Dev only handler
 	//b.Session.AddHandler(b.DevTestHandler)

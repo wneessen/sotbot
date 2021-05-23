@@ -65,7 +65,7 @@ func (b *Bot) PlaySound(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 		}
 
-		AnswerUser(s, m, fmt.Sprintf("Sorry, I have a registered sound file %q", msgArray[1]),
+		AnswerUser(s, m, fmt.Sprintf("Sorry, I don't have a registered sound file %q", msgArray[1]),
 			m.Author.Mention())
 		return
 	}
