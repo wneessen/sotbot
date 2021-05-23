@@ -120,6 +120,7 @@ func (b *Bot) Run() {
 	b.Session.AddHandler(b.SotSeasonProgress)
 	b.Session.AddHandler(b.RandSotCode)
 	b.Session.AddHandler(b.SotReputation)
+	b.Session.AddHandler(b.SotStats)
 	b.Session.AddHandler(b.DmHelp)
 
 	// Dev only handler
