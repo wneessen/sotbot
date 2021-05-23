@@ -5,6 +5,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/database"
+	"github.com/wneessen/sotbot/user"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"time"
@@ -12,16 +13,18 @@ import (
 
 func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 	l := log.WithFields(log.Fields{
-		"action": "handler.UserPlaySot",
+		"action": "bot.UserPlaySot",
 	})
 
-	reqUser, err := database.GetUser(b.Db, m.User.ID)
+	userObj, err := user.NewUser(b.Db, m.User.ID)
 	if err != nil {
-		l.Errorf("User lookup in DB failed: %v", err)
+		l.Errorf("Failed to create new user object: %v", err)
 		return
 	}
-	if reqUser.ID <= 0 {
-		l.Debugf("Received presence update, but user isn't registered.")
+	userObj.AuthorName = m.User.Username
+	userObj.Mention = m.User.Mention()
+
+	if !userObj.IsRegistered() {
 		return
 	}
 	discordUser, err := s.User(m.User.ID)
@@ -35,9 +38,18 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 		for _, curActivity := range m.Activities {
 			if curActivity.Name == "Sea of Thieves" {
 				l.Debugf("%v started playing SoT. Updating balance...", discordUser.Username)
-				b.UserUpdateSotBalance(&reqUser)
+				err := userObj.UpdateSotBalance(b.Db, b.HttpClient)
+				if err != nil {
+					if err.Error() == "notify" {
+						dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
+							"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
+							"update your cookie.")
+						DmUser(s, &userObj, dmMsg, true)
+					}
+				}
 
-				if err := database.UserSetPref(b.Db, reqUser.ID, "playing_sot", time.Now().String()); err != nil {
+				if err := database.UserSetPref(b.Db, userObj.UserInfo.ID, "playing_sot",
+					time.Now().String()); err != nil {
 					l.Errorf("Failed to update user status in database: %v", err)
 				}
 			}
@@ -46,16 +58,24 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 
 	// User might have stopped an activity
 	if len(m.Activities) == 0 {
-		userWasPlaying := database.UserGetPrefString(b.Db, reqUser.ID, "playing_sot")
+		userWasPlaying := database.UserGetPrefString(b.Db, userObj.UserInfo.ID, "playing_sot")
 		if userWasPlaying != "" {
 			l.Debugf("%v stopped playing SoT. Updating balance...", discordUser.Username)
-			b.UserUpdateSotBalance(&reqUser)
+			err := userObj.UpdateSotBalance(b.Db, b.HttpClient)
+			if err != nil {
+				if err.Error() == "notify" {
+					dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
+						"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
+						"update your cookie.")
+					DmUser(s, &userObj, dmMsg, true)
+				}
+			}
 
-			if err := database.UserDelPref(b.Db, reqUser.ID, "playing_sot"); err != nil {
+			if err := database.UserDelPref(b.Db, userObj.UserInfo.ID, "playing_sot"); err != nil {
 				l.Errorf("Failed to delete user status in database: %v", err)
 			}
 
-			userBalance, err := database.GetBalance(b.Db, reqUser.ID)
+			userBalance, err := database.GetBalance(b.Db, userObj.UserInfo.ID)
 			if err != nil {
 				return
 			}
@@ -65,11 +85,11 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				dmText := fmt.Sprintf("you played SoT recently. Your new balance is: %v gold, %v "+
 					"doubloons and %v ancient coins", p.Sprintf("%d", userBalance.Gold),
 					p.Sprintf("%d", userBalance.Doubloons), p.Sprintf("%d", userBalance.AncientCoins))
-				DmUser(s, reqUser.UserId, dmText, m.User.Mention())
+				DmUser(s, &userObj, dmText, true)
 			}
 
 			if b.Config.GetBool("sot_play_announce") {
-				balDiff := database.GetBalanceDifference(b.Db, reqUser.ID)
+				balDiff := database.GetBalanceDifference(b.Db, userObj.UserInfo.ID)
 				if balDiff.Gold != 0 || balDiff.AncientCoins != 0 || balDiff.Doubloons != 0 {
 					msg := fmt.Sprintf("Since their last trip to the Sea of Thieves, %v earned/spent: %v gold, "+
 						"%v doubloons and %v ancient coins. Their new balance is: %v gold, %v doubloons and %v"+

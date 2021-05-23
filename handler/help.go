@@ -1,24 +1,8 @@
-package bot
+package handler
 
-import (
-	"fmt"
-	"github.com/bwmarrin/discordgo"
-	log "github.com/sirupsen/logrus"
-)
-
-// Let's the bot tell you the current date/time when requested via !time command
-func (b *Bot) DmHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
-	l := log.WithFields(log.Fields{
-		"action": "handler.DmHelp",
-	})
-
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-	if m.Message.Content == "!help" {
-		l.Debugf("Received '!help' request from user %v", m.Author.Username)
-		helpMsg := `General channel commands:
+// Let's the bot provide a help message in the DMs
+func Help() (string, bool) {
+	helpMsg := `General channel commands:
    !version                  - Provide some info about myself
    !play <sound_name>        - Jump into the voice chat of the requesting user and play the requested sound
    !time                     - Replies with the current time
@@ -43,6 +27,6 @@ Note about the RAT cookie:
 To extract your cookie for the API, you need the SoT-RAT-Extractor (https://github.com/echox/sot-rat-extractor).
 Please keep in mind, that you are providing your MS Live login information to the RAT Extractor and once you use
 the !setrat feature, your cookie will be stored unencrypted for our database.`
-		DmUser(s, m.Author.ID, fmt.Sprintf("You can use the following commands:\n`%v`", helpMsg), "")
-	}
+
+	return "\n`" + helpMsg + "`", false
 }

@@ -1,31 +1,25 @@
-package bot
+package audio
 
 import (
-	"fmt"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"time"
 )
 
 // PlaySound plays the current buffer to the provided channel.
-func (b *Bot) PlayAudio(vc *discordgo.VoiceConnection, a string) error {
+func PlayAudio(vc *discordgo.VoiceConnection, b [][]byte) {
 	l := log.WithFields(log.Fields{
-		"action": "bot.PlayAudio",
+		"action": "audio.PlayAudio",
 	})
-	if a == "" {
-		return fmt.Errorf("Audio file %q not found in config", a)
-	}
 	time.Sleep(100 * time.Millisecond)
 	if err := vc.Speaking(true); err != nil {
 		l.Errorf("Failed to enable voice chat speaking mode: %v", err)
 	}
-	for _, buff := range *b.Audio[a].Buffer {
+	for _, buff := range b {
 		vc.OpusSend <- buff
 	}
 	if err := vc.Speaking(false); err != nil {
 		l.Errorf("Failed to disable voice chat speaking mode: %v", err)
 	}
 	time.Sleep(100 * time.Millisecond)
-
-	return nil
 }

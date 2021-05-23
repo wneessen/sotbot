@@ -106,26 +106,8 @@ func (b *Bot) Run() {
 
 	// Add handlers
 	b.Session.AddHandler(b.BotReadyHandler)
-	b.Session.AddHandler(b.TellTime)
-	b.Session.AddHandler(b.TellVersion)
-	b.Session.AddHandler(b.PlaySound)
-	b.Session.AddHandler(b.CurrentUserIsRegistered)
-	b.Session.AddHandler(b.RegisterUser)
-	b.Session.AddHandler(b.UnRegisterUser)
-	b.Session.AddHandler(b.SetRatCookie)
-	b.Session.AddHandler(b.GetBalance)
-	b.Session.AddHandler(b.LatestAchievement)
-	b.Session.AddHandler(b.RandomFact)
+	b.Session.AddHandler(b.CommandHandler)
 	b.Session.AddHandler(b.UserPlaysSot)
-	b.Session.AddHandler(b.SotSeasonProgress)
-	b.Session.AddHandler(b.RandSotCode)
-	b.Session.AddHandler(b.SotReputation)
-	b.Session.AddHandler(b.SotStats)
-	b.Session.AddHandler(b.DmHelp)
-	b.Session.AddHandler(b.TellMemUsage)
-
-	// Dev only handler
-	//b.Session.AddHandler(b.DevTestHandler)
 
 	// What events do we wanna see?
 	b.Session.Identify.Intents = discordgo.IntentsGuilds |
@@ -140,9 +122,6 @@ func (b *Bot) Run() {
 		l.Errorf("Error opening discord session: %v", err)
 		return
 	}
-
-	// Initial one-time jobs
-	b.UpdateSotBalances()
 
 	// We need a signal channel
 	sc := make(chan os.Signal, 1)
