@@ -17,8 +17,7 @@ func GetSotBalance(d *gorm.DB, h *http.Client, u *user.User) (string, bool, erro
 		"action": "handler.GetSotBalance",
 	})
 
-	var retErr error
-	retErr = u.UpdateSotBalance(d, h)
+	retErr := u.UpdateSotBalance(d, h)
 	userBalance, err := database.GetBalance(d, u.UserInfo.ID)
 	if err != nil {
 		l.Errorf("Database SoT balance lookup failed: %v", err)

@@ -38,17 +38,11 @@ func NewUser(d *gorm.DB, i string) (User, error) {
 }
 
 func (u *User) IsRegistered() bool {
-	if u.UserInfo.ID > 0 {
-		return true
-	}
-	return false
+	return u.UserInfo.ID > 0
 }
 
 func (u *User) HasRatCookie() bool {
-	if u.RatCookie != "" {
-		return true
-	}
-	return false
+	return u.RatCookie != ""
 }
 
 func (u *User) IsAdmin() bool {
