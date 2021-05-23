@@ -190,6 +190,12 @@ code.
 Example:
 ![Screenshot !code](documentation/code.png)
 
+#### General statistics
+The `!stats` command will provide you with some general stats about your SoT travels
+
+Example:
+![Screenshot !stats](documentation/stats.png)
+
 ### Play sound feature
 With the `!play` feature, when you are active in a voice channel, you can have the bot join and play a predefined
 sound. The bot is "shipped" with predefined sounds in the config (see `audiofiles` in `sotbot.json`). So using 

@@ -21,7 +21,6 @@ all: $(TARGETS)
 test:
 	go test $(MODNAME)
 
-build: build
 clean: clean
 release: clean build release clean
 
