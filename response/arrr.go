@@ -1,4 +1,4 @@
-package bot
+package response
 
 import (
 	log "github.com/sirupsen/logrus"

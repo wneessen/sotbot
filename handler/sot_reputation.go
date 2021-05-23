@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"github.com/wneessen/sotbot/sotapi"
+	"github.com/wneessen/sotbot/api"
 	"github.com/wneessen/sotbot/user"
 	"net/http"
 	"regexp"
@@ -26,7 +26,7 @@ func GetSotReputation(h *http.Client, u *user.User, f string) (string, bool, err
 	if len(validFactionMatch) < 1 {
 		return wrongFormatMsg, true, nil
 	}
-	userReputation, err := sotapi.GetFactionReputation(h, u.RatCookie, strings.ToLower(validFactionMatch[0]))
+	userReputation, err := api.GetFactionReputation(h, u.RatCookie, strings.ToLower(validFactionMatch[0]))
 	if err != nil {
 		l.Errorf("An error occured fetching user progress: %v", err)
 		return "", false, err

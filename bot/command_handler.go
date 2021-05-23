@@ -5,6 +5,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/handler"
+	"github.com/wneessen/sotbot/response"
 	"github.com/wneessen/sotbot/user"
 	"strings"
 )
@@ -56,19 +57,19 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Placeholder for the legacy !airhorn command
 	case command == "!airhorn" && cmdNum == 1:
 		re := "The !airhorn command has been renamed to `!play <soundname>`. Try `!play airhorn` instead"
-		AnswerUser(s, m, re, true)
+		response.AnswerUser(s, m, re, true)
 		return
 
 	// Tell us the current time
 	case command == "!time" && cmdNum == 1:
 		re, me := handler.TellTime()
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// Version information
 	case command == "!version" && cmdNum == 1:
 		re, me := handler.TellVersion()
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// Play a registered sound in a voice chat
@@ -86,13 +87,13 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			err := handler.PlaySound(guildObj.VoiceStates, s, *b.Audio[soundName].Buffer, userObj.AuthorId, guildObj.ID)
 			if err != nil {
 				re := fmt.Sprintf("An error occured when playing the sound: %v", err.Error())
-				AnswerUser(s, m, re, true)
+				response.AnswerUser(s, m, re, true)
 			}
 			b.AudioMutex.Unlock()
 			return
 		}
 		re := fmt.Sprintf("I don't have a registered sound file named %q", soundName)
-		AnswerUser(s, m, re, true)
+		response.AnswerUser(s, m, re, true)
 		return
 
 	// Show some memory statistics
@@ -101,13 +102,13 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 		re, me := handler.TellMemUsage()
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// Reply with a help text in the DMs
 	case command == "!help" && cmdNum == 1:
 		re, me := handler.Help()
-		DmUser(s, &userObj, re, me)
+		response.DmUser(s, &userObj, re, me)
 		return
 
 	// Reply with random useless fact
@@ -115,10 +116,21 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		re, me, err := handler.RandomFact(b.HttpClient)
 		if err != nil {
 			re = fmt.Sprintf("An error occured while fetching the random fact API: %v", err)
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 			return
 		}
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
+		return
+
+	// Check Urban dictionary for the provided word
+	case (command == "!ud" || command == "!urban") && cmdNum == 2:
+		em, err := handler.UrbanDict(b.HttpClient, msgArray[1])
+		if err != nil {
+			re := fmt.Sprintf("An error occured while fetching the urban dictionary API: %v", err)
+			response.AnswerUser(s, m, re, true)
+			return
+		}
+		response.Embed(s, chanInfo.ID, em)
 		return
 
 	// SoT: Show user's balance
@@ -135,13 +147,13 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 				dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
 					"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
 					"update your cookie.")
-				DmUser(s, &userObj, dmMsg, true)
+				response.DmUser(s, &userObj, dmMsg, true)
 			} else {
 				re = fmt.Sprintf("An error occured checking your SoT balance: %v", err)
-				AnswerUser(s, m, re, true)
+				response.AnswerUser(s, m, re, true)
 			}
 		}
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// SoT: Show user's season progress
@@ -155,9 +167,9 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		re, me, err := handler.GetSotSeasonProgress(b.HttpClient, &userObj)
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT season progress: %v", err)
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 		}
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// SoT: Show user's reputation with a faction/company
@@ -171,9 +183,9 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		re, me, err := handler.GetSotReputation(b.HttpClient, &userObj, msgArray[1])
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT reputation level: %v", err)
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 		}
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// SoT: Show user's general stats
@@ -187,9 +199,9 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		re, me, err := handler.GetSotStats(b.HttpClient, &userObj)
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT general stats: %v", err)
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 		}
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// SoT: Show user's latest achievement
@@ -203,9 +215,9 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		em, err := handler.GetSotAchievement(b.HttpClient, &userObj)
 		if err != nil {
 			re := fmt.Sprintf("An error occured checking your SoT latest achievement: %v", err)
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 		}
-		Embed(s, m.ChannelID, em)
+		response.Embed(s, m.ChannelID, em)
 		return
 
 	// SoT: Quote a random SoT pirate code article
@@ -213,31 +225,31 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		em, err := handler.GetSotRandomCode()
 		if err != nil {
 			re := fmt.Sprintf("An error occured quoting the SoT pirate code: %v", err)
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 		}
-		Embed(s, m.ChannelID, em)
+		response.Embed(s, m.ChannelID, em)
 		return
 
 	// SoT: Set RAT cookie
 	case (command == "!setrat" || command == "!rat") && cmdNum == 2:
 		if chanInfo.Type != discordgo.ChannelTypeDM {
 			re := "You exposed your RAT cookie to a public channel. Please change your password immediately."
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 			return
 		}
 		re, me, err := handler.UserSetRatCookie(b.Db, &userObj, msgArray[1])
 		if err != nil {
 			re := fmt.Sprintf("An error occured setting/updating your RAT cookie: %v", err)
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 			return
 		}
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// User management: Tell the user if they are registered
 	case (command == "!userinfo" || command == "!info") && cmdNum == 1:
 		re, me := handler.UserIsRegistered(&userObj)
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// User management: Register a new user
@@ -251,9 +263,9 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		re, me, err := handler.RegisterUser(b.Db, msgArray[1])
 		if err != nil {
 			re := fmt.Sprintf("An error occured registering user: %v", err)
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 		}
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	// User management: Un-register a new user
@@ -267,14 +279,14 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		re, me, err := handler.UnregisterUser(b.Db, msgArray[1])
 		if err != nil {
 			re := fmt.Sprintf("An error occured registering user: %v", err)
-			AnswerUser(s, m, re, true)
+			response.AnswerUser(s, m, re, true)
 		}
-		AnswerUser(s, m, re, me)
+		response.AnswerUser(s, m, re, me)
 		return
 
 	default:
 		re := "Unknown command"
-		AnswerUser(s, m, re, true)
+		response.AnswerUser(s, m, re, true)
 		return
 	}
 }

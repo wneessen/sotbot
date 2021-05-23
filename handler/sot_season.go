@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"github.com/wneessen/sotbot/sotapi"
+	"github.com/wneessen/sotbot/api"
 	"github.com/wneessen/sotbot/user"
 	"net/http"
 )
@@ -14,7 +14,7 @@ func GetSotSeasonProgress(h *http.Client, u *user.User) (string, bool, error) {
 		"action": "handler.GetSotSeasonProgress",
 	})
 
-	userAchievement, err := sotapi.GetSeasonProgress(h, u.RatCookie)
+	userAchievement, err := api.GetSeasonProgress(h, u.RatCookie)
 	if err != nil {
 		l.Errorf("An error occured fetching user progress: %v", err)
 		return "", false, err

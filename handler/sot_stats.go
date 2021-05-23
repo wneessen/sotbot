@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"github.com/wneessen/sotbot/sotapi"
+	"github.com/wneessen/sotbot/api"
 	"github.com/wneessen/sotbot/user"
 	"net/http"
 )
@@ -13,7 +13,7 @@ func GetSotStats(h *http.Client, u *user.User) (string, bool, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.GetSotStats",
 	})
-	userStats, err := sotapi.GetStats(h, u.RatCookie)
+	userStats, err := api.GetStats(h, u.RatCookie)
 	if err != nil {
 		l.Errorf("An error occured fetching user stats: %v", err)
 		return "", false, err

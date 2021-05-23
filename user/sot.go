@@ -3,8 +3,8 @@ package user
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"github.com/wneessen/sotbot/api"
 	"github.com/wneessen/sotbot/database"
-	"github.com/wneessen/sotbot/sotapi"
 	"gorm.io/gorm"
 	"net/http"
 	"time"
@@ -32,7 +32,7 @@ func (u *User) UpdateSotBalance(d *gorm.DB, h *http.Client) error {
 		return nil
 	}
 
-	userBalance, err := sotapi.GetBalance(h, userRatCookie)
+	userBalance, err := api.GetBalance(h, userRatCookie)
 	if err != nil {
 		if err.Error() == "403" {
 			l.Errorf("Was not allowed to fetch user balance from API. Token likely invalid.")

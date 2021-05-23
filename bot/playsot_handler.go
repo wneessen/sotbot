@@ -5,6 +5,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/database"
+	"github.com/wneessen/sotbot/response"
 	"github.com/wneessen/sotbot/user"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
@@ -44,7 +45,7 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 						dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
 							"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
 							"update your cookie.")
-						DmUser(s, &userObj, dmMsg, true)
+						response.DmUser(s, &userObj, dmMsg, true)
 					}
 				}
 
@@ -67,7 +68,7 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 					dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
 						"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
 						"update your cookie.")
-					DmUser(s, &userObj, dmMsg, true)
+					response.DmUser(s, &userObj, dmMsg, true)
 				}
 			}
 
@@ -85,10 +86,10 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				dmText := fmt.Sprintf("you played SoT recently. Your new balance is: %v gold, %v "+
 					"doubloons and %v ancient coins", p.Sprintf("%d", userBalance.Gold),
 					p.Sprintf("%d", userBalance.Doubloons), p.Sprintf("%d", userBalance.AncientCoins))
-				DmUser(s, &userObj, dmText, true)
+				response.DmUser(s, &userObj, dmText, true)
 			}
 
-			if b.Config.GetBool("sot_play_announce") {
+			if b.Config.GetBool("sot_play_announce") && b.AnnounceChan != nil {
 				balDiff := database.GetBalanceDifference(b.Db, userObj.UserInfo.ID)
 				if balDiff.Gold != 0 || balDiff.AncientCoins != 0 || balDiff.Doubloons != 0 {
 					msg := fmt.Sprintf("Since their last trip to the Sea of Thieves, %v earned/spent: %v gold, "+
@@ -97,7 +98,8 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 						p.Sprintf("%d", balDiff.Doubloons), p.Sprintf("%d", balDiff.AncientCoins),
 						p.Sprintf("%d", userBalance.Gold), p.Sprintf("%d", userBalance.Doubloons),
 						p.Sprintf("%d", userBalance.AncientCoins))
-					b.Announce(msg)
+
+					response.Announce(s, b.AnnounceChan.ID, msg)
 				}
 			}
 		}

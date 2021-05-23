@@ -1,4 +1,4 @@
-package factapi
+package api
 
 import (
 	"encoding/json"

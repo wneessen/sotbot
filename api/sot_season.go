@@ -1,4 +1,4 @@
-package sotapi
+package api
 
 import (
 	"encoding/json"

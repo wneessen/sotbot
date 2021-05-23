@@ -4,6 +4,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/wneessen/sotbot/audio"
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/httpclient"
 	"gorm.io/gorm"
@@ -51,7 +52,7 @@ func NewBot(c *viper.Viper) Bot {
 		l.Debugf("Loading audio file %q as %q into memory", fn, af)
 
 		audioBuffer := make([][]byte, 0)
-		if err := LoadAudio("./media/audio/"+fn, &audioBuffer); err != nil {
+		if err := audio.LoadAudio("./media/audio/"+fn, &audioBuffer); err != nil {
 			l.Errorf("Failed to load audio file into memory: %v", err)
 			break
 		}
