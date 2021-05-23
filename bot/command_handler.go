@@ -123,6 +123,17 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 
 	// Check Urban dictionary for the provided word
+	case (command == "!ud" || command == "!urban") && cmdNum == 1:
+		em, err := handler.UrbanDict(b.HttpClient, "")
+		if err != nil {
+			re := fmt.Sprintf("An error occured while fetching the urban dictionary API: %v", err)
+			response.AnswerUser(s, m, re, true)
+			return
+		}
+		response.Embed(s, chanInfo.ID, em)
+		return
+
+	// Check Urban dictionary for the provided word
 	case (command == "!ud" || command == "!urban") && cmdNum == 2:
 		em, err := handler.UrbanDict(b.HttpClient, msgArray[1])
 		if err != nil {

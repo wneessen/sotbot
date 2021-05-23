@@ -13,6 +13,7 @@ type UrbanDictEntry struct {
 	PermaLink  string `json:"permalink"`
 	Example    string `json:"example"`
 	Author     string `json:"author"`
+	Word       string `json:"word"`
 }
 
 type UrbanDict struct {
@@ -25,7 +26,13 @@ func GetUrbanDict(hc *http.Client, w string) (UrbanDictEntry, error) {
 	})
 
 	var urbanReps UrbanDict
-	apiUrl := fmt.Sprintf("https://api.urbandictionary.com/v0/define?term=%v", w)
+	var apiUrl string
+	if w == "" {
+		apiUrl = "https://api.urbandictionary.com/v0/random"
+	}
+	if w != "" {
+		apiUrl = fmt.Sprintf("https://api.urbandictionary.com/v0/define?term=%v", w)
+	}
 
 	l.Debugf("Fetching UD definition fact from UD API...")
 	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, "", "")
