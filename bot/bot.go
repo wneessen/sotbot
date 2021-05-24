@@ -2,6 +2,7 @@ package bot
 
 import (
 	"github.com/bwmarrin/discordgo"
+	"github.com/ryanbradynd05/go-tmdb"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/wneessen/sotbot/audio"
@@ -25,6 +26,7 @@ type Bot struct {
 	Db           *gorm.DB
 	Session      *discordgo.Session
 	AnnounceChan *discordgo.Channel
+	TMDb         *tmdb.TMDb
 }
 
 type Audio struct {
@@ -77,6 +79,16 @@ func NewBot(c *viper.Viper) Bot {
 		os.Exit(1)
 	}
 	bot.HttpClient = hc
+
+	// Create a TMDB object
+	tmdbApiKey := c.GetString("tmdb_api_key")
+	if tmdbApiKey != "" {
+		bot.TMDb = tmdb.Init(tmdb.Config{
+			APIKey:   tmdbApiKey,
+			Proxies:  nil,
+			UseProxy: false,
+		})
+	}
 
 	return bot
 }

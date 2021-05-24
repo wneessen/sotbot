@@ -146,7 +146,12 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Get a random movie recommendation
 	case command == "!movie" && cmdNum == 1:
-		em, err := handler.TmdbRandMovie(b.HttpClient, b.Config.GetString("tmdb_api_key"))
+		if b.TMDb == nil {
+			re := "You haven't specified a TMDb API key in your config file."
+			response.AnswerUser(s, m, re, true)
+			return
+		}
+		em, err := handler.TMDbRandMovie(b.TMDb)
 		if err != nil {
 			re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
 			response.AnswerUser(s, m, re, true)
