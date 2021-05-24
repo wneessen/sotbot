@@ -105,6 +105,15 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.AnswerUser(s, m, re, me)
 		return
 
+	// Show bot's uptime
+	case (command == "!uptime" || command == "!up") && cmdNum == 1:
+		re, me, err := handler.Uptime(b.StartTime)
+		if err != nil {
+			re = fmt.Sprintf("Sorry, an error occured calculating the uptime: %v", err)
+		}
+		response.AnswerUser(s, m, re, me)
+		return
+
 	// Reply with a help text in the DMs
 	case command == "!help" && cmdNum == 1:
 		re, me := handler.Help()

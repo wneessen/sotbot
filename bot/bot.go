@@ -27,6 +27,7 @@ type Bot struct {
 	Session      *discordgo.Session
 	AnnounceChan *discordgo.Channel
 	TMDb         *tmdb.TMDb
+	StartTime    time.Time
 }
 
 type Audio struct {
@@ -46,6 +47,7 @@ func NewBot(c *viper.Viper) Bot {
 		AuthToken:  authToken,
 		Config:     c,
 		AudioMutex: &sync.Mutex{},
+		StartTime:  time.Now(),
 	}
 	bot.Audio = make(map[string]Audio)
 
