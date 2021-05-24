@@ -169,6 +169,11 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		em, err := handler.TMDbSearchMovie(b.TMDb, msgArray[1:])
 		if err != nil {
+			if err.Error() == "No matching movie found" {
+				re := "Sorry, but I wasn't able to find a movie matching your search criteria."
+				response.AnswerUser(s, m, re, true)
+				return
+			}
 			re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
