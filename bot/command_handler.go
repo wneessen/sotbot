@@ -160,6 +160,22 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.Embed(s, chanInfo.ID, em)
 		return
 
+	// Get a specific movie
+	case command == "!movie" && cmdNum > 1:
+		if b.TMDb == nil {
+			re := "You haven't specified a TMDb API key in your config file."
+			response.AnswerUser(s, m, re, true)
+			return
+		}
+		em, err := handler.TMDbSearchMovie(b.TMDb, msgArray[1:])
+		if err != nil {
+			re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+			response.AnswerUser(s, m, re, true)
+			return
+		}
+		response.Embed(s, chanInfo.ID, em)
+		return
+
 	// SoT: Show user's balance
 	case (command == "!balance" || command == "!bal") && cmdNum == 1:
 		if !userObj.IsRegistered() {
