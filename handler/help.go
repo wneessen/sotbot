@@ -1,7 +1,7 @@
 package handler
 
 // Let's the bot provide a help message in the DMs
-func Help() (string, bool) {
+func Help() string {
 	helpMsg := `General channel commands:
    !version                  - Provide some info about myself
    !play <sound_name>        - Jump into the voice chat of the requesting user and play the requested sound
@@ -28,5 +28,5 @@ To extract your cookie for the API, you need the SoT-RAT-Extractor (https://gith
 Please keep in mind, that you are providing your MS Live login information to the RAT Extractor and once you use
 the !setrat feature, your cookie will be stored unencrypted for our database.`
 
-	return "\n`" + helpMsg + "`", false
+	return "\n`" + helpMsg + "`"
 }

@@ -9,18 +9,18 @@ import (
 )
 
 // Just a test handler
-func GetSotStats(h *http.Client, u *user.User) (string, bool, error) {
+func GetSotStats(h *http.Client, u *user.User) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.GetSotStats",
 	})
 	userStats, err := api.GetStats(h, u.RatCookie)
 	if err != nil {
 		l.Errorf("An error occured fetching user stats: %v", err)
-		return "", false, err
+		return "", err
 	}
 	responseMsg := fmt.Sprintf("During your journeys on the Sea of Thieves, so far, you defeated %d "+
 		"kraken, had %d encounters with a Megalodon, handed in %d chests, sank %d other ships and vomited "+
 		"%d times. Good job!", userStats.KrakenDefeated, userStats.MegalodonEncounters, userStats.ChestsHandedIn,
 		userStats.ShipsSunk, userStats.VomitedTotal)
-	return responseMsg, true, nil
+	return responseMsg, nil
 }

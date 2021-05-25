@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func RandomFact(h *http.Client) (string, bool, error) {
+func RandomFact(h *http.Client) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.RandomFact",
 	})
@@ -14,8 +14,8 @@ func RandomFact(h *http.Client) (string, bool, error) {
 	randFact, err := api.GetRandFact(h)
 	if err != nil {
 		l.Errorf("Could not fetch random fact: %v", err)
-		return "", false, err
+		return "", err
 	}
 
-	return randFact.Text, true, nil
+	return randFact.Text, nil
 }

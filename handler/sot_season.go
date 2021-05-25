@@ -9,7 +9,7 @@ import (
 )
 
 // Just a test handler
-func GetSotSeasonProgress(h *http.Client, u *user.User) (string, bool, error) {
+func GetSotSeasonProgress(h *http.Client, u *user.User) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.GetSotSeasonProgress",
 	})
@@ -17,11 +17,11 @@ func GetSotSeasonProgress(h *http.Client, u *user.User) (string, bool, error) {
 	userAchievement, err := api.GetSeasonProgress(h, u.RatCookie)
 	if err != nil {
 		l.Errorf("An error occured fetching user progress: %v", err)
-		return "", false, err
+		return "", err
 	}
 	responseMsg := fmt.Sprintf("You are currently sailing in %v. Your renown level is %v%% (Tier: %d). "+
-		"Of the total amount of %d season challanges, so far, you completed %d.", userAchievement.SeasonTitle,
+		"Of the total amount of %d season challenges, so far, you completed %d.", userAchievement.SeasonTitle,
 		fmt.Sprintf("%.1f", userAchievement.LevelProgress), userAchievement.Tier,
 		userAchievement.TotalChallenges, userAchievement.CompletedChallenges)
-	return responseMsg, true, nil
+	return responseMsg, nil
 }

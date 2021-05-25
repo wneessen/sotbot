@@ -8,14 +8,14 @@ import (
 )
 
 // Set a SoT RAT cookie
-func UserSetRatCookie(d *gorm.DB, u *user.User, r string) (string, bool, error) {
+func UserSetRatCookie(d *gorm.DB, u *user.User, r string) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.UserSetRatCookie",
 	})
 
 	if err := database.UserSetPref(d, u.UserInfo.ID, "rat_cookie", r); err != nil {
 		l.Errorf("Failed to store RAT cookie in DB: %v", err)
-		return "", false, err
+		return "", err
 	}
 
 	if err := database.UserDelPref(d, u.UserInfo.ID, "failed_rat_notify"); err != nil {
@@ -27,5 +27,5 @@ func UserSetRatCookie(d *gorm.DB, u *user.User, r string) (string, bool, error) 
 	}
 
 	responseMsg := "Thanks for setting/updating your RAT cookie."
-	return responseMsg, true, nil
+	return responseMsg, nil
 }

@@ -11,7 +11,7 @@ import (
 )
 
 // Just a test handler
-func GetSotReputation(h *http.Client, u *user.User, f string) (string, bool, error) {
+func GetSotReputation(h *http.Client, u *user.User, f string) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.GetSotReputation",
 	})
@@ -20,16 +20,16 @@ func GetSotReputation(h *http.Client, u *user.User, f string) (string, bool, err
 		"<athena|bilge|hoarder|hunter|merchant|order|reaper|seadog>")
 	var validFaction = regexp.MustCompile(`^(athena|bilge|hoarder|hunter|merchant|order|reaper|seadog)$`)
 	if !validFaction.MatchString(f) {
-		return wrongFormatMsg, true, nil
+		return wrongFormatMsg, nil
 	}
 	validFactionMatch := validFaction.FindStringSubmatch(f)
 	if len(validFactionMatch) < 1 {
-		return wrongFormatMsg, true, nil
+		return wrongFormatMsg, nil
 	}
 	userReputation, err := api.GetFactionReputation(h, u.RatCookie, strings.ToLower(validFactionMatch[0]))
 	if err != nil {
 		l.Errorf("An error occured fetching user progress: %v", err)
-		return "", false, err
+		return "", err
 	}
 	responseMsg := fmt.Sprintf("You current reputation level with the %v faction (%q) is: %d (Rank: %v). "+
 		"Your current level XP is %d. To reach the next reputation level (level %d), you need to reach a total"+
@@ -37,5 +37,5 @@ func GetSotReputation(h *http.Client, u *user.User, f string) (string, bool, err
 		userReputation.Name, userReputation.Motto, userReputation.Level, userReputation.Rank,
 		userReputation.Xp, userReputation.NextLevel.Level, userReputation.NextLevel.XpRequired,
 		userReputation.NextLevel.XpRequired-userReputation.Xp)
-	return responseMsg, true, nil
+	return responseMsg, nil
 }
