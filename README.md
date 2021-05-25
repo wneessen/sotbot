@@ -235,7 +235,7 @@ error will be returned from the bot.
 Example:
 ![Screenshot !movie](documentation/tmdb_movie.png)
 
-### Version feature
+### Version
 When requested the `!version` command, the bot will respond with it's current version and some build information.
 
 Example:
