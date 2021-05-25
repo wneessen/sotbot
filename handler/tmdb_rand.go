@@ -20,7 +20,7 @@ func TMDbRandMovie(t *tmdb.TMDb) (*discordgo.MessageEmbed, error) {
 		return &discordgo.MessageEmbed{}, err
 	}
 
-	searchOpts := make(map[string]string, 0)
+	searchOpts := make(map[string]string)
 	searchOpts["region"] = "DE"
 	searchOpts["page"] = strconv.FormatInt(int64(randPage), 10)
 	movieResult, err := t.DiscoverMovie(searchOpts)
