@@ -59,11 +59,12 @@ The config currently supports the following format:
     "dbfile": "/home/sotbot/.sotbot/sotbot.db",
     "announcechan": "123456789012345678",
     "sot_play_announce": true,
-    "sot_play_dm_user": false
+    "sot_play_dm_user": false, 
+    "tmdb_api_key": "Put your TMDb api key here"
 }
 ```
 
-#### config parameters
+#### Config parameters
 * `authtoken`: this is your discord bot token, that you need to aquire from the development portal
 * `audiofiles`: this is an associated array of audio files that can be played using the `!play` command.
   the files for this need to be placed in the `./media/audio/` directory of the bot. please keep in mind
@@ -78,9 +79,11 @@ The config currently supports the following format:
   balance they made during the last playing session
 * `sot_play_dm_user`: If set to `true`, user tracking is enabled and the user is registered, the bot will
   DM the user after they played SoT and provide them with their new balance
+* `tmdb_api_key`: If you want to use the TMDb commands, you need to have a valid API token. For more details
+  check the [TMDb API documentation](https://developers.themoviedb.org/3/getting-started/authentication)
 
-## Features
-SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. Lots of its commands are SoT-based, but
+## Commands
+SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. A couple of its commands are SoT-themed, but
 there are couple of fun non SoT-related commands as well.
 
 ### User management
@@ -89,18 +92,17 @@ User information is based on your discord userid and will be stored in a SQLite 
 the bot.
 
 #### User registration
-For the bot to use some specific features, users need to be registered. Only users with discord admin permission
-can "register" users with the bot.
+For the bot to use some specific commands (especially the SoT-themed commands), users need to be registered. 
+Only users with discord admin permission can "register" users with the bot.
 
-To register a user, use the `!register` command. \
-Example: ```!register @johndoe```
+To register a user, use the `!register` or `!reg` command. \
+Example: `!register @johndoe`
 
 #### User unregistration
-Admins can also unregister users, which will effectively delete the user from the database again, using the
-`!unregister` command. \
-Example: ```!unregister @johndoe```
+Admins can also delete users from the database again, using the `!unregister` or `!unreg` command. \
+Example: `!unregister @johndoe`
 
-### Sea of Thieves commands
+### Sea of Thieves related commands
 Only registered users will be able to use the SoT specific bot features, as this requires API access, which
 needs to be assigned to users.
 
@@ -119,14 +121,14 @@ having access to the API data without having to store/renew the cookie.
 
 #### RAT Cookie registration
 Once you have you user registered and obtained a valid cookie using the `SoT-RAT-Extractor`, you have to store
-it in the bot's database. To do so, you have to DM the bot and use the `!setrat` command followed by the 
+it in the bot's database. To do so, you have to DM the bot and use the `!setrat` or `!rat` command followed by the 
 extracted cookie. Please keep in mind that this only works in the DMs and will not work in a public channel
 for security reasons.
 
 Example:
 ![Screenshot !setrat](documentation/ratcookie.png)
 
-*Note:* As mentioned already, the cookie situation is not perfect and the cookie will expire after 14 days. This
+**Note:** As mentioned already, the cookie situation is not perfect and the cookie will expire after 14 days. This
 means that after 14 days, the bot will not be able to access the API anymore until you update your cookie. When
 the bot runs into 3 continous failed API request, the bot will notify you in a DM about the fact that your cookie
 has likely expired and you need to renew it. Once done, it will not notify you anymore unless you used the 
@@ -135,8 +137,8 @@ flag is set, the bot will also not try to access the API anymore to avoid too ma
 "notifed" flag was removed.
 
 #### User balance
-With the `!balance` command, the Bot will query you current balance of Gold, Ancient Coins and Doubloons from 
-the API and will output it to you in the channel you requested it.
+With the `!balance` or `!bal` command, the Bot will query you current balance of Gold, Ancient Coins and Doubloons 
+from the API and will output it to you in the channel you requested it.
 
 Example:
 ![Screenshot !balance](documentation/balance.png)
@@ -153,8 +155,8 @@ Example:
 ![Screenshot auto_balance](documentation/auto_balance.png)
 
 #### Latest achievement
-Using the `!achievement` command, the bot will fetch your achievements list from the API and present you with
-your latest completed achievement.
+Using the `!achievement` or `!achieve` command, the bot will fetch your achievements list from the API and 
+present you with your latest completed achievement.
 
 Example:
 ![Screenshot !achievement](documentation/achievement.png)
@@ -167,8 +169,8 @@ Example:
 ![Screenshot !season](documentation/season.png)
 
 #### Faction/Company reputation
-The `!rep` command, followed by one of the supported faction names, will let the bot fetch your current reputation
-and XP level with the requested faction/company.
+The `!reputation` or `!rep` command, followed by one of the supported faction names, will let the bot fetch 
+your current reputation and XP level with the requested faction/company.
 
 Supported factions:
   * athena
@@ -191,7 +193,7 @@ Example:
 ![Screenshot !code](documentation/code.png)
 
 #### General statistics
-The `!stats` command will provide you with some general stats about your SoT travels
+The `!stats` or `!stat` command will provide you with some general stats about your SoT travels
 
 Example:
 ![Screenshot !stats](documentation/stats.png)
@@ -214,6 +216,24 @@ back to you.
 
 Example:
 ![Screenshot !fact](documentation/fact.png)
+
+### Urban dictionary
+To query the Urban Dictionary, you can use the `!urban` or `!ud` command. If used without any arguments, a random
+term will be looked up. If followed by a term, the actual term will be looked up and the first result presented to
+the requester.
+
+Example:
+![Screenshot !ud](documentation/urban.png)
+
+### The Movie Database
+With the `!movie` command, you can have the bot look up a random movie from [The Movie Database](https://themoviedb.org) 
+(TMDb). If the command is followed by arguments, the arguments will be used as search string.
+
+For this feature to work, you need a valid API key for the TMDb API. If no API key is found in the config file, an
+error will be returned from the bot.
+
+Example:
+![Screenshot !movie](documentation/tmdb_movie.png)
 
 ### Version feature
 When requested the `!version` command, the bot will respond with it's current version and some build information.

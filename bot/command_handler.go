@@ -67,7 +67,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 
 	// Version information
-	case command == "!version" && cmdNum == 1:
+	case (command == "!version" || command == "!ver") && cmdNum == 1:
 		re := handler.TellVersion()
 		response.AnswerUser(s, m, re, true)
 		return
@@ -93,7 +93,9 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Reply with a help text in the DMs
 	case command == "!help" && cmdNum == 1:
 		re := handler.Help()
-		response.DmUser(s, &userObj, re, false)
+		for _, msgText := range re {
+			response.DmUser(s, &userObj, "`"+msgText+"`", false, true)
+		}
 		return
 
 	// Reply with random useless fact
@@ -107,64 +109,66 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.AnswerUser(s, m, re, true)
 		return
 
-	// Check Urban dictionary for the provided word
-	case (command == "!ud" || command == "!urban") && cmdNum == 1:
-		em, err := handler.UrbanDict(b.HttpClient, "")
-		if err != nil {
-			re := fmt.Sprintf("An error occured while fetching the urban dictionary API: %v", err)
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		response.Embed(s, chanInfo.ID, em)
-		return
-
-	// Check Urban dictionary for the provided word
-	case (command == "!ud" || command == "!urban") && cmdNum == 2:
-		em, err := handler.UrbanDict(b.HttpClient, msgArray[1])
-		if err != nil {
-			re := fmt.Sprintf("An error occured while fetching the urban dictionary API: %v", err)
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		response.Embed(s, chanInfo.ID, em)
-		return
-
-	// Get a random movie recommendation
-	case command == "!movie" && cmdNum == 1:
-		if b.TMDb == nil {
-			re := "You haven't specified a TMDb API key in your config file."
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		em, err := handler.TMDbRandMovie(b.TMDb)
-		if err != nil {
-			re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		response.Embed(s, chanInfo.ID, em)
-		return
-
-	// Get a specific movie
-	case command == "!movie" && cmdNum > 1:
-		if b.TMDb == nil {
-			re := "You haven't specified a TMDb API key in your config file."
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		em, err := handler.TMDbSearchMovie(b.TMDb, msgArray[1:])
-		if err != nil {
-			if err.Error() == "No matching movie found" {
-				re := "Sorry, but I wasn't able to find a movie matching your search criteria."
+	// Check Urban dictionary
+	case command == "!ud" || command == "!urban":
+		if cmdNum == 1 {
+			em, err := handler.UrbanDict(b.HttpClient, "")
+			if err != nil {
+				re := fmt.Sprintf("An error occured while fetching the urban dictionary API: %v", err)
 				response.AnswerUser(s, m, re, true)
 				return
 			}
-			re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
-			response.AnswerUser(s, m, re, true)
+			response.Embed(s, chanInfo.ID, em)
 			return
 		}
-		response.Embed(s, chanInfo.ID, em)
-		return
+		if cmdNum == 2 {
+			em, err := handler.UrbanDict(b.HttpClient, msgArray[1])
+			if err != nil {
+				re := fmt.Sprintf("An error occured while fetching the urban dictionary API: %v", err)
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			response.Embed(s, chanInfo.ID, em)
+			return
+		}
+
+	// Get a random movie recommendation
+	case command == "!movie":
+		if cmdNum == 1 {
+			if b.TMDb == nil {
+				re := "You haven't specified a TMDb API key in your config file."
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			em, err := handler.TMDbRandMovie(b.TMDb)
+			if err != nil {
+				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			response.Embed(s, chanInfo.ID, em)
+			return
+		}
+		if cmdNum > 1 {
+			if b.TMDb == nil {
+				re := "You haven't specified a TMDb API key in your config file."
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			em, err := handler.TMDbSearchMovie(b.TMDb, msgArray[1:])
+			if err != nil {
+				if err.Error() == "No matching movie found" {
+					re := "Sorry, but I wasn't able to find a movie matching your search criteria."
+					response.AnswerUser(s, m, re, true)
+					return
+				}
+				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			response.Embed(s, chanInfo.ID, em)
+			return
+		}
 
 	// SoT: Show user's balance
 	case (command == "!balance" || command == "!bal") && cmdNum == 1:
@@ -180,7 +184,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 				dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
 					"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
 					"update your cookie.")
-				response.DmUser(s, &userObj, dmMsg, true)
+				response.DmUser(s, &userObj, dmMsg, true, false)
 			} else {
 				re = fmt.Sprintf("An error occured checking your SoT balance: %v", err)
 				response.AnswerUser(s, m, re, true)
