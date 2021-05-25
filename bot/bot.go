@@ -2,8 +2,10 @@ package bot
 
 import (
 	"github.com/bwmarrin/discordgo"
+	"github.com/ryanbradynd05/go-tmdb"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/wneessen/sotbot/audio"
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/httpclient"
 	"gorm.io/gorm"
@@ -24,6 +26,8 @@ type Bot struct {
 	Db           *gorm.DB
 	Session      *discordgo.Session
 	AnnounceChan *discordgo.Channel
+	TMDb         *tmdb.TMDb
+	StartTime    time.Time
 }
 
 type Audio struct {
@@ -43,6 +47,7 @@ func NewBot(c *viper.Viper) Bot {
 		AuthToken:  authToken,
 		Config:     c,
 		AudioMutex: &sync.Mutex{},
+		StartTime:  time.Now(),
 	}
 	bot.Audio = make(map[string]Audio)
 
@@ -51,7 +56,7 @@ func NewBot(c *viper.Viper) Bot {
 		l.Debugf("Loading audio file %q as %q into memory", fn, af)
 
 		audioBuffer := make([][]byte, 0)
-		if err := LoadAudio("./media/audio/"+fn, &audioBuffer); err != nil {
+		if err := audio.LoadAudio("./media/audio/"+fn, &audioBuffer); err != nil {
 			l.Errorf("Failed to load audio file into memory: %v", err)
 			break
 		}
@@ -76,6 +81,16 @@ func NewBot(c *viper.Viper) Bot {
 		os.Exit(1)
 	}
 	bot.HttpClient = hc
+
+	// Create a TMDB object
+	tmdbApiKey := c.GetString("tmdb_api_key")
+	if tmdbApiKey != "" {
+		bot.TMDb = tmdb.Init(tmdb.Config{
+			APIKey:   tmdbApiKey,
+			Proxies:  nil,
+			UseProxy: false,
+		})
+	}
 
 	return bot
 }

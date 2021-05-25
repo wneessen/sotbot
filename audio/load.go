@@ -1,4 +1,4 @@
-package bot
+package audio
 
 import (
 	"encoding/binary"

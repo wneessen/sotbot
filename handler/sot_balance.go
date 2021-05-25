@@ -12,7 +12,7 @@ import (
 )
 
 // Get current SoT balance
-func GetSotBalance(d *gorm.DB, h *http.Client, u *user.User) (string, bool, error) {
+func GetSotBalance(d *gorm.DB, h *http.Client, u *user.User) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.GetSotBalance",
 	})
@@ -21,12 +21,12 @@ func GetSotBalance(d *gorm.DB, h *http.Client, u *user.User) (string, bool, erro
 	userBalance, err := database.GetBalance(d, u.UserInfo.ID)
 	if err != nil {
 		l.Errorf("Database SoT balance lookup failed: %v", err)
-		return "", false, err
+		return "", err
 	}
 
 	p := message.NewPrinter(language.German)
 	responseMsg := fmt.Sprintf("Your current SoT balance is: %v gold, %v doubloons and %v ancient coins",
 		p.Sprintf("%d", userBalance.Gold), p.Sprintf("%d", userBalance.Doubloons),
 		p.Sprintf("%d", userBalance.AncientCoins))
-	return responseMsg, true, retErr
+	return responseMsg, retErr
 }

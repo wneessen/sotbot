@@ -74,6 +74,7 @@ func HttpReqGet(u string, hc *http.Client, rc string, ref string) ([]byte, error
 	}()
 
 	if serverResp.StatusCode != 200 {
+		l.Errorf("HTTP request failed: %v", serverResp.Status)
 		return []byte{}, fmt.Errorf("%v", serverResp.StatusCode)
 	}
 
@@ -95,5 +96,5 @@ func HttpReqGet(u string, hc *http.Client, rc string, ref string) ([]byte, error
 // Set package specific HTTP header
 func setReqHeader(h *http.Request) {
 	h.Header.Set("User-Agent", fmt.Sprintf("SoT Discord Bot v%v", version.Version))
-	h.Header.Set("Accept", "*/*")
+	h.Header.Set("Accept", "application/json")
 }

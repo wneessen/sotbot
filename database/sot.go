@@ -3,8 +3,8 @@ package database
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"github.com/wneessen/sotbot/api"
 	"github.com/wneessen/sotbot/database/models"
-	"github.com/wneessen/sotbot/sotapi"
 	"gorm.io/gorm"
 	"strconv"
 	"time"
@@ -56,7 +56,7 @@ func GetBalanceDifference(d *gorm.DB, u uint) models.SotBalance {
 	return returnBalance
 }
 
-func UpdateBalance(d *gorm.DB, u uint, b *sotapi.UserBalance) error {
+func UpdateBalance(d *gorm.DB, u uint, b *api.UserBalance) error {
 	oldBalance := models.SotBalance{}
 	d.Where(models.SotBalance{
 		UserID: u,

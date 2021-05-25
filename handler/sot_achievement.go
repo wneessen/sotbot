@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
-	"github.com/wneessen/sotbot/sotapi"
+	"github.com/wneessen/sotbot/api"
 	"github.com/wneessen/sotbot/user"
 	"net/http"
 )
@@ -15,7 +15,7 @@ func GetSotAchievement(h *http.Client, u *user.User) (*discordgo.MessageEmbed, e
 		"action": "handler.GetSotAchievement",
 	})
 
-	userAchievement, err := sotapi.GetLatestAchievement(h, u.RatCookie)
+	userAchievement, err := api.GetLatestAchievement(h, u.RatCookie)
 	if err != nil {
 		l.Errorf("User's latest achievement lookup failed: %v", err)
 		return &discordgo.MessageEmbed{}, err
