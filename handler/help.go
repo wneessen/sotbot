@@ -9,6 +9,8 @@ func Help() []string {
    !movie <query>                - Look up the <query> in the TMDb movie database. If <query> is omitted, a
                                    random movie is choosen
    !time                         - Replies with the current time
+   !tv <query>                   - Look up the <query> in the TMDb TV series database. If <query> is omitted, a
+                                   random TV series is choosen
    [!urban|!ud] <term>           - Looks up the <term> in Urban Dictionary. If <term> is omitted, a random 
                                    term is choosen
    [!uptime|!up]                 - Will show you my current uptime

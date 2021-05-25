@@ -229,6 +229,8 @@ Example:
 With the `!movie` command, you can have the bot look up a random movie from [The Movie Database](https://themoviedb.org) 
 (TMDb). If the command is followed by arguments, the arguments will be used as search string.
 
+The same applies to `!tv`, but instead of movies it will look up TV series.
+
 For this feature to work, you need a valid API key for the TMDb API. If no API key is found in the config file, an
 error will be returned from the bot.
 

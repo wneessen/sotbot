@@ -170,6 +170,44 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
+	// Get a random movie recommendation
+	case command == "!tv":
+		if cmdNum == 1 {
+			if b.TMDb == nil {
+				re := "You haven't specified a TMDb API key in your config file."
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			em, err := handler.TMDbRandTvSeries(b.TMDb)
+			if err != nil {
+				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			response.Embed(s, chanInfo.ID, em)
+			return
+		}
+		if cmdNum > 1 {
+			if b.TMDb == nil {
+				re := "You haven't specified a TMDb API key in your config file."
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			em, err := handler.TMDbSearchTvSeries(b.TMDb, msgArray[1:])
+			if err != nil {
+				if err.Error() == "No matching TV series found" {
+					re := "Sorry, but I wasn't able to find a TV series matching your search criteria."
+					response.AnswerUser(s, m, re, true)
+					return
+				}
+				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			response.Embed(s, chanInfo.ID, em)
+			return
+		}
+
 	// SoT: Show user's balance
 	case (command == "!balance" || command == "!bal") && cmdNum == 1:
 		if !userObj.IsRegistered() {
