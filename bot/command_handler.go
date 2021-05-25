@@ -263,6 +263,22 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.AnswerUser(s, m, re, true)
 		return
 
+	// SoT: Show user's ledger position with a faction/company
+	case (command == "!ledger" || command == "!led") && cmdNum == 2:
+		if !userObj.IsRegistered() {
+			return
+		}
+		if !userObj.HasRatCookie() {
+			return
+		}
+		re, err := handler.GetSotLedger(b.HttpClient, &userObj, msgArray[1])
+		if err != nil {
+			re = fmt.Sprintf("An error occured checking your SoT ledger rank: %v", err)
+			response.AnswerUser(s, m, re, true)
+		}
+		response.AnswerUser(s, m, re, true)
+		return
+
 	// SoT: Show user's general stats
 	case (command == "!stats" || command == "!stat") && cmdNum == 1:
 		if !userObj.IsRegistered() {
