@@ -20,9 +20,18 @@ type FriendsLedger struct {
 	User FactionLedger `json:"user"`
 }
 
+type BandTitle struct {
+	AthenasFortune   []string
+	GoldHoarder      []string
+	MerchantAlliance []string
+	OrderOfSouls     []string
+	ReapersBone      []string
+}
+
 type FactionLedger struct {
 	Name       string
 	Band       int `json:"band"`
+	BandTitle  string
 	Rank       int `json:"rank"`
 	Score      int `json:"score"`
 	ToNextRank int `json:"toNextRank"`
@@ -32,6 +41,14 @@ func GetFactionLedger(hc *http.Client, rc string, f string) (FactionLedger, erro
 	l := log.WithFields(log.Fields{
 		"action": "sotapi.GetFactionLedger",
 	})
+
+	factionBandTitle := BandTitle{
+		AthenasFortune:   []string{"Legend", "Guardian", "Voyager", "Seeker"},
+		GoldHoarder:      []string{"Captain", "Marauder", "Seafarer", "Castaway"},
+		MerchantAlliance: []string{"Admiral", "Commander", "Cadet", "Sailor"},
+		OrderOfSouls:     []string{"Grandee", "Chief", "Mercenary", "Apprentice"},
+		ReapersBone:      []string{"Master", "Keeper", "Servant", "Follower"},
+	}
 
 	var apiUrl string
 	apiBase := "https://www.seaofthieves.com/api/ledger/friends/"
@@ -66,14 +83,19 @@ func GetFactionLedger(hc *http.Client, rc string, f string) (FactionLedger, erro
 	switch f {
 	case "athena":
 		userFactionLedger.Name = "Athenas Fortune"
+		userFactionLedger.BandTitle = factionBandTitle.AthenasFortune[userFactionLedger.Band]
 	case "hoarder":
 		userFactionLedger.Name = "Gold Hoarders"
+		userFactionLedger.BandTitle = factionBandTitle.GoldHoarder[userFactionLedger.Band]
 	case "merchant":
 		userFactionLedger.Name = "Merchant Alliance"
+		userFactionLedger.BandTitle = factionBandTitle.MerchantAlliance[userFactionLedger.Band]
 	case "order":
 		userFactionLedger.Name = "Order of Souls"
+		userFactionLedger.BandTitle = factionBandTitle.OrderOfSouls[userFactionLedger.Band]
 	case "reaper":
 		userFactionLedger.Name = "Reaper's Bones"
+		userFactionLedger.BandTitle = factionBandTitle.ReapersBone[userFactionLedger.Band]
 	}
 
 	return userFactionLedger, nil
