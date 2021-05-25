@@ -36,7 +36,7 @@ func GetSotLedger(h *http.Client, u *user.User, f string) (string, error) {
 
 	p := message.NewPrinter(language.German)
 	responseMsg := fmt.Sprintf("You current global ledger rank within the %v faction is: %v. Your current"+
-		" emisaary value is %v, which results in postion %v on the leaderboard. To reach the next ledger rank, "+
+		" emissary value is %v, which results in postion %v on the leaderboard. To reach the next ledger rank, "+
 		"you'll need to increase your faction's emissary value by %v points.",
 		userLedger.Name, userLedger.BandTitle, p.Sprintf("%d", userLedger.Score),
 		p.Sprintf("%d", userLedger.Rank), p.Sprintf("%d", userLedger.ToNextRank))
