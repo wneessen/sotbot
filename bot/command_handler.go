@@ -375,6 +375,17 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.AnswerUser(s, m, re, true)
 		return
 
+	// OWM: Current weather
+	case command == "!weather" && cmdNum > 1:
+		re, err := handler.GetCurrentWeather(b.OwmClient, msgArray[1:])
+		if err != nil {
+			re := fmt.Sprintf("An error occured fetching OWM weather data: %v", err)
+			response.AnswerUser(s, m, re, true)
+			return
+		}
+		response.AnswerUser(s, m, re, true)
+		return
+
 	// Play a registered sound in a voice chat
 	case command == "!play" && cmdNum == 2:
 		soundName := msgArray[1]
