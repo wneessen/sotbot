@@ -30,8 +30,9 @@ func GetCurrentWeather(o *owm.Client, loc []string) (string, error) {
 		return "", err
 	}
 
-	responseMsg := fmt.Sprintf("Current weather in %v. Temperatur: %.2f°C (Min: %.1f°C, Max: %.1f°C), "+
-		"Humidity: %d%%, Pressure: %.1fhPa.", curWeather.Name, curWeather.Main.Temp, curWeather.Main.TempMin,
-		curWeather.Main.TempMax, curWeather.Main.Humidity, curWeather.Main.Pressure)
+	responseMsg := fmt.Sprintf("The current weather condition in %v, %v is: %v at %.2f°C "+
+		"(Min: %.1f°C, Max: %.1f°C), Humidity: %d%%, Air pressure: %.1fhPa.",
+		curWeather.Name, curWeather.Sys.Country, curWeather.Weather[0].Description, curWeather.Main.Temp,
+		curWeather.Main.TempMin, curWeather.Main.TempMax, curWeather.Main.Humidity, curWeather.Main.Pressure)
 	return responseMsg, nil
 }
