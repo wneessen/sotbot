@@ -188,6 +188,21 @@ Supported factions:
 Example:
 ![Screenshot !rep merchant](documentation/reputation.png)
 
+#### Faction/company ledger stats
+With the `!ledger` or `!let` command, followed by one of the supported faction names, the bot fetch
+your current position in the factions ledger, together with the rank and the amount of poins missing, to level
+up to the next rank.
+
+Supported factions:
+* athena
+* hoarder
+* merchant
+* order
+* reaper
+
+Example:
+![Screenshot !rep ledger](documentation/ledger.png)
+
 #### The pirate code
 When you issue a `!code` in the channel, the bot will present you with a random article from the SoT's pirate
 code.
@@ -247,7 +262,7 @@ For this feature to work, you need a valid API key for the OWM API. If no API ke
 error will be returned from the bot.
 
 Example:
-![Screenshot !movie](documentation/tmdb_movie.png)
+![Screenshot !weather](documentation/weather.png)
 
 ### Version
 When requested the `!version` command, the bot will respond with it's current version and some build information.
