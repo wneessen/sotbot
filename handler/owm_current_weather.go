@@ -12,7 +12,7 @@ func GetCurrentWeather(o *owm.Client, loc []string) (string, error) {
 	})
 
 	// Bot ist located in Cologne, Germany... so that's a default
-	weatherLoc := "Köln"
+	var weatherLoc string
 	if len(loc) > 0 {
 		weatherLoc = ""
 		for i, loctext := range loc {
@@ -30,8 +30,8 @@ func GetCurrentWeather(o *owm.Client, loc []string) (string, error) {
 		return "", err
 	}
 
-	responseMsg := fmt.Sprintf("The current weather condition in %v, %v is: %v at %.2f°C "+
-		"(Min: %.1f°C, Max: %.1f°C), Humidity: %d%%, Air pressure: %.1fhPa.",
+	responseMsg := fmt.Sprintf("The current weather condition in %v, %v is: %v at %.1f°C "+
+		"(Min: %.0f°C, Max: %.0f°C), Humidity: %d%%, Air pressure: %.0fhPa.",
 		curWeather.Name, curWeather.Sys.Country, curWeather.Weather[0].Description, curWeather.Main.Temp,
 		curWeather.Main.TempMin, curWeather.Main.TempMax, curWeather.Main.Humidity, curWeather.Main.Pressure)
 	return responseMsg, nil

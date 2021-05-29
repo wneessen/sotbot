@@ -13,6 +13,7 @@ func Help() []string {
                                    random TV series is choosen
    [!urban|!ud] <term>           - Looks up the <term> in Urban Dictionary. If <term> is omitted, a random 
                                    term is choosen
+   !weather <location>           - Look up the current weather in <location> and provide it to the user
    [!uptime|!up]                 - Will show you my current uptime
    [!userinfo|!info]             - Tells you, if you are registered with the myself
    [!version|!ver]               - Provide some version info about myself`, `Admin-only channel commands:
