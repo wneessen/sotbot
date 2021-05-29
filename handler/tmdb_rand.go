@@ -21,7 +21,6 @@ func TMDbRandMovie(t *tmdb.TMDb) (*discordgo.MessageEmbed, error) {
 	}
 
 	searchOpts := make(map[string]string)
-	searchOpts["region"] = "DE"
 	searchOpts["page"] = strconv.FormatInt(int64(randPage), 10)
 	movieResult, err := t.DiscoverMovie(searchOpts)
 	if err != nil {
@@ -47,6 +46,48 @@ func TMDbRandMovie(t *tmdb.TMDb) (*discordgo.MessageEmbed, error) {
 			Width: 300,
 		},
 		URL: fmt.Sprintf("https://www.themoviedb.org/movie/%v", randMovie.ID),
+	}
+
+	return responseEmbed, nil
+}
+
+func TMDbRandTvSeries(t *tmdb.TMDb) (*discordgo.MessageEmbed, error) {
+	l := log.WithFields(log.Fields{
+		"action": "handler.TMDbRandTvSeries",
+	})
+
+	randPage, err := random.Number(500)
+	if err != nil {
+		l.Errorf("Random number generation failed: %v", err)
+		return &discordgo.MessageEmbed{}, err
+	}
+
+	searchOpts := make(map[string]string)
+	searchOpts["page"] = strconv.FormatInt(int64(randPage), 10)
+	tvSeriesResult, err := t.DiscoverTV(searchOpts)
+	if err != nil {
+		l.Errorf("Failed to look up TMDB: %v", err)
+		return &discordgo.MessageEmbed{}, err
+	}
+
+	numResults := len(tvSeriesResult.Results)
+	randResult, err := random.Number(numResults)
+	if err != nil {
+		l.Errorf("Failed to generate random number from number of results: %v", err)
+		return &discordgo.MessageEmbed{}, err
+	}
+
+	randSeries := tvSeriesResult.Results[randResult]
+	responseEmbed := &discordgo.MessageEmbed{
+		Title: randSeries.Name,
+		Description: fmt.Sprintf("%v\n\n**First aired:** %v\n**Score:** %.0f%%", randSeries.Overview,
+			randSeries.FirstAirDate, (randSeries.VoteAverage * 10)),
+		Type: discordgo.EmbedTypeImage,
+		Image: &discordgo.MessageEmbedImage{
+			URL:   fmt.Sprintf("https://image.tmdb.org/t/p/w300%v", randSeries.PosterPath),
+			Width: 300,
+		},
+		URL: fmt.Sprintf("https://www.themoviedb.org/tv/%v", randSeries.ID),
 	}
 
 	return responseEmbed, nil

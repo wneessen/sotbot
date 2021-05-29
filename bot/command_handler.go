@@ -170,6 +170,44 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
+	// Get a random movie recommendation
+	case command == "!tv":
+		if cmdNum == 1 {
+			if b.TMDb == nil {
+				re := "You haven't specified a TMDb API key in your config file."
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			em, err := handler.TMDbRandTvSeries(b.TMDb)
+			if err != nil {
+				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			response.Embed(s, chanInfo.ID, em)
+			return
+		}
+		if cmdNum > 1 {
+			if b.TMDb == nil {
+				re := "You haven't specified a TMDb API key in your config file."
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			em, err := handler.TMDbSearchTvSeries(b.TMDb, msgArray[1:])
+			if err != nil {
+				if err.Error() == "No matching TV series found" {
+					re := "Sorry, but I wasn't able to find a TV series matching your search criteria."
+					response.AnswerUser(s, m, re, true)
+					return
+				}
+				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			response.Embed(s, chanInfo.ID, em)
+			return
+		}
+
 	// SoT: Show user's balance
 	case (command == "!balance" || command == "!bal") && cmdNum == 1:
 		if !userObj.IsRegistered() {
@@ -220,6 +258,22 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		re, err := handler.GetSotReputation(b.HttpClient, &userObj, msgArray[1])
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT reputation level: %v", err)
+			response.AnswerUser(s, m, re, true)
+		}
+		response.AnswerUser(s, m, re, true)
+		return
+
+	// SoT: Show user's ledger position with a faction/company
+	case (command == "!ledger" || command == "!led") && cmdNum == 2:
+		if !userObj.IsRegistered() {
+			return
+		}
+		if !userObj.HasRatCookie() {
+			return
+		}
+		re, err := handler.GetSotLedger(b.HttpClient, &userObj, msgArray[1])
+		if err != nil {
+			re = fmt.Sprintf("An error occured checking your SoT ledger rank: %v", err)
 			response.AnswerUser(s, m, re, true)
 		}
 		response.AnswerUser(s, m, re, true)
@@ -317,6 +371,17 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			re := fmt.Sprintf("An error occured registering user: %v", err)
 			response.AnswerUser(s, m, re, true)
+		}
+		response.AnswerUser(s, m, re, true)
+		return
+
+	// OWM: Current weather
+	case command == "!weather" && cmdNum > 1:
+		re, err := handler.GetCurrentWeather(b.OwmClient, msgArray[1:])
+		if err != nil {
+			re := fmt.Sprintf("An error occured fetching OWM weather data: %v", err)
+			response.AnswerUser(s, m, re, true)
+			return
 		}
 		response.AnswerUser(s, m, re, true)
 		return

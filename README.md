@@ -60,7 +60,8 @@ The config currently supports the following format:
     "announcechan": "123456789012345678",
     "sot_play_announce": true,
     "sot_play_dm_user": false, 
-    "tmdb_api_key": "Put your TMDb api key here"
+    "tmdb_api_key": "Put your TMDb api key here", 
+    "owm_api_key": "Put your OpenWeatherMap api key here"
 }
 ```
 
@@ -81,6 +82,8 @@ The config currently supports the following format:
   DM the user after they played SoT and provide them with their new balance
 * `tmdb_api_key`: If you want to use the TMDb commands, you need to have a valid API token. For more details
   check the [TMDb API documentation](https://developers.themoviedb.org/3/getting-started/authentication)
+* `owm_api_key`: For the weather commands to work, you need to have a valid OWM API token. For more details
+  check the [OWM API documentation](https://openweathermap.org/appid)
 
 ## Commands
 SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. A couple of its commands are SoT-themed, but
@@ -229,13 +232,24 @@ Example:
 With the `!movie` command, you can have the bot look up a random movie from [The Movie Database](https://themoviedb.org) 
 (TMDb). If the command is followed by arguments, the arguments will be used as search string.
 
+The same applies to `!tv`, but instead of movies it will look up TV series.
+
 For this feature to work, you need a valid API key for the TMDb API. If no API key is found in the config file, an
 error will be returned from the bot.
 
 Example:
 ![Screenshot !movie](documentation/tmdb_movie.png)
 
-### Version feature
+### Open Weather Map
+By issuing the `!weather` command, you can have the bot look up the current weather in a provided location.
+
+For this feature to work, you need a valid API key for the OWM API. If no API key is found in the config file, an
+error will be returned from the bot.
+
+Example:
+![Screenshot !movie](documentation/tmdb_movie.png)
+
+### Version
 When requested the `!version` command, the bot will respond with it's current version and some build information.
 
 Example:

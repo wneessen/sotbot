@@ -41,3 +41,41 @@ func TMDbSearchMovie(t *tmdb.TMDb, q []string) (*discordgo.MessageEmbed, error) 
 
 	return responseEmbed, nil
 }
+func TMDbSearchTvSeries(t *tmdb.TMDb, q []string) (*discordgo.MessageEmbed, error) {
+	l := log.WithFields(log.Fields{
+		"action": "handler.TMDbSearchTvSeries",
+	})
+
+	var searchString string
+	for _, keyWord := range q {
+		searchString = fmt.Sprintf("%v %v", searchString, keyWord)
+	}
+	tvSeriesResult, err := t.SearchTv(searchString, nil)
+	if err != nil {
+		l.Errorf("Failed to look up TMDB: %v", err)
+		return &discordgo.MessageEmbed{}, err
+	}
+
+	if len(tvSeriesResult.Results) == 0 {
+		return &discordgo.MessageEmbed{}, fmt.Errorf("No matching TV series found")
+	}
+
+	randTvSeries := tvSeriesResult.Results[0]
+	randTvDetails, err := t.GetTvInfo(randTvSeries.ID, nil)
+	if err != nil {
+		return &discordgo.MessageEmbed{}, err
+	}
+	responseEmbed := &discordgo.MessageEmbed{
+		Title: randTvSeries.Name,
+		Description: fmt.Sprintf("%v\n\n**First aired:** %v\n**Score:** %.0f%%", randTvDetails.Overview,
+			randTvSeries.FirstAirDate, (randTvSeries.VoteAverage * 10)),
+		Type: discordgo.EmbedTypeImage,
+		Image: &discordgo.MessageEmbedImage{
+			URL:   fmt.Sprintf("https://image.tmdb.org/t/p/w300%v", randTvSeries.PosterPath),
+			Width: 300,
+		},
+		URL: fmt.Sprintf("https://www.themoviedb.org/tv/%v", randTvSeries.ID),
+	}
+
+	return responseEmbed, nil
+}

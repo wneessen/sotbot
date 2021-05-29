@@ -9,8 +9,11 @@ func Help() []string {
    !movie <query>                - Look up the <query> in the TMDb movie database. If <query> is omitted, a
                                    random movie is choosen
    !time                         - Replies with the current time
+   !tv <query>                   - Look up the <query> in the TMDb TV series database. If <query> is omitted, a
+                                   random TV series is choosen
    [!urban|!ud] <term>           - Looks up the <term> in Urban Dictionary. If <term> is omitted, a random 
                                    term is choosen
+   !weather <location>           - Look up the current weather in <location> and provide it to the user
    [!uptime|!up]                 - Will show you my current uptime
    [!userinfo|!info]             - Tells you, if you are registered with the myself
    [!version|!ver]               - Provide some version info about myself`, `Admin-only channel commands:

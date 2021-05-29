@@ -5,6 +5,7 @@ import (
 	"github.com/ryanbradynd05/go-tmdb"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/vascocosta/owm"
 	"github.com/wneessen/sotbot/audio"
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/httpclient"
@@ -27,6 +28,7 @@ type Bot struct {
 	Session      *discordgo.Session
 	AnnounceChan *discordgo.Channel
 	TMDb         *tmdb.TMDb
+	OwmClient    *owm.Client
 	StartTime    time.Time
 }
 
@@ -90,6 +92,12 @@ func NewBot(c *viper.Viper) Bot {
 			Proxies:  nil,
 			UseProxy: false,
 		})
+	}
+
+	// Create OWM object
+	owmApiKey := c.GetString("owm_api_key")
+	if owmApiKey != "" {
+		bot.OwmClient = owm.NewClient(owmApiKey)
 	}
 
 	return bot
