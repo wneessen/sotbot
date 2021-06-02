@@ -1,6 +1,6 @@
 MODNAME		:= github.com/wneessen/sotbot
 SPACE		:= $(null) $(null)
-CURVER		:= 1.4.2
+CURVER		:= 1.4.3-RC1
 CURARCH		:= $(shell uname -m | tr 'A-Z' 'a-z')
 CUROS		:= $(shell uname -s | tr 'A-Z' 'a-z')
 CURBRANCH	:= $(shell git branch | grep '*' | awk '{print $$2}')
