@@ -226,6 +226,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			} else {
 				re = fmt.Sprintf("An error occured checking your SoT balance: %v", err)
 				response.AnswerUser(s, m, re, true)
+				return
 			}
 		}
 		response.AnswerUser(s, m, re, true)
@@ -243,6 +244,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT season progress: %v", err)
 			response.AnswerUser(s, m, re, true)
+			return
 		}
 		response.AnswerUser(s, m, re, true)
 		return
@@ -259,6 +261,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT reputation level: %v", err)
 			response.AnswerUser(s, m, re, true)
+			return
 		}
 		response.AnswerUser(s, m, re, true)
 		return
@@ -275,6 +278,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT ledger rank: %v", err)
 			response.AnswerUser(s, m, re, true)
+			return
 		}
 		response.AnswerUser(s, m, re, true)
 		return
@@ -291,6 +295,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT general stats: %v", err)
 			response.AnswerUser(s, m, re, true)
+			return
 		}
 		response.AnswerUser(s, m, re, true)
 		return
@@ -307,6 +312,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			re := fmt.Sprintf("An error occured checking your SoT latest achievement: %v", err)
 			response.AnswerUser(s, m, re, true)
+			return
 		}
 		response.Embed(s, m.ChannelID, em)
 		return
@@ -317,6 +323,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			re := fmt.Sprintf("An error occured quoting the SoT pirate code: %v", err)
 			response.AnswerUser(s, m, re, true)
+			return
 		}
 		response.Embed(s, m.ChannelID, em)
 		return
@@ -355,6 +362,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			re := fmt.Sprintf("An error occured registering user: %v", err)
 			response.AnswerUser(s, m, re, true)
+			return
 		}
 		response.AnswerUser(s, m, re, true)
 		return
@@ -371,12 +379,18 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			re := fmt.Sprintf("An error occured registering user: %v", err)
 			response.AnswerUser(s, m, re, true)
+			return
 		}
 		response.AnswerUser(s, m, re, true)
 		return
 
 	// OWM: Current weather
 	case command == "!weather" && cmdNum > 1:
+		if b.OwmClient == nil {
+			re := "Not OpenWeatherMap API token set"
+			response.AnswerUser(s, m, re, true)
+			return
+		}
 		re, err := handler.GetCurrentWeather(b.OwmClient, msgArray[1:])
 		if err != nil {
 			re := fmt.Sprintf("An error occured fetching OWM weather data: %v", err)
