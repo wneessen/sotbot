@@ -387,7 +387,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// OWM: Current weather
 	case command == "!weather" && cmdNum > 1:
 		if b.OwmClient == nil {
-			re := "Not OpenWeatherMap API token set"
+			re := "You haven't specified a OpenWeatherMap API key in your config file."
 			response.AnswerUser(s, m, re, true)
 			return
 		}
