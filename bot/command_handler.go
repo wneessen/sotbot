@@ -19,8 +19,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-
-	if !strings.HasPrefix(m.Content, "!") {
+	if !strings.HasPrefix(m.Content, "!") || len(m.Content) <= 1 {
 		return
 	}
 
@@ -385,20 +384,27 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 
 	// OWM: Current weather
-	case command == "!weather" && cmdNum > 1:
-		if b.OwmClient == nil {
-			re := "You haven't specified a OpenWeatherMap API key in your config file."
+	case command == "!weather":
+		if cmdNum == 1 {
+			re := "You need to tell me a location as well. Usage: `!weather <location>`"
 			response.AnswerUser(s, m, re, true)
 			return
 		}
-		re, err := handler.GetCurrentWeather(b.OwmClient, msgArray[1:])
-		if err != nil {
-			re := fmt.Sprintf("An error occured fetching OWM weather data: %v", err)
+		if cmdNum > 1 {
+			if b.OwmClient == nil {
+				re := "You haven't specified a OpenWeatherMap API key in your config file."
+				response.AnswerUser(s, m, re, true)
+				return
+			}
+			re, err := handler.GetCurrentWeather(b.OwmClient, msgArray[1:])
+			if err != nil {
+				re := fmt.Sprintf("An error occured fetching OWM weather data: %v", err)
+				response.AnswerUser(s, m, re, true)
+				return
+			}
 			response.AnswerUser(s, m, re, true)
 			return
 		}
-		response.AnswerUser(s, m, re, true)
-		return
 
 	// Play a registered sound in a voice chat
 	case command == "!play" && cmdNum == 2:
