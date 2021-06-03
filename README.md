@@ -189,7 +189,7 @@ Example:
 ![Screenshot !rep merchant](documentation/reputation.png)
 
 #### Faction/company ledger stats
-With the `!ledger` or `!let` command, followed by one of the supported faction names, the bot fetch
+With the `!ledger` or `!led` command, followed by one of the supported faction names, the bot fetch
 your current position in the factions ledger, together with the rank and the amount of poins missing, to level
 up to the next rank.
 
