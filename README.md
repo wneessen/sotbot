@@ -216,6 +216,12 @@ The `!stats` or `!stat` command will provide you with some general stats about y
 Example:
 ![Screenshot !stats](documentation/stats.png)
 
+#### Daily deeds
+With the `!deed` or `!dd` command, you can ask the bot to fetch the currently active "daily deed" in SoT
+
+Example:
+![Screenshot !season](documentation/daily_deed.png)
+
 ### Play sound feature
 With the `!play` feature, when you are active in a voice channel, you can have the bot join and play a predefined
 sound. The bot is "shipped" with predefined sounds in the config (see `audiofiles` in `sotbot.json`). So using 

@@ -24,6 +24,7 @@ func Help() []string {
    [!achievement|!achieve]       - Replies with your latest SoT achievement[1][2]
    [!balance|!bal]               - Replies your current SoT gold balance[1][2]
    !code                         - Replies with a random SoT pirate code article
+   [!deed|!dd]                   - Replies with the currently active "daily deed" in SoT
    [!ledger|!led] <fac.>         - Replies with your current ledger position/rank in the requested faction[1][2]
    [!reputation|!rep] <fac.>     - Replies with your current reputation in the requested faction[1][2]
    !season                       - Replies with your current SoT season progress[1][2]

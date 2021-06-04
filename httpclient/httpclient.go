@@ -1,11 +1,12 @@
 package httpclient
 
 import (
-	"bufio"
+	"bytes"
 	"crypto/tls"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/version"
+	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"time"
@@ -79,22 +80,17 @@ func HttpReqGet(u string, hc *http.Client, rc string, ref string) ([]byte, error
 	}
 
 	// Read the response body
-	var respBody []byte
-	scanner := bufio.NewScanner(serverResp.Body)
-	buf := make([]byte, 0, 64*1024)
-	scanner.Buffer(buf, 1024*1024)
-	for scanner.Scan() {
-		respBody = scanner.Bytes()
-	}
-	if err = scanner.Err(); err != nil {
+	var respBody bytes.Buffer
+	_, err = io.Copy(&respBody, serverResp.Body)
+	if err != nil {
 		return []byte{}, err
 	}
 
-	return respBody, nil
+	return respBody.Bytes(), nil
 }
 
 // Set package specific HTTP header
 func setReqHeader(h *http.Request) {
 	h.Header.Set("User-Agent", fmt.Sprintf("SoT Discord Bot v%v", version.Version))
-	h.Header.Set("Accept", "application/json")
+	//h.Header.Set("Accept", "application/json")
 }
