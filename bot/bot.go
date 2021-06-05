@@ -100,6 +100,12 @@ func NewBot(c *viper.Viper) Bot {
 		bot.OwmClient = owm.NewClient(owmApiKey)
 	}
 
+	// Create/Fetch encyption key
+	if err := bot.GetEncryptionKey(); err != nil {
+		l.Errorf("Failed to create/read encryption key: %v", err)
+		os.Exit(1)
+	}
+
 	return bot
 }
 

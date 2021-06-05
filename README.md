@@ -122,6 +122,17 @@ encrypted way. Therefore, before storing your cookie in the bot's DB, please mak
 you are doing. Maybe at some time, RARE decides to offer an API which offers OAuth2, so we can allow the bot
 having access to the API data without having to store/renew the cookie.
 
+*Update:* As of v1.4.4-RC3 supports encryption at rest in the database using AES256. For this a randomly generated
+encryption key is set on first startup and stored in the $HOME directory of the user running the bot as 
+`$HOME/.sotbot_enc_key` file. At next start time, the key file is read and the key is stored in memory. This way, in 
+the SQLite database file, your RAT cookie is not stored in plain text anymore. The secret key is shared for all users 
+and is meant as general encryption key for any bot operation that might benefit from encryption. 
+
+**Please note**: The encryption key file is still stored on the file system, near to the actual SQLite database file.
+Therefore the encryption only help if your SQLite gets unauthorized access only. If the unauthorized person is able
+to access all files, the bot is able to access, chances are high, that the attacker also accessed the encryption key
+and therefore is able to decrypt the encrypted values in the database as well.
+
 #### RAT Cookie registration
 Once you have you user registered and obtained a valid cookie using the `SoT-RAT-Extractor`, you have to store
 it in the bot's database. To do so, you have to DM the bot and use the `!setrat` or `!rat` command followed by the 

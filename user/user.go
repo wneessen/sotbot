@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/database/models"
 	"gorm.io/gorm"
@@ -17,7 +18,7 @@ type User struct {
 	UserInfo       *models.RegisteredUser
 }
 
-func NewUser(d *gorm.DB, i string) (*User, error) {
+func NewUser(d *gorm.DB, c *viper.Viper, i string) (*User, error) {
 	l := log.WithFields(log.Fields{
 		"action": "user.NewUser",
 	})
@@ -30,7 +31,7 @@ func NewUser(d *gorm.DB, i string) (*User, error) {
 	userObj := User{AuthorId: i, UserInfo: &dbUser}
 
 	if dbUser.ID > 0 {
-		userRatCookie := database.UserGetPrefString(d, dbUser.ID, "rat_cookie")
+		userRatCookie := database.UserGetPrefEncString(d, c, dbUser.ID, "rat_cookie")
 		userObj.RatCookie = userRatCookie
 	}
 

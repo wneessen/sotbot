@@ -2,18 +2,19 @@ package handler
 
 import (
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/user"
 	"gorm.io/gorm"
 )
 
 // Set a SoT RAT cookie
-func UserSetRatCookie(d *gorm.DB, u *user.User, r string) (string, error) {
+func UserSetRatCookie(d *gorm.DB, c *viper.Viper, u *user.User, r string) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.UserSetRatCookie",
 	})
 
-	if err := database.UserSetPref(d, u.UserInfo.ID, "rat_cookie", r); err != nil {
+	if err := database.UserSetPrefEnc(d, c, u.UserInfo.ID, "rat_cookie", r); err != nil {
 		l.Errorf("Failed to store RAT cookie in DB: %v", err)
 		return "", err
 	}

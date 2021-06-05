@@ -9,7 +9,8 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.7.1
 	github.com/vascocosta/owm v0.0.0-20150101012210-5dc4adf0c67c
-	golang.org/x/text v0.3.2
+	github.com/wneessen/go-wftk v0.0.0-20210426154211-c92e42bb51c2
+	golang.org/x/text v0.3.3
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.10
 )

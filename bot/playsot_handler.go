@@ -17,7 +17,7 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 		"action": "bot.UserPlaySot",
 	})
 
-	userObj, err := user.NewUser(b.Db, m.User.ID)
+	userObj, err := user.NewUser(b.Db, b.Config, m.User.ID)
 	if err != nil {
 		l.Errorf("Failed to create new user object: %v", err)
 		return

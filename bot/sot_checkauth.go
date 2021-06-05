@@ -21,7 +21,7 @@ func (b *Bot) CheckSotAuth() {
 		return
 	}
 	for _, curUser := range userList {
-		userObj, err := user.NewUser(b.Db, curUser.UserId)
+		userObj, err := user.NewUser(b.Db, b.Config, curUser.UserId)
 		if err != nil {
 			l.Errorf("Failed to create user object: %v", err)
 			break
