@@ -34,7 +34,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		l.Errorf("Failed to get channel info: %v", err)
 	}
 
-	userObj, err := user.NewUser(b.Db, m.Author.ID)
+	userObj, err := user.NewUser(b.Db, b.Config, m.Author.ID)
 	if err != nil {
 		l.Errorf("Could not create user object: %v", err)
 		return
@@ -351,7 +351,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			response.AnswerUser(s, m, re, true)
 			return
 		}
-		re, err := handler.UserSetRatCookie(b.Db, userObj, msgArray[1])
+		re, err := handler.UserSetRatCookie(b.Db, b.Config, userObj, msgArray[1])
 		if err != nil {
 			re := fmt.Sprintf("An error occured setting/updating your RAT cookie: %v", err)
 			response.AnswerUser(s, m, re, true)

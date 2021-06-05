@@ -2,9 +2,13 @@ package database
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	wftkaes "github.com/wneessen/go-wftk/crypto/aes"
 	"github.com/wneessen/sotbot/database/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"strings"
 )
 
 func GetUser(d *gorm.DB, u string) (models.RegisteredUser, error) {
@@ -82,6 +86,19 @@ func UserSetPref(d *gorm.DB, u uint, k, v string) error {
 	return nil
 }
 
+func UserSetPrefEnc(d *gorm.DB, c *viper.Viper, u uint, k, v string) error {
+	encKey := c.GetString("enc_key")
+	if encKey == "" {
+		return fmt.Errorf("No encryption key set")
+	}
+	encVal, err := wftkaes.EncryptAuthBase64(v, encKey, k)
+	if err != nil {
+		return err
+	}
+
+	return UserSetPref(d, u, k, "{ENCRYPTED}"+encVal)
+}
+
 func UserDelPref(d *gorm.DB, u uint, k string) error {
 	userPref := userGetPref(d, u, k)
 	if userPref.ID <= 0 {
@@ -98,6 +115,30 @@ func UserDelPref(d *gorm.DB, u uint, k string) error {
 func UserGetPrefString(d *gorm.DB, u uint, k string) string {
 	userPref := userGetPref(d, u, k)
 	return userPref.Value
+}
+
+func UserGetPrefEncString(d *gorm.DB, c *viper.Viper, u uint, k string) string {
+	l := log.WithFields(log.Fields{
+		"action": "database.UserGetPrefEncString",
+	})
+	userPref := userGetPref(d, u, k)
+	if !strings.HasPrefix(userPref.Value, "{ENCRYPTED}") {
+		l.Warnf("Not an encrypted value")
+		return userPref.Value
+	}
+	encKey := c.GetString("enc_key")
+	if encKey == "" {
+		l.Warnf("No encryption key set")
+		return ""
+	}
+	decVal, err := wftkaes.DecryptAuthBase64(strings.Replace(userPref.Value, "{ENCRYPTED}", "", 1),
+		encKey, k)
+	if err != nil {
+		l.Errorf("Failed to decrypt value: %v", err)
+		return ""
+	}
+
+	return decVal
 }
 
 func userGetPref(d *gorm.DB, u uint, k string) models.UserPref {
