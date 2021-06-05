@@ -21,7 +21,7 @@ func GetTraderoutes() (string, error) {
 	for _, v := range traderoutes.Routes {
 		response.WriteString(fmt.Sprintf("**%v**: sought after ***%v*** / surplus ***%v***\n", v.Outpost, v.Sought, v.Surplus))
 	}
-	response.WriteString(fmt.Sprintf("\nSafe travels, don't let the reapers bite you..."))
+	response.WriteString("\nSafe travels, don't let the reapers bite you...")
 
 	return response.String(), nil
 }
