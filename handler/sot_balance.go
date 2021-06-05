@@ -25,7 +25,7 @@ func GetSotBalance(d *gorm.DB, h *http.Client, u *user.User) (string, error) {
 	}
 
 	p := message.NewPrinter(language.German)
-	responseMsg := fmt.Sprintf("Your current SoT balance is: %v gold, %v doubloons and %v ancient coins",
+	responseMsg := fmt.Sprintf("Your current SoT balance is: **%v gold**, **%v doubloons** and **%v ancient coins**",
 		p.Sprintf("%d", userBalance.Gold), p.Sprintf("%d", userBalance.Doubloons),
 		p.Sprintf("%d", userBalance.AncientCoins))
 	return responseMsg, retErr

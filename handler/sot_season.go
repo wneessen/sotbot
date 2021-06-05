@@ -19,8 +19,8 @@ func GetSotSeasonProgress(h *http.Client, u *user.User) (string, error) {
 		l.Errorf("An error occured fetching user progress: %v", err)
 		return "", err
 	}
-	responseMsg := fmt.Sprintf("You are currently sailing in %v. Your renown level is %v%% (Tier: %d). "+
-		"Of the total amount of %d season challenges, so far, you completed %d.", userAchievement.SeasonTitle,
+	responseMsg := fmt.Sprintf("You are currently sailing in **%v**. Your renown level is **%v%%** (**Tier: %d**). "+
+		"Of the total amount of **%d season challenges**, so far, you completed **%d**.", userAchievement.SeasonTitle,
 		fmt.Sprintf("%.1f", userAchievement.LevelProgress), userAchievement.Tier,
 		userAchievement.TotalChallenges, userAchievement.CompletedChallenges)
 	return responseMsg, nil
