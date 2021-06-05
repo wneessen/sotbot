@@ -16,45 +16,15 @@ func (u *User) UpdateSotBalance(d *gorm.DB, h *http.Client) error {
 	})
 
 	l.Debugf("Checking if user %q has a RAT cookie set...", u.UserInfo.UserId)
-	userRatCookie := database.UserGetPrefString(d, u.UserInfo.ID, "rat_cookie")
-	if userRatCookie == "" {
+	if !u.HasRatCookie() {
 		l.Debugf("User %q has not cookie set.", u.UserInfo.UserId)
 		return nil
 	}
 
-	failedRatTries, err := database.GetFailedRatCookieTries(d, u.UserInfo.ID)
+	userBalance, err := api.GetBalance(h, u.RatCookie)
 	if err != nil {
-		l.Errorf("Failed to fetch failed_rat_tries from DB: %v", err)
-		return nil
-	}
-	if failedRatTries > 3 {
-		l.Errorf("API requests with user's RAT cookie failed for more than 3 times. Skipping.")
-		return nil
-	}
-
-	userBalance, err := api.GetBalance(h, userRatCookie)
-	if err != nil {
-		if err.Error() == "403" {
-			l.Errorf("Was not allowed to fetch user balance from API. Token likely invalid.")
-			newFailedTries, err := database.IncreaseFailedRatCookieTries(d, u.UserInfo.ID)
-			if err != nil {
-				l.Errorf("Failed to increase rat_fails counter in DB: %v", err)
-				return nil
-			}
-			if newFailedTries > 3 {
-				needsNotify := u.UserNotifyFailedToken(d)
-				if needsNotify {
-					return fmt.Errorf("notify")
-				}
-			}
-			return nil
-		}
 		l.Errorf("Failed to fetch user balance from API: %v", err)
 		return nil
-	}
-
-	if err := database.UserDelPref(d, u.UserInfo.ID, "failed_rat_tries"); err != nil {
-		l.Errorf("Failed to delete 'failed_rat_tries' userpref in DB: %v", err)
 	}
 
 	if err := database.UpdateBalance(d, u.UserInfo.ID, &userBalance); err != nil {
@@ -64,9 +34,9 @@ func (u *User) UpdateSotBalance(d *gorm.DB, h *http.Client) error {
 	return nil
 }
 
-func (u *User) UserNotifyFailedToken(d *gorm.DB) bool {
+func (u *User) UserNeedsNotifyFailedToken(d *gorm.DB) bool {
 	l := log.WithFields(log.Fields{
-		"action": "user.UserNotifyFailedToken",
+		"action": "user.UserNeedsNotifyFailedToken",
 		"userId": u.UserInfo.ID,
 	})
 
@@ -83,4 +53,42 @@ func (u *User) UserNotifyFailedToken(d *gorm.DB) bool {
 	}
 
 	return true
+}
+
+func (u *User) CheckAuth(d *gorm.DB, h *http.Client) (bool, error) {
+	l := log.WithFields(log.Fields{
+		"action": "user.CheckAuth",
+		"userId": u.UserInfo.ID,
+	})
+	l.Debugf("Checking SoT RAT cookie validtiy for user %v", u.UserInfo.UserId)
+
+	failedRatTries, err := database.GetFailedRatCookieTries(d, u.UserInfo.ID)
+	if err != nil {
+		return false, err
+	}
+	if failedRatTries > 3 {
+		l.Warnf("API requests with user's RAT cookie failed for more than 3 times. Skipping.")
+		return false, nil
+	}
+	_, err = api.GetBalance(h, u.RatCookie)
+	if err == nil {
+		if err := database.UserDelPref(d, u.UserInfo.ID, "failed_rat_tries"); err != nil {
+			l.Errorf("Failed to delete 'failed_rat_tries' userpref in DB: %v", err)
+		}
+		return false, nil
+	}
+
+	// If the response is a 403, it's likely that the RAT is expired or wrong.
+	if err.Error() == "403" {
+		newFailedTries, err := database.IncreaseFailedRatCookieTries(d, u.UserInfo.ID)
+		if err != nil {
+			return false, fmt.Errorf("Failed to increase rat_fails counter in DB: %v", err)
+		}
+		if newFailedTries > 3 {
+			needsNotify := u.UserNeedsNotifyFailedToken(d)
+			return needsNotify, nil
+		}
+	}
+
+	return false, nil
 }

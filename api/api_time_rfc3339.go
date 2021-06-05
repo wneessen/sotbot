@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-type TimeRFC3339 time.Time
+type ApiTimeRFC3339 time.Time
 
 // UnmarshalJSON function for strings that are in RFC3339 format
-func (t *TimeRFC3339) UnmarshalJSON(s []byte) error {
+func (t *ApiTimeRFC3339) UnmarshalJSON(s []byte) error {
 	dateString := string(s)
 	dateString = strings.ReplaceAll(dateString, `"`, "")
 	if dateString == "null" {
@@ -24,6 +24,6 @@ func (t *TimeRFC3339) UnmarshalJSON(s []byte) error {
 	return nil
 }
 
-func (t TimeRFC3339) Time() time.Time {
+func (t ApiTimeRFC3339) Time() time.Time {
 	return time.Time(t)
 }

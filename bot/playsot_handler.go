@@ -45,7 +45,7 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 						dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
 							"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
 							"update your cookie.")
-						response.DmUser(s, &userObj, dmMsg, true, false)
+						response.DmUser(s, userObj, dmMsg, true, false)
 					}
 				}
 
@@ -68,7 +68,7 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 					dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
 						"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
 						"update your cookie.")
-					response.DmUser(s, &userObj, dmMsg, true, false)
+					response.DmUser(s, userObj, dmMsg, true, false)
 				}
 			}
 
@@ -86,7 +86,7 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				dmText := fmt.Sprintf("you played SoT recently. Your new balance is: %v gold, %v "+
 					"doubloons and %v ancient coins", p.Sprintf("%d", userBalance.Gold),
 					p.Sprintf("%d", userBalance.Doubloons), p.Sprintf("%d", userBalance.AncientCoins))
-				response.DmUser(s, &userObj, dmText, true, false)
+				response.DmUser(s, userObj, dmText, true, false)
 			}
 
 			if b.Config.GetBool("sot_play_announce") && b.AnnounceChan != nil {

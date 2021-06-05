@@ -17,14 +17,14 @@ type User struct {
 	UserInfo       *models.RegisteredUser
 }
 
-func NewUser(d *gorm.DB, i string) (User, error) {
+func NewUser(d *gorm.DB, i string) (*User, error) {
 	l := log.WithFields(log.Fields{
 		"action": "user.NewUser",
 	})
 	dbUser, err := database.GetUser(d, i)
 	if err != nil {
 		l.Errorf("Database user lookup failed: %v", err)
-		return User{}, err
+		return &User{}, err
 	}
 
 	userObj := User{AuthorId: i, UserInfo: &dbUser}
@@ -34,7 +34,7 @@ func NewUser(d *gorm.DB, i string) (User, error) {
 		userObj.RatCookie = userRatCookie
 	}
 
-	return userObj, nil
+	return &userObj, nil
 }
 
 func (u *User) IsRegistered() bool {

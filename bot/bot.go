@@ -151,8 +151,8 @@ func (b *Bot) Run() {
 	signal.Notify(sc)
 
 	// We want timed events as well
-	aliveTimer := time.NewTicker(1 * time.Hour)
-	defer aliveTimer.Stop()
+	checkAuthTimer := time.NewTicker(time.Hour)
+	defer checkAuthTimer.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
 	l.Infof("Bot is ready and connected. Press CTRL-C to exit.")
@@ -172,8 +172,8 @@ func (b *Bot) Run() {
 
 				os.Exit(0)
 			}
-		case curTick := <-aliveTimer.C:
-			l.Infof("I am still alive. The time is %v", curTick.Format("2006-01-02 15:04:05"))
+		case <-checkAuthTimer.C:
+			go b.CheckSotAuth()
 		}
 	}
 }
