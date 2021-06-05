@@ -28,6 +28,7 @@ func Help() []string {
    [!ledger|!led] <fac.>         - Replies with your current ledger position/rank in the requested faction[1][2]
    [!reputation|!rep] <fac.>     - Replies with your current reputation in the requested faction[1][2]
    !season                       - Replies with your current SoT season progress[1][2]
+   !tr				 - Replies with the current traderoutes from rarethief
    [!setrat|!rat] <cookie>       - Set/update your SoT RAT cookie in the bot's DB[1][3]
    [!stats|!stat]                - Provides some general SoT stats for your user (killed kraken, sold chests, etc.)[1][2]
 

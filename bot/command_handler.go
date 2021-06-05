@@ -360,6 +360,17 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.AnswerUser(s, m, re, true)
 		return
 
+	// RareThief: Get Traderoutes
+	case command == "!tr" && cmdNum == 1:
+		em, err := handler.GetTraderoutes()
+		if err != nil {
+			re := fmt.Sprintf("An error occured fetching traderoutes: %v", err)
+			response.AnswerUser(s, m, re, true)
+			return
+		}
+		response.AnswerUser(s, m, em, true)
+		return
+
 	// User management: Tell the user if they are registered
 	case (command == "!userinfo" || command == "!info") && cmdNum == 1:
 		re := handler.UserIsRegistered(userObj)
