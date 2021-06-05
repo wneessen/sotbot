@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 )
@@ -32,7 +32,10 @@ func GetTraderoutes() (Traderoutes, error) {
 		return Traderoutes{}, err
 	}
 
-	body, _ := ioutil.ReadAll(httpResp.Body)
+	body, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return Traderoutes{}, err
+	}
 	re := regexp.MustCompile(`var trade_routes\s*=\s*({.*})`)
 	validJson := re.FindStringSubmatch(string(body))
 
