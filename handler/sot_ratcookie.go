@@ -26,6 +26,7 @@ func UserSetRatCookie(d *gorm.DB, u *user.User, r string) (string, error) {
 		l.Errorf("Failed to delete 'failed_rat_tries' userpref in DB: %v", err)
 	}
 
+	u.RatCookie = r
 	responseMsg := "Thanks for setting/updating your RAT cookie."
 	return responseMsg, nil
 }

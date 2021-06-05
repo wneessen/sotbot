@@ -93,7 +93,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case command == "!help" && cmdNum == 1:
 		re := handler.Help()
 		for _, msgText := range re {
-			response.DmUser(s, &userObj, "`"+msgText+"`", false, true)
+			response.DmUser(s, userObj, "`"+msgText+"`", false, true)
 		}
 		return
 
@@ -215,13 +215,13 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if !userObj.HasRatCookie() {
 			return
 		}
-		re, err := handler.GetSotBalance(b.Db, b.HttpClient, &userObj)
+		re, err := handler.GetSotBalance(b.Db, b.HttpClient, userObj)
 		if err != nil {
 			if err.Error() == "notify" {
 				dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
 					"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
 					"update your cookie.")
-				response.DmUser(s, &userObj, dmMsg, true, false)
+				response.DmUser(s, userObj, dmMsg, true, false)
 			} else {
 				re = fmt.Sprintf("An error occured checking your SoT balance: %v", err)
 				response.AnswerUser(s, m, re, true)
@@ -239,7 +239,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if !userObj.HasRatCookie() {
 			return
 		}
-		re, err := handler.GetSotSeasonProgress(b.HttpClient, &userObj)
+		re, err := handler.GetSotSeasonProgress(b.HttpClient, userObj)
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT season progress: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -256,7 +256,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if !userObj.HasRatCookie() {
 			return
 		}
-		re, err := handler.GetSotReputation(b.HttpClient, &userObj, msgArray[1])
+		re, err := handler.GetSotReputation(b.HttpClient, userObj, msgArray[1])
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT reputation level: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -273,7 +273,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if !userObj.HasRatCookie() {
 			return
 		}
-		re, err := handler.GetSotLedger(b.HttpClient, &userObj, msgArray[1])
+		re, err := handler.GetSotLedger(b.HttpClient, userObj, msgArray[1])
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT ledger rank: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -290,7 +290,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if !userObj.HasRatCookie() {
 			return
 		}
-		re, err := handler.GetSotStats(b.HttpClient, &userObj)
+		re, err := handler.GetSotStats(b.HttpClient, userObj)
 		if err != nil {
 			re = fmt.Sprintf("An error occured checking your SoT general stats: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -307,7 +307,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if !userObj.HasRatCookie() {
 			return
 		}
-		em, err := handler.GetDailyDeed(b.HttpClient, &userObj)
+		em, err := handler.GetDailyDeed(b.HttpClient, userObj)
 		if err != nil {
 			re := fmt.Sprintf("An error occured fetching the daily deed: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -324,7 +324,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if !userObj.HasRatCookie() {
 			return
 		}
-		em, err := handler.GetSotAchievement(b.HttpClient, &userObj)
+		em, err := handler.GetSotAchievement(b.HttpClient, userObj)
 		if err != nil {
 			re := fmt.Sprintf("An error occured checking your SoT latest achievement: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -351,7 +351,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			response.AnswerUser(s, m, re, true)
 			return
 		}
-		re, err := handler.UserSetRatCookie(b.Db, &userObj, msgArray[1])
+		re, err := handler.UserSetRatCookie(b.Db, userObj, msgArray[1])
 		if err != nil {
 			re := fmt.Sprintf("An error occured setting/updating your RAT cookie: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -362,7 +362,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// User management: Tell the user if they are registered
 	case (command == "!userinfo" || command == "!info") && cmdNum == 1:
-		re := handler.UserIsRegistered(&userObj)
+		re := handler.UserIsRegistered(userObj)
 		response.AnswerUser(s, m, re, true)
 		return
 

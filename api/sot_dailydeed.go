@@ -27,15 +27,15 @@ type EventDataComponentData struct {
 }
 
 type BountyList struct {
-	Type                      string       `json:"#Type"`
-	Title                     string       `json:"Title"`
-	BodyText                  string       `json:"BodyText"`
-	StartDate                 TimeRFC3339  `json:"StartDate"`
-	EndDate                   TimeRFC3339  `json:"EndDate"`
-	CompletedAt               TimeRFC3339  `json:"CompletedAt"`
-	Image                     DailyDeedImg `json:"Image"`
-	EntitlementRewardValue    int          `json:"EntitlementRewardValue"`
-	EntitlementRewardCurrency string       `json:"EntitlementRewardCurrency"`
+	Type                      string         `json:"#Type"`
+	Title                     string         `json:"Title"`
+	BodyText                  string         `json:"BodyText"`
+	StartDate                 ApiTimeRFC3339 `json:"StartDate"`
+	EndDate                   ApiTimeRFC3339 `json:"EndDate"`
+	CompletedAt               ApiTimeRFC3339 `json:"CompletedAt"`
+	Image                     DailyDeedImg   `json:"Image"`
+	EntitlementRewardValue    int            `json:"EntitlementRewardValue"`
+	EntitlementRewardCurrency string         `json:"EntitlementRewardCurrency"`
 }
 
 type DailyDeedImg struct {

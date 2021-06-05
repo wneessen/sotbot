@@ -21,7 +21,6 @@ func GetUser(d *gorm.DB, u string) (models.RegisteredUser, error) {
 	return userObj, nil
 }
 
-/*
 func GetUsers(d *gorm.DB) ([]models.RegisteredUser, error) {
 	userList := []models.RegisteredUser{}
 	dbTx := d.Find(&userList)
@@ -31,7 +30,6 @@ func GetUsers(d *gorm.DB) ([]models.RegisteredUser, error) {
 
 	return userList, nil
 }
-*/
 
 func CreateUser(d *gorm.DB, u string) error {
 	userObj := models.RegisteredUser{
