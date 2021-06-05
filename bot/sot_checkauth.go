@@ -40,6 +40,10 @@ func (b *Bot) CheckSotAuth() {
 				}
 				time.Sleep(sleepTime)
 				needsNotify, err := userObj.CheckAuth(b.Db, b.HttpClient)
+				if err != nil {
+					l.Errorf("CheckAuth failed: %v", err)
+					return
+				}
 				if needsNotify {
 					userObj.RatCookie = ""
 					dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
