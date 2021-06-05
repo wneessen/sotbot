@@ -233,6 +233,12 @@ With the `!deed` or `!dd` command, you can ask the bot to fetch the currently ac
 Example:
 ![Screenshot !season](documentation/daily_deed.png)
 
+#### Traderoutes
+Get the current Traderoutes from rarethief.com with `!tr`
+
+Example:
+![Screenshot !tr](documentation/traderoutes.png)
+
 ### Play sound feature
 With the `!play` feature, when you are active in a voice channel, you can have the bot join and play a predefined
 sound. The bot is "shipped" with predefined sounds in the config (see `audiofiles` in `sotbot.json`). So using 
