@@ -11,13 +11,13 @@ func Help() []string {
    !time                         - Replies with the current time
    !tv <query>                   - Look up the <query> in the TMDb TV series database. If <query> is omitted, a
                                    random TV series is choosen
-   [!urban|!ud] <term>           - Looks up the <term> in Urban Dictionary. If <term> is omitted, a random 
+   [!urban|!ud] <term>           - Looks up the <term> in Urban Dictionary. If <term> is omitted, a random
                                    term is choosen
    !weather <location>           - Look up the current weather in <location> and provide it to the user
    [!uptime|!up]                 - Will show you my current uptime
    [!userinfo|!info]             - Tells you, if you are registered with the myself
    [!version|!ver]               - Provide some version info about myself`, `Admin-only channel commands:
-   [!register|!reg] <@nick>      - Registers <@nick> as user in the bot's database for them to access 
+   [!register|!reg] <@nick>      - Registers <@nick> as user in the bot's database for them to access
                                    some advances features (like the SoT commands)
    [!unregister|!unreg] <@nick>  - Delete <@nick> from registered user's database
    [!memory|!mem]                - Show some memory usage information`, `Sea of Thieves specific commands:
@@ -28,7 +28,7 @@ func Help() []string {
    [!ledger|!led] <fac.>         - Replies with your current ledger position/rank in the requested faction[1][2]
    [!reputation|!rep] <fac.>     - Replies with your current reputation in the requested faction[1][2]
    !season                       - Replies with your current SoT season progress[1][2]
-   !tr				 - Replies with the current traderoutes from rarethief
+   !tr                           - Replies with the current traderoutes from rarethief
    [!setrat|!rat] <cookie>       - Set/update your SoT RAT cookie in the bot's DB[1][3]
    [!stats|!stat]                - Provides some general SoT stats for your user (killed kraken, sold chests, etc.)[1][2]
 
