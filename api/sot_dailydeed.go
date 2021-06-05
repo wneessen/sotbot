@@ -7,37 +7,42 @@ import (
 	"github.com/wneessen/sotbot/httpclient"
 	"net/http"
 	"regexp"
+	"time"
 )
 
 type EventApiResponse struct {
-	GlobalNav GlobalNav `json:"globalNav"`
+	Data EventData `json:"data"`
 }
 
-type GlobalNav struct {
-	Items []GlobalNavItem `json:"Items"`
+type EventData struct {
+	Components []EventDataComponent `json:"components"`
 }
 
-type GlobalNavItem struct {
-	Children []GlobalNavItemChild `json:"Children"`
+type EventDataComponent struct {
+	Data EventDataComponentData `json:"data"`
 }
 
-type GlobalNavItemChild struct {
-	DailyDeed DailyDeed `json:"DailyDeed"`
+type EventDataComponentData struct {
+	BountyList []BountyList `json:"BountyList"`
 }
 
-type DailyDeed struct {
-	Title     string       `json:"Title"`
-	Copy      string       `json:"Copy"`
-	StartDate TimeRFC3339  `json:"StartDate"`
-	EndDate   TimeRFC3339  `json:"EndDate"`
-	Image     DailyDeedImg `json:"Image"`
+type BountyList struct {
+	Type                      string       `json:"#Type"`
+	Title                     string       `json:"Title"`
+	BodyText                  string       `json:"BodyText"`
+	StartDate                 TimeRFC3339  `json:"StartDate"`
+	EndDate                   TimeRFC3339  `json:"EndDate"`
+	CompletedAt               TimeRFC3339  `json:"CompletedAt"`
+	Image                     DailyDeedImg `json:"Image"`
+	EntitlementRewardValue    int          `json:"EntitlementRewardValue"`
+	EntitlementRewardCurrency string       `json:"EntitlementRewardCurrency"`
 }
 
 type DailyDeedImg struct {
 	Desktop string `json:"desktop"`
 }
 
-func GetDailyDeed(hc *http.Client, rc string) (DailyDeed, error) {
+func GetDailyDeed(hc *http.Client, rc string) (BountyList, error) {
 	l := log.WithFields(log.Fields{
 		"action": "sotapi.GetDailyDeed",
 	})
@@ -46,7 +51,7 @@ func GetDailyDeed(hc *http.Client, rc string) (DailyDeed, error) {
 	l.Debugf("Fetching event-hub data from www.seaofthieves.com...")
 	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, rc, "https://www.seaofthieves.com/season-two")
 	if err != nil {
-		return DailyDeed{}, err
+		return BountyList{}, err
 	}
 	re := regexp.MustCompile(`<script>var APP_PROPS\s*=\s*({.*});</script>`)
 	validJson := re.FindStringSubmatch(string(httpResp))
@@ -54,14 +59,17 @@ func GetDailyDeed(hc *http.Client, rc string) (DailyDeed, error) {
 		var apiResponse EventApiResponse
 		if err := json.Unmarshal([]byte(validJson[1]), &apiResponse); err != nil {
 			l.Errorf("Failed to unmarshal API response: %v", err)
-			return DailyDeed{}, err
+			return BountyList{}, err
 		}
-		for _, curItem := range apiResponse.GlobalNav.Items {
-			if curItem.Children[0].DailyDeed.Title != "" {
-				return curItem.Children[0].DailyDeed, nil
+		nowTime := time.Now().Unix()
+		for _, curComp := range apiResponse.Data.Components {
+			for _, curBounty := range curComp.Data.BountyList {
+				if curBounty.StartDate.Time().Unix() <= nowTime && curBounty.EndDate.Time().Unix() >= nowTime {
+					return curBounty, nil
+				}
 			}
 		}
 	}
 
-	return DailyDeed{}, fmt.Errorf("No daily deed found in API response.")
+	return BountyList{}, fmt.Errorf("No daily deed found in API response.")
 }
