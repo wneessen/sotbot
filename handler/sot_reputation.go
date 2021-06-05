@@ -31,9 +31,9 @@ func GetSotReputation(h *http.Client, u *user.User, f string) (string, error) {
 		l.Errorf("An error occured fetching user progress: %v", err)
 		return "", err
 	}
-	responseMsg := fmt.Sprintf("You current reputation level with the %v faction (%q) is: %d (Rank: %v). "+
-		"Your current level XP is %d. To reach the next reputation level (level %d), you need to reach a total"+
-		" of %d XP. That's %d to go!",
+	responseMsg := fmt.Sprintf("You current reputation level with the **%v faction** (%q) is: **%d (Rank: %v)**. "+
+		"Your current level **XP is %d**. To reach the next reputation level (level %d), you need to reach a total"+
+		" of **%d XP**. That's **%d to go**!",
 		userReputation.Name, userReputation.Motto, userReputation.Level, userReputation.Rank,
 		userReputation.Xp, userReputation.NextLevel.Level, userReputation.NextLevel.XpRequired,
 		userReputation.NextLevel.XpRequired-userReputation.Xp)
