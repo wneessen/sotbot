@@ -18,7 +18,10 @@ func GetSotReputation(h *http.Client, u *user.User, f string) (string, error) {
 
 	wrongFormatMsg := fmt.Sprintf("Incorrect request format. Usage: !reputation " +
 		"<athena|bilge|hoarder|hunter|merchant|order|reaper|seadog>")
-	var validFaction = regexp.MustCompile(`^(athena|bilge|hoarder|hunter|merchant|order|reaper|seadog)$`)
+	validFaction, err := regexp.Compile(`^(athena|bilge|hoarder|hunter|merchant|order|reaper|seadog)$`)
+	if err != nil {
+		return "", err
+	}
 	if !validFaction.MatchString(f) {
 		return wrongFormatMsg, nil
 	}

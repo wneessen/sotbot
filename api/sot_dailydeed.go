@@ -53,7 +53,10 @@ func GetDailyDeed(hc *http.Client, rc string) (BountyList, error) {
 	if err != nil {
 		return BountyList{}, err
 	}
-	re := regexp.MustCompile(`<script>var APP_PROPS\s*=\s*({.*});</script>`)
+	re, err := regexp.Compile(`<script>var APP_PROPS\s*=\s*({.*});</script>`)
+	if err != nil {
+		return BountyList{}, err
+	}
 	validJson := re.FindStringSubmatch(string(httpResp))
 	if len(validJson) > 1 {
 		var apiResponse EventApiResponse

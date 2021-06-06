@@ -20,7 +20,10 @@ func GetSotLedger(h *http.Client, u *user.User, f string) (string, error) {
 
 	wrongFormatMsg := fmt.Sprintf("Incorrect request format. Usage: !ledger " +
 		"<athena|hoarder|merchant|order|reaper>")
-	var validFaction = regexp.MustCompile(`^(athena|hoarder|merchant|order|reaper)$`)
+	var validFaction, err = regexp.Compile(`^(athena|hoarder|merchant|order|reaper)$`)
+	if err != nil {
+		return "", err
+	}
 	if !validFaction.MatchString(f) {
 		return wrongFormatMsg, nil
 	}

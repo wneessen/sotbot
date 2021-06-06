@@ -36,7 +36,10 @@ func GetTraderoutes() (Traderoutes, error) {
 	if err != nil {
 		return Traderoutes{}, err
 	}
-	re := regexp.MustCompile(`var trade_routes\s*=\s*({.*})`)
+	re, err := regexp.Compile(`var trade_routes\s*=\s*({.*})`)
+	if err != nil {
+		return Traderoutes{}, err
+	}
 	validJson := re.FindStringSubmatch(string(body))
 
 	var routes Traderoutes

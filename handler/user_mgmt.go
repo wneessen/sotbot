@@ -27,7 +27,10 @@ func RegisterUser(d *gorm.DB, u string) (string, error) {
 	})
 
 	wrongFormatMsg := "Incorrect request format. Usage: !register <@user>"
-	var validUser = regexp.MustCompile(`^<@[!&]*(\d+)>$`)
+	validUser, err := regexp.Compile(`^<@[!&]*(\d+)>$`)
+	if err != nil {
+		return "", err
+	}
 	if !validUser.MatchString(u) {
 		return wrongFormatMsg, nil
 	}
@@ -61,7 +64,10 @@ func UnregisterUser(d *gorm.DB, u string) (string, error) {
 	})
 
 	wrongFormatMsg := "Incorrect request format. Usage: !unregister <@user>"
-	var validUser = regexp.MustCompile(`^<@[!&]*(\d+)>$`)
+	validUser, err := regexp.Compile(`^<@[!&]*(\d+)>$`)
+	if err != nil {
+		return "", err
+	}
 	if !validUser.MatchString(u) {
 		return wrongFormatMsg, nil
 	}
