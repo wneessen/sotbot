@@ -6,9 +6,12 @@ import (
 	"strings"
 )
 
+// ApiStringInt is a type alias for a int64. It is meant to be used for
+// example in API responses where an obvious Int is returned as string
+// in the JSON
 type ApiStringInt int64
 
-// UnmarshalJSON function for strings that are obviously ints
+// UnmarshalJSON converts the ApiStringInt string into an int64
 func (s *ApiStringInt) UnmarshalJSON(is []byte) error {
 	intString := string(is)
 	intString = strings.ReplaceAll(intString, `"`, ``)

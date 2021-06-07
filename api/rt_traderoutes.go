@@ -9,14 +9,15 @@ import (
 	"regexp"
 )
 
-// Traderoutes converts the JSON response of the rarethief API into a struct
+// Traderoutes defines the structure for the rarethief.com trading route
+// API response
 type Traderoutes struct {
 	Dates  string           `json:"trade_route_dates"`
 	Routes map[string]Route `json:"routes"`
 }
 
-// Route converts the different routes of the API response into their own
-// struct
+// Route defines the structure of the sub part of the API response that is
+// a actual route
 type Route struct {
 	Outpost string `json:"outpost"`
 	Sought  string `json:"sought_after"`
@@ -24,7 +25,7 @@ type Route struct {
 }
 
 // GetTraderoutes fetches the currently active trading routes from the
-// rarethief.com API and returns the Traderoutes struct to the caller
+// rarethief.com API and returns a Traderoutes struct
 func GetTraderoutes() (Traderoutes, error) {
 	l := log.WithFields(log.Fields{
 		"action": "rarethief.Traderoutes",
