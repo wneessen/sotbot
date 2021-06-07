@@ -17,7 +17,7 @@ func GetDailyDeed(h *http.Client, u *user.User) (*discordgo.MessageEmbed, error)
 	})
 	dailyDeed, err := api.GetDailyDeed(h, u.RatCookie)
 	if err != nil {
-		l.Errorf("An error occured fetching daily deeed data: %v", err)
+		l.Errorf("An error occurred fetching daily deeed data: %v", err)
 		return &discordgo.MessageEmbed{}, err
 	}
 	embedDesc := fmt.Sprintf("%v\n\nStart date: %v\nEnd date: %v", dailyDeed.BodyText,

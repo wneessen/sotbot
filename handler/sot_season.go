@@ -16,7 +16,7 @@ func GetSotSeasonProgress(h *http.Client, u *user.User) (string, error) {
 
 	userAchievement, err := api.GetSeasonProgress(h, u.RatCookie)
 	if err != nil {
-		l.Errorf("An error occured fetching user progress: %v", err)
+		l.Errorf("An error occurred fetching user progress: %v", err)
 		return "", err
 	}
 	responseMsg := fmt.Sprintf("You are currently sailing in **%v**. Your renown level is **%v%%** (**Tier: %d**). "+

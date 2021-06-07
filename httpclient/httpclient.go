@@ -41,7 +41,7 @@ func HttpReqGet(u string, hc *http.Client, rc string, ref string) ([]byte, error
 	// Create a HTTP request
 	httpReq, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return []byte{}, fmt.Errorf("an error occured creating new HTTP GET request: %v", err)
+		return []byte{}, fmt.Errorf("an error occurred creating new HTTP GET request: %v", err)
 	}
 
 	// Set cookie

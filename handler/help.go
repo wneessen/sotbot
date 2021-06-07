@@ -7,12 +7,12 @@ func Help() []string {
    !play <sound_name>            - Jump into the voice chat of the requesting user and play the requested sound
    !fact                         - Replies with a random useless fact
    !movie <query>                - Look up the <query> in the TMDb movie database. If <query> is omitted, a
-                                   random movie is choosen
+                                   random movie is chosen
    !time                         - Replies with the current time
    !tv <query>                   - Look up the <query> in the TMDb TV series database. If <query> is omitted, a
-                                   random TV series is choosen
+                                   random TV series is chosen
    [!urban|!ud] <term>           - Looks up the <term> in Urban Dictionary. If <term> is omitted, a random
-                                   term is choosen
+                                   term is chosen
    !weather <location>           - Look up the current weather in <location> and provide it to the user
    [!uptime|!up]                 - Will show you my current uptime
    [!userinfo|!info]             - Tells you, if you are registered with the myself

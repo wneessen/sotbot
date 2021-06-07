@@ -84,7 +84,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case (command == "!uptime" || command == "!up") && cmdNum == 1:
 		re, err := handler.Uptime(b.StartTime)
 		if err != nil {
-			re = fmt.Sprintf("Sorry, an error occured calculating the uptime: %v", err)
+			re = fmt.Sprintf("Sorry, an error occurred calculating the uptime: %v", err)
 		}
 		response.AnswerUser(s, m, re, true)
 		return
@@ -101,7 +101,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case command == "!fact" && cmdNum == 1:
 		re, err := handler.RandomFact(b.HttpClient)
 		if err != nil {
-			re = fmt.Sprintf("An error occured while fetching the random fact API: %v", err)
+			re = fmt.Sprintf("An error occurred while fetching the random fact API: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -113,7 +113,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if cmdNum == 1 {
 			em, err := handler.UrbanDict(b.HttpClient, "")
 			if err != nil {
-				re := fmt.Sprintf("An error occured while fetching the urban dictionary API: %v", err)
+				re := fmt.Sprintf("An error occurred while fetching the urban dictionary API: %v", err)
 				response.AnswerUser(s, m, re, true)
 				return
 			}
@@ -123,7 +123,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if cmdNum == 2 {
 			em, err := handler.UrbanDict(b.HttpClient, msgArray[1])
 			if err != nil {
-				re := fmt.Sprintf("An error occured while fetching the urban dictionary API: %v", err)
+				re := fmt.Sprintf("An error occurred while fetching the urban dictionary API: %v", err)
 				response.AnswerUser(s, m, re, true)
 				return
 			}
@@ -141,7 +141,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 			em, err := handler.TMDbRandMovie(b.TMDb)
 			if err != nil {
-				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				re := fmt.Sprintf("An error occurred while fetching the TMDB API: %v", err)
 				response.AnswerUser(s, m, re, true)
 				return
 			}
@@ -161,7 +161,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 					response.AnswerUser(s, m, re, true)
 					return
 				}
-				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				re := fmt.Sprintf("An error occurred while fetching the TMDB API: %v", err)
 				response.AnswerUser(s, m, re, true)
 				return
 			}
@@ -179,7 +179,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 			em, err := handler.TMDbRandTvSeries(b.TMDb)
 			if err != nil {
-				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				re := fmt.Sprintf("An error occurred while fetching the TMDB API: %v", err)
 				response.AnswerUser(s, m, re, true)
 				return
 			}
@@ -199,7 +199,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 					response.AnswerUser(s, m, re, true)
 					return
 				}
-				re := fmt.Sprintf("An error occured while fetching the TMDB API: %v", err)
+				re := fmt.Sprintf("An error occurred while fetching the TMDB API: %v", err)
 				response.AnswerUser(s, m, re, true)
 				return
 			}
@@ -223,7 +223,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 					"update your cookie.")
 				response.DmUser(s, userObj, dmMsg, true, false)
 			} else {
-				re = fmt.Sprintf("An error occured checking your SoT balance: %v", err)
+				re = fmt.Sprintf("An error occurred checking your SoT balance: %v", err)
 				response.AnswerUser(s, m, re, true)
 				return
 			}
@@ -241,7 +241,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		re, err := handler.GetSotSeasonProgress(b.HttpClient, userObj)
 		if err != nil {
-			re = fmt.Sprintf("An error occured checking your SoT season progress: %v", err)
+			re = fmt.Sprintf("An error occurred checking your SoT season progress: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -258,7 +258,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		re, err := handler.GetSotReputation(b.HttpClient, userObj, msgArray[1])
 		if err != nil {
-			re = fmt.Sprintf("An error occured checking your SoT reputation level: %v", err)
+			re = fmt.Sprintf("An error occurred checking your SoT reputation level: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -275,7 +275,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		re, err := handler.GetSotLedger(b.HttpClient, userObj, msgArray[1])
 		if err != nil {
-			re = fmt.Sprintf("An error occured checking your SoT ledger rank: %v", err)
+			re = fmt.Sprintf("An error occurred checking your SoT ledger rank: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -292,7 +292,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		re, err := handler.GetSotStats(b.HttpClient, userObj)
 		if err != nil {
-			re = fmt.Sprintf("An error occured checking your SoT general stats: %v", err)
+			re = fmt.Sprintf("An error occurred checking your SoT general stats: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -309,7 +309,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		em, err := handler.GetDailyDeed(b.HttpClient, userObj)
 		if err != nil {
-			re := fmt.Sprintf("An error occured fetching the daily deed: %v", err)
+			re := fmt.Sprintf("An error occurred fetching the daily deed: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -326,7 +326,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		em, err := handler.GetSotAchievement(b.HttpClient, userObj)
 		if err != nil {
-			re := fmt.Sprintf("An error occured checking your SoT latest achievement: %v", err)
+			re := fmt.Sprintf("An error occurred checking your SoT latest achievement: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -337,7 +337,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case command == "!code" && cmdNum == 1:
 		em, err := handler.GetSotRandomCode()
 		if err != nil {
-			re := fmt.Sprintf("An error occured quoting the SoT pirate code: %v", err)
+			re := fmt.Sprintf("An error occurred quoting the SoT pirate code: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -353,7 +353,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		re, err := handler.UserSetRatCookie(b.Db, b.Config, userObj, msgArray[1])
 		if err != nil {
-			re := fmt.Sprintf("An error occured setting/updating your RAT cookie: %v", err)
+			re := fmt.Sprintf("An error occurred setting/updating your RAT cookie: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -364,7 +364,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case command == "!tr" && cmdNum == 1:
 		em, err := handler.GetTraderoutes()
 		if err != nil {
-			re := fmt.Sprintf("An error occured fetching traderoutes: %v", err)
+			re := fmt.Sprintf("An error occurred fetching traderoutes: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -387,7 +387,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		re, err := handler.RegisterUser(b.Db, msgArray[1])
 		if err != nil {
-			re := fmt.Sprintf("An error occured registering user: %v", err)
+			re := fmt.Sprintf("An error occurred registering user: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -404,7 +404,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		re, err := handler.UnregisterUser(b.Db, msgArray[1])
 		if err != nil {
-			re := fmt.Sprintf("An error occured registering user: %v", err)
+			re := fmt.Sprintf("An error occurred registering user: %v", err)
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -426,7 +426,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 			re, err := handler.GetCurrentWeather(b.OwmClient, msgArray[1:])
 			if err != nil {
-				re := fmt.Sprintf("An error occured fetching OWM weather data: %v", err)
+				re := fmt.Sprintf("An error occurred fetching OWM weather data: %v", err)
 				response.AnswerUser(s, m, re, true)
 				return
 			}
@@ -448,7 +448,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			b.AudioMutex.Lock()
 			err := handler.PlaySound(guildObj.VoiceStates, s, *b.Audio[soundName].Buffer, userObj.AuthorId, guildObj.ID)
 			if err != nil {
-				re := fmt.Sprintf("An error occured when playing the sound: %v", err.Error())
+				re := fmt.Sprintf("An error occurred when playing the sound: %v", err.Error())
 				response.AnswerUser(s, m, re, true)
 			}
 			b.AudioMutex.Unlock()

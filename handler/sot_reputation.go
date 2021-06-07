@@ -31,7 +31,7 @@ func GetSotReputation(h *http.Client, u *user.User, f string) (string, error) {
 	}
 	userReputation, err := api.GetFactionReputation(h, u.RatCookie, strings.ToLower(validFactionMatch[0]))
 	if err != nil {
-		l.Errorf("An error occured fetching user progress: %v", err)
+		l.Errorf("An error occurred fetching user progress: %v", err)
 		return "", err
 	}
 	responseMsg := fmt.Sprintf("You current reputation level with the **%v faction** (%q) is: **%d (Rank: %v)**. "+
