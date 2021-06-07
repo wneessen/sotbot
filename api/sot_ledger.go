@@ -8,14 +8,17 @@ import (
 	"net/http"
 )
 
+// ApiLedger is the complete SoT faction ledger API endpoint response structure
 type ApiLedger struct {
 	Current CurrentLedger `json:"current"`
 }
 
+// CurrentLedger is a subset of the ApiLedger API response
 type CurrentLedger struct {
 	Friends FriendsLedger `json:"friends"`
 }
 
+// FriendsLedger is a subset of the CurrentLedger API response
 type FriendsLedger struct {
 	User FactionLedger `json:"user"`
 }
@@ -28,6 +31,7 @@ type BandTitle struct {
 	ReapersBone      []string
 }
 
+// FactionLedger is a subset of the FriendsLedger API response
 type FactionLedger struct {
 	Name       string
 	Band       int `json:"band"`
@@ -37,6 +41,7 @@ type FactionLedger struct {
 	ToNextRank int `json:"toNextRank"`
 }
 
+// GetFactionLedger calls the SoT ledger API endpoint and returns a FactionLedger struct
 func GetFactionLedger(hc *http.Client, rc string, f string) (FactionLedger, error) {
 	l := log.WithFields(log.Fields{
 		"action": "sotapi.GetFactionLedger",

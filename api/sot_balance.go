@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// UserBalance defines the structure of the SoT user balance API endpoint response
 type UserBalance struct {
 	GamerTag     string `json:"gamertag"`
 	Title        string `json:"title"`
@@ -15,6 +16,7 @@ type UserBalance struct {
 	AncientCoins int    `json:"ancientCoins"`
 }
 
+// GetBalance calls the SoT balance API endpoint and returns a UserBalance struct
 func GetBalance(hc *http.Client, rc string) (UserBalance, error) {
 	l := log.WithFields(log.Fields{
 		"action": "sotapi.GetBalance",

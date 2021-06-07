@@ -7,14 +7,18 @@ import (
 	"net/http"
 )
 
+// UserAchievements defines the structure of the SoT API response for the
+// users latest achievements
 type UserAchievements struct {
 	Sorted []SortedAchievement `json:"sorted"`
 }
 
+// SortedAchievement is a subpart of the UserAchievements API response
 type SortedAchievement struct {
 	Achievement Achievement `json:"achievement"`
 }
 
+// Achievement is a subpart of the SortedAchievement API response
 type Achievement struct {
 	Sort        int    `json:"Sort"`
 	Name        string `json:"Name"`
@@ -22,6 +26,8 @@ type Achievement struct {
 	MediaUrl    string `json:"MediaUrl"`
 }
 
+// GetLatestAchievement calls the SoT achievements API endpoint and returns
+// a Achievement struct
 func GetLatestAchievement(hc *http.Client, rc string) (Achievement, error) {
 	l := log.WithFields(log.Fields{
 		"action": "sotapi.GetLatestAchievement",

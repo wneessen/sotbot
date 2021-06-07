@@ -13,26 +13,12 @@ import (
 // User is a struct of user object. Each incoming message in the command_handler
 // will try to create a User object based on the message it received
 type User struct {
-	// AuthorId is the Discord UserId of the message current session event
-	AuthorId string
-
-	// AuthorName is the Discord nickname of the AuthorId
-	AuthorName string
-
-	// ChanPermission reflects the bitmask of permissions of User in the
-	// current channel
+	AuthorId       string
+	AuthorName     string
 	ChanPermission int64
-
-	// Mention is the Discord string for a @mention of the User
-	Mention string
-
-	// RatCookie reflects the SoT RAT authentication cookie from the database
-	// if the user set such before
-	RatCookie string
-
-	// UserInfo reflects a pointer to the *models.RegisteredUser database model of
-	// User
-	UserInfo *models.RegisteredUser
+	Mention        string
+	RatCookie      string
+	UserInfo       *models.RegisteredUser
 }
 
 // NewUser creates and returns a new User object
@@ -56,17 +42,18 @@ func NewUser(d *gorm.DB, c *viper.Viper, i string) (*User, error) {
 	return &userObj, nil
 }
 
-// IsRegistered checks wether *User is registered or not
+// IsRegistered return true when *User is registered
 func (u *User) IsRegistered() bool {
 	return u.UserInfo.ID > 0
 }
 
-// HasRatCookie checks wether *User has a valid SoT RAT cookie set in the database
+// HasRatCookie returns true when *User has a valid SoT RAT cookie set in
+// the database
 func (u *User) HasRatCookie() bool {
 	return u.RatCookie != ""
 }
 
-// IsAdmin checks weather *User has channel admin permission
+// IsAdmin returns true when *User has channel admin permission
 func (u *User) IsAdmin() bool {
 	return u.ChanPermission&discordgo.PermissionAdministrator != 0
 }
