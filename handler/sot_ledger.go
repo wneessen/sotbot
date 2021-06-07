@@ -12,7 +12,8 @@ import (
 	"strings"
 )
 
-// Just a test handler
+// GetSotLedger is a SoTBot handler that replies the requesting user with their current
+// SoT ledger position in a specific faction/company
 func GetSotLedger(h *http.Client, u *user.User, f string) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.GetSotLedger",

@@ -6,9 +6,11 @@ import (
 	"time"
 )
 
+// ApiTimeRFC3339 is an alias type for time.Time
 type ApiTimeRFC3339 time.Time
 
-// UnmarshalJSON function for strings that are in RFC3339 format
+// UnmarshalJSON converts a API RFC3339 formated date strings into a
+// time.Time object
 func (t *ApiTimeRFC3339) UnmarshalJSON(s []byte) error {
 	dateString := string(s)
 	dateString = strings.ReplaceAll(dateString, `"`, "")
@@ -24,6 +26,7 @@ func (t *ApiTimeRFC3339) UnmarshalJSON(s []byte) error {
 	return nil
 }
 
+// Time returns the time.Time object of a ApiTimeRFC3339 type
 func (t ApiTimeRFC3339) Time() time.Time {
 	return time.Time(t)
 }
