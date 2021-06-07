@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+// UserPlaysSot monitors the presence updates of the guild users. If a user
+// starts playing SoT, it will fetch the current balance from the SoT API and
+// store it in the database. Once the user finished their game, it will redo
+// the same action and present a difference to the announce channel
 func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 	l := log.WithFields(log.Fields{
 		"action": "bot.UserPlaySot",

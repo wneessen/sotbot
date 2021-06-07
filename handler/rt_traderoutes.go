@@ -13,7 +13,7 @@ func GetTraderoutes() (string, error) {
 	})
 	traderoutes, err := api.GetTraderoutes()
 	if err != nil {
-		l.Errorf("An error occured fetching traderoutes: %v", err)
+		l.Errorf("An error occurred fetching traderoutes: %v", err)
 		return "Sorry, couldn't fetch traderoutes", err
 	}
 	var response strings.Builder

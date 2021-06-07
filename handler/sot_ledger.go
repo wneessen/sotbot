@@ -33,13 +33,13 @@ func GetSotLedger(h *http.Client, u *user.User, f string) (string, error) {
 	}
 	userLedger, err := api.GetFactionLedger(h, u.RatCookie, strings.ToLower(validFactionMatch[0]))
 	if err != nil {
-		l.Errorf("An error occured fetching user progress: %v", err)
+		l.Errorf("An error occurred fetching user progress: %v", err)
 		return "", err
 	}
 
 	p := message.NewPrinter(language.German)
 	responseMsg := fmt.Sprintf("You current global ledger rank within the **%v** faction is: **%v**. Your current"+
-		" emissary value is **%v**, which results in postion %v on the leaderboard. To reach the next ledger rank, "+
+		" emissary value is **%v**, which results in position %v on the leaderboard. To reach the next ledger rank, "+
 		"you'll need to increase your faction's emissary value by **%v points**.",
 		userLedger.Name, userLedger.BandTitle, p.Sprintf("%d", userLedger.Score),
 		p.Sprintf("%d", userLedger.Rank), p.Sprintf("%d", userLedger.ToNextRank))

@@ -12,6 +12,6 @@ func Embed(s *discordgo.Session, c string, em *discordgo.MessageEmbed) {
 
 	_, err := s.ChannelMessageSendEmbed(c, em)
 	if err != nil {
-		l.Errorf("Failed to send embeded message: %v", err)
+		l.Errorf("Failed to send embedded message: %v", err)
 	}
 }

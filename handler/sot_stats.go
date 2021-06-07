@@ -15,7 +15,7 @@ func GetSotStats(h *http.Client, u *user.User) (string, error) {
 	})
 	userStats, err := api.GetStats(h, u.RatCookie)
 	if err != nil {
-		l.Errorf("An error occured fetching user stats: %v", err)
+		l.Errorf("An error occurred fetching user stats: %v", err)
 		return "", err
 	}
 	responseMsg := fmt.Sprintf("During your journeys on the Sea of Thieves, so far, you defeated %d "+
