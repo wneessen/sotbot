@@ -25,7 +25,7 @@ type Route struct {
 }
 
 // GetTraderoutes fetches the currently active trading routes from the
-// rarethief.com API and returns a Traderoutes struct
+// rarethief.com API and returns Traderoutes struct
 func GetTraderoutes() (Traderoutes, error) {
 	l := log.WithFields(log.Fields{
 		"action": "rarethief.Traderoutes",
@@ -36,6 +36,9 @@ func GetTraderoutes() (Traderoutes, error) {
 	httpResp, err := http.Get(apiUrl)
 	if err != nil {
 		return Traderoutes{}, err
+	}
+	if httpResp.StatusCode != 200 {
+		return Traderoutes{}, fmt.Errorf("Non HTTP 200 returned: %v", httpResp.StatusCode)
 	}
 
 	body, err := io.ReadAll(httpResp.Body)
