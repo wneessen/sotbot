@@ -4,14 +4,15 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/api"
+	"net/http"
 	"strings"
 )
 
-func GetTraderoutes() (string, error) {
+func GetTraderoutes(hc *http.Client) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.GetTraderoutes",
 	})
-	traderoutes, err := api.GetTraderoutes()
+	traderoutes, err := api.GetTraderoutes(hc)
 	if err != nil {
 		l.Errorf("An error occurred fetching traderoutes: %v", err)
 		return "Sorry, couldn't fetch traderoutes", err

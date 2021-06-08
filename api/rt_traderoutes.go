@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"io"
+	"github.com/wneessen/sotbot/httpclient"
 	"net/http"
 	"regexp"
 )
@@ -26,30 +26,23 @@ type Route struct {
 
 // GetTraderoutes fetches the currently active trading routes from the
 // rarethief.com API and returns Traderoutes struct
-func GetTraderoutes() (Traderoutes, error) {
+func GetTraderoutes(hc *http.Client) (Traderoutes, error) {
 	l := log.WithFields(log.Fields{
 		"action": "rarethief.Traderoutes",
 	})
 	apiUrl := "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
 
 	l.Debugf("Fetching traderoutes from rarethief...")
-	httpResp, err := http.Get(apiUrl)
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, "", "")
 	if err != nil {
 		return Traderoutes{}, err
-	}
-	if httpResp.StatusCode != 200 {
-		return Traderoutes{}, fmt.Errorf("Non HTTP 200 returned: %v", httpResp.StatusCode)
 	}
 
-	body, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		return Traderoutes{}, err
-	}
 	re, err := regexp.Compile(`var trade_routes\s*=\s*({.*})`)
 	if err != nil {
 		return Traderoutes{}, err
 	}
-	validJson := re.FindStringSubmatch(string(body))
+	validJson := re.FindStringSubmatch(string(httpResp))
 
 	var routes Traderoutes
 	if len(validJson) > 1 {
