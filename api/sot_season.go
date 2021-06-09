@@ -23,7 +23,7 @@ func GetSeasonProgress(hc *http.Client, rc string) (SeasonProgress, error) {
 
 	l.Debugf("Fetching user season progress from API...")
 	var userProgress SeasonProgress
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, rc, "")
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, &rc, nil, false)
 	if err != nil {
 		return userProgress, err
 	}

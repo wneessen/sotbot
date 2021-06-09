@@ -25,7 +25,7 @@ func GetBalance(hc *http.Client, rc string) (UserBalance, error) {
 	apiUrl := "https://www.seaofthieves.com/api/profilev2/balance"
 
 	l.Debugf("Fetching balance from API...")
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, rc, "")
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, &rc, nil, false)
 	if err != nil {
 		return userBalance, err
 	}

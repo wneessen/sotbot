@@ -33,7 +33,7 @@ func NewHttpClient() (*http.Client, error) {
 }
 
 // Perform a GET request
-func HttpReqGet(u string, hc *http.Client, rc string, ref string) ([]byte, error) {
+func HttpReqGet(u string, hc *http.Client, rc *string, ref *string, noref bool) ([]byte, error) {
 	l := log.WithFields(log.Fields{
 		"action": "httpclient.HttpReqGet",
 	})
@@ -45,20 +45,20 @@ func HttpReqGet(u string, hc *http.Client, rc string, ref string) ([]byte, error
 	}
 
 	// Set cookie
-	if rc != "" {
+	if rc != nil {
 		ratCookie := &http.Cookie{
 			Name:  "rat",
-			Value: rc,
+			Value: *rc,
 		}
 		httpReq.AddCookie(ratCookie)
 	}
 
 	// Set referer
-	if ref != "" {
-		httpReq.Header.Set("referer", ref)
-	}
-	if ref == "" {
+	if !noref {
 		httpReq.Header.Set("referer", "https://www.seaofthieves.com/profile/achievements")
+		if ref != nil {
+			httpReq.Header.Set("referer", *ref)
+		}
 	}
 
 	// Set HTTP header
@@ -74,7 +74,7 @@ func HttpReqGet(u string, hc *http.Client, rc string, ref string) ([]byte, error
 		}
 	}()
 
-	if serverResp.StatusCode != 200 {
+	if serverResp.StatusCode >= 400 {
 		l.Errorf("HTTP request failed: %v", serverResp.Status)
 		return []byte{}, fmt.Errorf("%v", serverResp.StatusCode)
 	}

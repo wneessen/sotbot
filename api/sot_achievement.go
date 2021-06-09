@@ -36,7 +36,7 @@ func GetLatestAchievement(hc *http.Client, rc string) (Achievement, error) {
 	apiUrl := "https://www.seaofthieves.com/api/profilev2/achievements"
 
 	l.Debugf("Fetching user achievements from API...")
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, rc, "")
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, &rc, nil, false)
 	if err != nil {
 		return Achievement{}, err
 	}

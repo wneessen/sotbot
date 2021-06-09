@@ -24,7 +24,7 @@ func GetRandFact(hc *http.Client) (RandomFact, error) {
 	apiUrl := "https://uselessfacts.jsph.pl/random.json?language=en"
 
 	l.Debugf("Fetching random fact from API...")
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, "", "")
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, nil, nil, true)
 	if err != nil {
 		return randomFact, err
 	}
