@@ -41,7 +41,7 @@ func GetFactionReputation(hc *http.Client, rc string, f string) (FactionReputati
 
 	l.Debugf("Fetching user reputation in %v faction from API...", f)
 	var userReps Factions
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, rc, "")
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, &rc, nil, false)
 	if err != nil {
 		return FactionReputation{}, err
 	}

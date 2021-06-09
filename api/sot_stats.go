@@ -27,7 +27,7 @@ func GetStats(hc *http.Client, rc string) (UserStats, error) {
 
 	l.Debugf("Fetching user season progress from API...")
 	var userOverview ApiOverview
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, rc, "")
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, &rc, nil, false)
 	if err != nil {
 		return UserStats{}, err
 	}

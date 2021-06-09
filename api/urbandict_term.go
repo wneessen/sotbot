@@ -35,7 +35,7 @@ func GetUrbanDict(hc *http.Client, w string) (UrbanDictEntry, error) {
 	}
 
 	l.Debugf("Fetching UD definition fact from UD API...")
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, "", "")
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, nil, nil, true)
 	if err != nil {
 		return UrbanDictEntry{}, err
 	}

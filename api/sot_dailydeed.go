@@ -49,7 +49,8 @@ func GetDailyDeed(hc *http.Client, rc string) (BountyList, error) {
 	apiUrl := "https://www.seaofthieves.com/event-hub"
 
 	l.Debugf("Fetching event-hub data from www.seaofthieves.com...")
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, rc, "https://www.seaofthieves.com/season-two")
+	ref := "https://www.seaofthieves.com/season-two"
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, &rc, &ref, false)
 	if err != nil {
 		return BountyList{}, err
 	}

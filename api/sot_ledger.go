@@ -75,7 +75,7 @@ func GetFactionLedger(hc *http.Client, rc string, f string) (FactionLedger, erro
 
 	l.Debugf("Fetching user ledger position in %v faction from API...", f)
 	var userApiLedger ApiLedger
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, rc, "")
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, &rc, nil, false)
 	if err != nil {
 		return FactionLedger{}, err
 	}

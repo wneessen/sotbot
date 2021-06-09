@@ -33,7 +33,7 @@ func GetTraderoutes(hc *http.Client) (Traderoutes, error) {
 	apiUrl := "https://maps.seaofthieves.rarethief.com/js/trade_routes.js"
 
 	l.Debugf("Fetching traderoutes from rarethief...")
-	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, "", "")
+	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, nil, nil, true)
 	if err != nil {
 		return Traderoutes{}, err
 	}
