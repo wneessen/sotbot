@@ -8,6 +8,5 @@
     "dbfile": "/home/sotbot/.sotbot/sotbot.db",
     "announcechan": "123456789012345678",
     "sot_play_announce": true,
-    "sot_play_dm_user": false,
     "tmdb_api_key": "Put your TMDB api key here"
 }

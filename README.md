@@ -59,7 +59,6 @@ The config currently supports the following format:
     "dbfile": "/home/sotbot/.sotbot/sotbot.db",
     "announcechan": "123456789012345678",
     "sot_play_announce": true,
-    "sot_play_dm_user": false, 
     "tmdb_api_key": "Put your TMDb api key here", 
     "owm_api_key": "Put your OpenWeatherMap api key here"
 }
@@ -78,8 +77,6 @@ The config currently supports the following format:
 * `sot_play_announce`: If set to `true`, user tracking is enabled and the user is registered, the bot will 
   announce when a user played SoT to the official announcement channel and will also tell the difference in 
   balance they made during the last playing session
-* `sot_play_dm_user`: If set to `true`, user tracking is enabled and the user is registered, the bot will
-  DM the user after they played SoT and provide them with their new balance
 * `tmdb_api_key`: If you want to use the TMDb commands, you need to have a valid API token. For more details
   check the [TMDb API documentation](https://developers.themoviedb.org/3/getting-started/authentication)
 * `owm_api_key`: For the weather commands to work, you need to have a valid OWM API token. For more details
