@@ -249,14 +249,21 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 
 	// SoT: Show user's reputation with a faction/company
-	case (command == "!reputation" || command == "!rep") && cmdNum == 2:
+	case (command == "!reputation" || command == "!rep"):
 		if !userObj.IsRegistered() {
 			return
 		}
 		if !userObj.HasRatCookie() {
 			return
 		}
-		re, err := handler.GetSotReputation(b.HttpClient, userObj, msgArray[1])
+		var re string
+		var err error
+		if cmdNum != 2 {
+			re, err = handler.GetSotReputation(b.HttpClient, userObj, "")
+		}
+		if cmdNum == 2 {
+			re, err = handler.GetSotReputation(b.HttpClient, userObj, msgArray[1])
+		}
 		if err != nil {
 			re = fmt.Sprintf("An error occurred checking your SoT reputation level: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -266,14 +273,21 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 
 	// SoT: Show user's ledger position with a faction/company
-	case (command == "!ledger" || command == "!led") && cmdNum == 2:
+	case (command == "!ledger" || command == "!led"):
 		if !userObj.IsRegistered() {
 			return
 		}
 		if !userObj.HasRatCookie() {
 			return
 		}
-		re, err := handler.GetSotLedger(b.HttpClient, userObj, msgArray[1])
+		var re string
+		var err error
+		if cmdNum != 2 {
+			re, err = handler.GetSotLedger(b.HttpClient, userObj, "")
+		}
+		if cmdNum == 2 {
+			re, err = handler.GetSotLedger(b.HttpClient, userObj, msgArray[1])
+		}
 		if err != nil {
 			re = fmt.Sprintf("An error occurred checking your SoT ledger rank: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -345,9 +359,14 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 
 	// SoT: Set RAT cookie
-	case (command == "!setrat" || command == "!rat") && cmdNum == 2:
+	case (command == "!setrat" || command == "!rat"):
 		if chanInfo.Type != discordgo.ChannelTypeDM {
 			re := "You exposed your RAT cookie to a public channel. Please change your password immediately."
+			response.AnswerUser(s, m, re, true)
+			return
+		}
+		if cmdNum != 2 {
+			re := "The !setrat command requires you to provide a cookie. Usage `!setrat <cookie>`"
 			response.AnswerUser(s, m, re, true)
 			return
 		}
@@ -378,14 +397,21 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 
 	// User management: Register a new user
-	case (command == "!register" || command == "!reg") && cmdNum == 2:
+	case (command == "!register" || command == "!reg"):
 		if !userObj.IsAdmin() {
 			return
 		}
 		if chanInfo.Type != discordgo.ChannelTypeGuildText {
 			return
 		}
-		re, err := handler.RegisterUser(b.Db, msgArray[1])
+		var re string
+		var err error
+		if cmdNum == 2 {
+			re, err = handler.RegisterUser(b.Db, msgArray[1])
+		}
+		if cmdNum != 2 {
+			re, err = handler.RegisterUser(b.Db, "")
+		}
 		if err != nil {
 			re := fmt.Sprintf("An error occurred registering user: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -395,14 +421,21 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 
 	// User management: Un-register a new user
-	case (command == "!unregister" || command == "!unreg") && cmdNum == 2:
+	case (command == "!unregister" || command == "!unreg"):
 		if !userObj.IsAdmin() {
 			return
 		}
 		if chanInfo.Type != discordgo.ChannelTypeGuildText {
 			return
 		}
-		re, err := handler.UnregisterUser(b.Db, msgArray[1])
+		var re string
+		var err error
+		if cmdNum == 2 {
+			re, err = handler.UnregisterUser(b.Db, msgArray[1])
+		}
+		if cmdNum != 2 {
+			re, err = handler.UnregisterUser(b.Db, msgArray[1])
+		}
 		if err != nil {
 			re := fmt.Sprintf("An error occurred registering user: %v", err)
 			response.AnswerUser(s, m, re, true)
@@ -435,7 +468,12 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 	// Play a registered sound in a voice chat
-	case command == "!play" && cmdNum == 2:
+	case command == "!play":
+		if cmdNum != 2 {
+			re := "Usage: `!play <soundname>`"
+			response.AnswerUser(s, m, re, true)
+			return
+		}
 		soundName := msgArray[1]
 		var guildObj *discordgo.Guild
 		if chanInfo != nil {
