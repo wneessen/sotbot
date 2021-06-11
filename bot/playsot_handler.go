@@ -51,7 +51,6 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				_ = userObj.UpdateSotBalance(b.Db, b.HttpClient)
 				userStats, err := api.GetStats(b.HttpClient, userObj.RatCookie)
 				if err == nil {
-					userStats.ShipsSunk = userStats.ShipsSunk - 1
 					var statsString bytes.Buffer
 					gobEnc := gob.NewEncoder(&statsString)
 					if err := gobEnc.Encode(userStats); err != nil {
