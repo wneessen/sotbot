@@ -54,7 +54,7 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				}
 
 				if err := database.UserSetPref(b.Db, userObj.UserInfo.ID, "playing_sot",
-					time.Now().String()); err != nil {
+					time.Now().Format(time.RFC3339)); err != nil {
 					l.Errorf("Failed to update user status in database: %v", err)
 				}
 			}
@@ -66,15 +66,12 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 		userWasPlaying := database.UserGetPrefString(b.Db, userObj.UserInfo.ID, "playing_sot")
 		if userWasPlaying != "" {
 			l.Debugf("%v stopped playing SoT. Updating balance...", discordUser.Username)
-			err := userObj.UpdateSotBalance(b.Db, b.HttpClient)
+			userStartedPlaying, err := time.Parse(time.RFC3339, userWasPlaying)
 			if err != nil {
-				if err.Error() == "notify" {
-					dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
-						"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
-						"update your cookie.")
-					response.DmUser(s, userObj, dmMsg, true, false)
-				}
+				l.Errorf("Could not parse user start playing-time. Skipping announcement.")
+				return
 			}
+			_ = userObj.UpdateSotBalance(b.Db, b.HttpClient)
 
 			if err := database.UserDelPref(b.Db, userObj.UserInfo.ID, "playing_sot"); err != nil {
 				l.Errorf("Failed to delete user status in database: %v", err)
@@ -82,6 +79,10 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 
 			userBalance, err := database.GetBalance(b.Db, userObj.UserInfo.ID)
 			if err != nil {
+				return
+			}
+			if userBalance.LastUpdated <= userStartedPlaying.Unix() {
+				l.Debugf("User balance seems to not have changed during game play")
 				return
 			}
 

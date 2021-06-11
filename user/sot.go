@@ -17,7 +17,7 @@ func (u *User) UpdateSotBalance(d *gorm.DB, h *http.Client) error {
 
 	l.Debugf("Checking if user %q has a RAT cookie set...", u.UserInfo.UserId)
 	if !u.HasRatCookie() {
-		l.Debugf("User %q has not cookie set.", u.UserInfo.UserId)
+		l.Debugf("User %q has no cookie set.", u.UserInfo.UserId)
 		return nil
 	}
 
