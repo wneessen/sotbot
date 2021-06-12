@@ -2,12 +2,13 @@ package bot
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/handler"
 	"github.com/wneessen/sotbot/response"
 	"github.com/wneessen/sotbot/user"
-	"strings"
 )
 
 // Let's the bot tell you the current date/time when requested via !time command
@@ -387,7 +388,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			response.AnswerUser(s, m, re, true)
 			return
 		}
-		response.AnswerUser(s, m, em, true)
+		response.Embed(s, m.ChannelID, em)
 		return
 
 	// User management: Tell the user if they are registered
