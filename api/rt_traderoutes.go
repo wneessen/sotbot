@@ -7,13 +7,17 @@ import (
 	"github.com/wneessen/sotbot/httpclient"
 	"net/http"
 	"regexp"
+	"strings"
+	"time"
 )
 
 // Traderoutes defines the structure for the rarethief.com trading route
 // API response
 type Traderoutes struct {
-	Dates  string           `json:"trade_route_dates"`
-	Routes map[string]Route `json:"routes"`
+	Dates     string           `json:"trade_route_dates"`
+	Routes    map[string]Route `json:"routes"`
+	ValidFrom time.Time
+	ValidThru time.Time
 }
 
 // Route defines the structure of the sub part of the API response that is
@@ -49,6 +53,16 @@ func GetTraderoutes(hc *http.Client) (Traderoutes, error) {
 		if err := json.Unmarshal([]byte(validJson[1]), &routes); err != nil {
 			l.Errorf("Failed to unmarshal API response: %v", err)
 			return Traderoutes{}, err
+		}
+		dateArray := strings.SplitN(routes.Dates, " - ", 2)
+		fromTime, err := time.Parse("2006/01/02", fmt.Sprintf("%v/%v", time.Now().Year(), dateArray[0]))
+		if err == nil {
+			routes.ValidFrom = fromTime
+		}
+		toTime, err := time.Parse("2006/01/02 15:04:05",
+			fmt.Sprintf("%v/%v 23:59:59", time.Now().Year(), dateArray[1]))
+		if err == nil {
+			routes.ValidThru = toTime
 		}
 		return routes, nil
 	}
