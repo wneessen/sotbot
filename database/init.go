@@ -26,6 +26,7 @@ func ConnectDB(d, ll string) (*gorm.DB, error) {
 	}
 
 	if err := db.AutoMigrate(
+		&models.BotCache{},
 		&models.RegisteredUser{},
 		&models.UserPref{},
 		&models.SotBalance{},

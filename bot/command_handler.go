@@ -382,7 +382,7 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// RareThief: Get Traderoutes
 	case command == "!tr" && cmdNum == 1:
-		em, err := handler.GetTraderoutes(b.HttpClient)
+		em, err := handler.GetTraderoutes(b.HttpClient, b.Db)
 		if err != nil {
 			re := fmt.Sprintf("An error occurred fetching traderoutes: %v", err)
 			response.AnswerUser(s, m, re, true)

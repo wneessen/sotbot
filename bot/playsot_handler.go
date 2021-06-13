@@ -1,13 +1,11 @@
 package bot
 
 import (
-	"bytes"
-	"encoding/base64"
-	"encoding/gob"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/api"
+	"github.com/wneessen/sotbot/cache"
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/response"
 	"github.com/wneessen/sotbot/tools"
@@ -51,15 +49,15 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				_ = userObj.UpdateSotBalance(b.Db, b.HttpClient)
 				userStats, err := api.GetStats(b.HttpClient, userObj.RatCookie)
 				if err == nil {
-					var statsString bytes.Buffer
-					gobEnc := gob.NewEncoder(&statsString)
-					if err := gobEnc.Encode(userStats); err != nil {
-						l.Errorf("Failed to serialize user stats.")
+					statsBase64, err := cache.SerializeObj(userStats)
+					if err != nil {
+						l.Errorf("Failed to serialize user stats: %v", err)
 					}
-					statsBase64 := base64.StdEncoding.EncodeToString(statsString.Bytes())
-					if err := database.UserSetPref(b.Db, userObj.UserInfo.ID, "sot_stats",
-						statsBase64); err != nil {
-						l.Errorf("Failed to store user stats in DB: %v", err)
+					if err == nil {
+						if err := database.UserSetPref(b.Db, userObj.UserInfo.ID, "sot_stats",
+							statsBase64); err != nil {
+							l.Errorf("Failed to store user stats in DB: %v", err)
+						}
 					}
 				}
 
@@ -106,15 +104,9 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				l.Errorf("Failed to delete user stats in database: %v", err)
 			}
 			if oldStatsObjBase64 != "" {
-				var statsString bytes.Buffer
-				oldStatsObjString, err := base64.StdEncoding.DecodeString(oldStatsObjBase64)
-				if err != nil {
-					l.Errorf("Failed to decode base64 string: %v", err)
-				}
-				statsString.Write(oldStatsObjString)
-				gobDec := gob.NewDecoder(&statsString)
-				if err := gobDec.Decode(&oldStats); err != nil {
-					l.Errorf("Failed to serialize old user stats.")
+				if err := cache.DeserializeObj(oldStatsObjBase64, &oldStats); err != nil {
+					l.Errorf("Failed to deserialize old user stats: %v", err)
+					return
 				}
 				statsChanged = tools.CompareSotStats(userStats, oldStats)
 			}
