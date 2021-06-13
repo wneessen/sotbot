@@ -5,6 +5,9 @@
 SoTBot is a Sea of Thieves themed Discord bot written in Go (Golang) and makes heavy use of the 
 fantastic [discordgo](https://github.com/bwmarrin/discordgo) library.
 
+## Support
+Need support? Join [#sotbot](https://discord.gg/Z9kUtJnzR8) on our Discord server.
+
 ## Requirements
 To run SoTBot you require a Discord bot token. You can create one in the
 [Discord developer portal](https://discord.com/developers/applications)
