@@ -138,6 +138,17 @@ func (b *Bot) Run() {
 	b.Session.AddHandler(b.CommandHandler)
 	b.Session.AddHandler(b.UserPlaysSot)
 
+	// Slash commands
+	foo := &discordgo.ApplicationCommand{
+		Name:        "testcmd",
+		Description: "This is a slash command",
+	}
+
+	_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", foo)
+	if err != nil {
+		l.Errorf("Cannot create slash command: %v", err)
+	}
+
 	// What events do we wanna see?
 	b.Session.Identify.Intents = discordgo.IntentsGuilds |
 		discordgo.IntentsGuildMessages |
