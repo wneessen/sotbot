@@ -116,6 +116,10 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		err := handler.PlaySound(guildObj.VoiceStates, s, *b.Audio[soundName].Buffer, userObj.AuthorId, guildObj.ID)
 		if err != nil {
 			l.Errorf("An error occured when playing sound: %v", err)
+			if err := s.InteractionResponseDelete(s.State.User.ID, i.Interaction); err != nil {
+				l.Errorf("Failed to delete interaction response: %v", err)
+				return
+			}
 			return
 		}
 		b.AudioMutex.Unlock()
