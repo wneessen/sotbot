@@ -106,7 +106,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			return
 		}
 		response.SlashCmdResponseDeferred(s, i)
-		em, err := handler.GetDailyDeed(b.HttpClient, userObj)
+		em, err := handler.GetDailyDeed(b.HttpClient, userObj, b.Db)
 		if err != nil {
 			if err := s.InteractionResponseDelete(s.State.User.ID, i.Interaction); err != nil {
 				l.Errorf("Failed to delete interaction response: %v", err)
