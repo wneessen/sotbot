@@ -300,23 +300,6 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.AnswerUser(s, m, re, true)
 		return
 
-	// SoT: Daily deed
-	case (command == "!deed" || command == "!dd") && cmdNum == 1:
-		if !userObj.IsRegistered() {
-			return
-		}
-		if !userObj.HasRatCookie() {
-			return
-		}
-		em, err := handler.GetDailyDeed(b.HttpClient, userObj)
-		if err != nil {
-			re := fmt.Sprintf("An error occurred fetching the daily deed: %v", err)
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		response.Embed(s, m.ChannelID, em)
-		return
-
 	// SoT: Show user's latest achievement
 	case (command == "!achievement" || command == "!achieve") && cmdNum == 1:
 		if !userObj.IsRegistered() {

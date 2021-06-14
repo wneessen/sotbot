@@ -139,30 +139,6 @@ func (b *Bot) Run() {
 	b.Session.AddHandler(b.SlashCmdHandler)
 	b.Session.AddHandler(b.UserPlaysSot)
 
-	// List of slash commands and descriptions
-	slashCmds := []*discordgo.ApplicationCommand{
-		{
-			Name:        "help",
-			Description: "Let SoTBot DM you a list of all available commands",
-		},
-		{
-			Name:        "version",
-			Description: "Let SoTBot tell you some details about itself",
-		},
-		{
-			Name:        "play",
-			Description: "Let SoTBot join the voice channel you are currently in an play a sound",
-			Options: []*discordgo.ApplicationCommandOption{
-				{
-					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "sound-name",
-					Description: "Name of the sound to play",
-					Required:    true,
-				},
-			},
-		},
-	}
-
 	// What events do we wanna see?
 	b.Session.Identify.Intents = discordgo.IntentsGuilds |
 		discordgo.IntentsGuildMessages |
@@ -179,10 +155,10 @@ func (b *Bot) Run() {
 	defer func() { _ = b.Session.Close() }()
 
 	// Register the slash commands
-	for _, slashCmd := range slashCmds {
-		_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", slashCmd)
+	for _, slashCmd := range b.SlashCmdList() {
+		_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "843575000987336755", slashCmd)
 		if err != nil {
-			l.Errorf("Could not register slash command: %v", err)
+			l.Errorf("Could not register %q slash command: %v", slashCmd.Name, err)
 		}
 	}
 

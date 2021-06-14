@@ -7,7 +7,7 @@ import (
 
 func Announce(s *discordgo.Session, c, m string) {
 	l := log.WithFields(log.Fields{
-		"action": "bot.Announce",
+		"action": "response.Announce",
 	})
 	_, err := s.ChannelMessageSend(c, RandomArrr()+"! "+m)
 	if err != nil {

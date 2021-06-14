@@ -101,6 +101,16 @@ When requested the `/version` command, the bot will respond with it's current ve
 Example:
 ![Screenshot !version](documentation/version.png)
 
+### Sea of Thieves related slash commands
+Only registered users will be able to use the SoT specific bot features, as this requires API access, which
+needs to be assigned to users.
+
+#### Daily deeds
+With the `/dailydeed` slash command, you can ask the bot to fetch the currently active "daily deed" in SoT
+
+Example:
+![Screenshot /dailydeed](documentation/daily_deed.png)
+
 ## Commands
 SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. A couple of its commands are SoT-themed, but
 there are couple of fun non SoT-related commands as well.
@@ -242,12 +252,6 @@ The `!stats` or `!stat` command will provide you with some general stats about y
 
 Example:
 ![Screenshot !stats](documentation/stats.png)
-
-#### Daily deeds
-With the `!deed` or `!dd` command, you can ask the bot to fetch the currently active "daily deed" in SoT
-
-Example:
-![Screenshot !season](documentation/daily_deed.png)
 
 #### Traderoutes
 Get the current Traderoutes from rarethief.com with `!tr`

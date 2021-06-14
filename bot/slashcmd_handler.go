@@ -44,14 +44,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 	switch {
 	case cmdName == "help":
 		helpTexts := handler.Help()
-		if err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionApplicationCommandResponseData{
-				Content: fmt.Sprintf("%v, please check your DMs", userObj.Mention),
-			},
-		}); err != nil {
-			l.Errorf("Failed to respond to interaction")
-		}
+		response.SlashCmdResponse(s, i, "Please check your DMs.", true)
 		for _, textPart := range helpTexts {
 			response.DmUser(s, userObj, "`"+textPart+"`", false, true)
 		}
@@ -59,27 +52,19 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 
 	case cmdName == "version":
 		versionString := handler.TellVersion()
-		if err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionApplicationCommandResponseData{
-				Content: versionString,
-			},
-		}); err != nil {
-			l.Errorf("Failed to execute version string slash command: %v", err)
-		}
+		response.SlashCmdResponse(s, i, versionString, true)
+		return
+
+	case cmdName == "time":
+		timeString := handler.TellTime()
+		response.SlashCmdResponse(s, i, timeString, true)
 		return
 
 	case cmdName == "play":
 		soundName := i.Data.Options[0].StringValue()
 		if b.Audio[soundName].Buffer == nil {
-			if err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionApplicationCommandResponseData{
-					Content: fmt.Sprintf("I don't have a soundfile called %q", soundName),
-				},
-			}); err != nil {
-				l.Errorf("Failed respond to user's slash command request: %v", err)
-			}
+			response.SlashCmdResponse(s, i,
+				fmt.Sprintf("I don't have a registered sound file call %v", soundName), true)
 			return
 		}
 
@@ -91,27 +76,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			}
 		}
 		if guildObj == nil {
-			if err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionApplicationCommandResponseData{
-					Content: "You are not part of a voice channel right now.",
-				},
-			}); err != nil {
-				l.Errorf("Failed respond to user's slash command request: %v", err)
-			}
+			response.SlashCmdResponse(s, i, "You are not part of a voice channel right now.", true)
 			return
 		}
 
-		if err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
-			Data: &discordgo.InteractionApplicationCommandResponseData{
-				Content: "",
-			},
-		}); err != nil {
-			l.Errorf("Failed respond to user's slash command request: %v", err)
-			return
-		}
-
+		response.SlashCmdResponseDeferred(s, i)
 		b.AudioMutex.Lock()
 		err := handler.PlaySound(guildObj.VoiceStates, s, *b.Audio[soundName].Buffer, userObj.AuthorId, guildObj.ID)
 		if err != nil {
@@ -127,6 +96,28 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			l.Errorf("Failed to delete interaction response: %v", err)
 			return
 		}
+		return
+
+	case cmdName == "dailydeed":
+		if !userObj.IsRegistered() {
+			return
+		}
+		if !userObj.HasRatCookie() {
+			return
+		}
+		response.SlashCmdResponseDeferred(s, i)
+		em, err := handler.GetDailyDeed(b.HttpClient, userObj)
+		if err != nil {
+			if err := s.InteractionResponseDelete(s.State.User.ID, i.Interaction); err != nil {
+				l.Errorf("Failed to delete interaction response: %v", err)
+				return
+			}
+			response.SlashCmdResponse(s, i,
+				fmt.Sprintf("An error occured fetching the daily deed: %v", err), true)
+			return
+		}
+
+		response.SlashCmdEmbedDeferred(s, i, em)
 		return
 	}
 }
