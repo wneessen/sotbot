@@ -159,7 +159,7 @@ func (b *Bot) Run() {
 	for _, slashCmd := range b.SlashCmdList() {
 		go func(s *discordgo.ApplicationCommand) {
 			randNum, _ := random.Number(2000)
-			randNum = +1000
+			randNum += 1000
 			randDelay, _ := time.ParseDuration(fmt.Sprintf("%dms", randNum))
 			time.Sleep(randDelay)
 			l.Debugf("[%v] Registering...", s.Name)
