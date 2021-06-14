@@ -111,6 +111,14 @@ With the `/dailydeed` slash command, you can ask the bot to fetch the currently 
 Example:
 ![Screenshot /dailydeed](documentation/daily_deed.png)
 
+#### Latest achievement
+Using the `/achievement` slash command, the bot will fetch your achievements list from the API and
+present you with your latest completed achievement.
+
+Example:
+![Screenshot /achievement](documentation/achievement.png)
+
+
 ## Commands
 SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. A couple of its commands are SoT-themed, but
 there are couple of fun non SoT-related commands as well.
@@ -193,13 +201,6 @@ with the current balance - this is also configurable.
 
 Example:
 ![Screenshot auto_balance](documentation/auto_balance.png)
-
-#### Latest achievement
-Using the `!achievement` or `!achieve` command, the bot will fetch your achievements list from the API and 
-present you with your latest completed achievement.
-
-Example:
-![Screenshot !achievement](documentation/achievement.png)
 
 #### Season progress
 When you enter the `!season` command, the bot will fetch your season progress and present you with a little 

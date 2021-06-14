@@ -300,23 +300,6 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.AnswerUser(s, m, re, true)
 		return
 
-	// SoT: Show user's latest achievement
-	case (command == "!achievement" || command == "!achieve") && cmdNum == 1:
-		if !userObj.IsRegistered() {
-			return
-		}
-		if !userObj.HasRatCookie() {
-			return
-		}
-		em, err := handler.GetSotAchievement(b.HttpClient, userObj)
-		if err != nil {
-			re := fmt.Sprintf("An error occurred checking your SoT latest achievement: %v", err)
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		response.Embed(s, m.ChannelID, em)
-		return
-
 	// SoT: Quote a random SoT pirate code article
 	case command == "!code" && cmdNum == 1:
 		em, err := handler.GetSotRandomCode()

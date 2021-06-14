@@ -56,6 +56,12 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			Name:        "dailydeed",
 			Description: "Let SoTBot show you the currently active daily deed to complete in SoT",
 		},
+
+		// SoT: Retrieve the users latest achievement in SoT
+		{
+			Name:        "achievement",
+			Description: "Let SoTBot tell you about your latest achievement in SoT",
+		},
 	}
 
 	return slashCmds

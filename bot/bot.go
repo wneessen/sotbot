@@ -156,10 +156,15 @@ func (b *Bot) Run() {
 
 	// Register the slash commands
 	for _, slashCmd := range b.SlashCmdList() {
-		_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", slashCmd)
-		if err != nil {
-			l.Errorf("Could not register %q slash command: %v", slashCmd.Name, err)
-		}
+		go func(s *discordgo.ApplicationCommand) {
+			time.Sleep(time.Millisecond * 500)
+			l.Debugf("[%v] Registering...", s.Name)
+			_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", s)
+			if err != nil {
+				l.Errorf("Could not register %q slash command: %v", s.Name, err)
+			}
+			l.Debugf("[%v] Registration completed", s.Name)
+		}(slashCmd)
 	}
 
 	// We need a signal channel
