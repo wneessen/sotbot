@@ -138,15 +138,34 @@ func (b *Bot) Run() {
 	b.Session.AddHandler(b.CommandHandler)
 	b.Session.AddHandler(b.UserPlaysSot)
 
-	// Slash commands
-	foo := &discordgo.ApplicationCommand{
-		Name:        "testcmd",
-		Description: "This is a slash command",
+	// Slash commands#
+	commandHandlers := map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
+		"basic-command": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionApplicationCommandResponseData{
+					Content: "Hey there! Congratulations, you just executed your first slash command",
+				},
+			})
+		},
+	}
+	b.Session.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		if h, ok := commandHandlers[i.Data.Name]; ok {
+			h(s, i)
+		}
+	})
+	foo := []*discordgo.ApplicationCommand{
+		{
+			Name:        "basic-command",
+			Description: "This is a slash command",
+		},
 	}
 
-	_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", foo)
-	if err != nil {
-		l.Errorf("Cannot create slash command: %v", err)
+	for _, v := range foo {
+		_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", v)
+		if err != nil {
+			l.Errorf("Cannot create slash command: %v", err)
+		}
 	}
 
 	// What events do we wanna see?
