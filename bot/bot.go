@@ -180,7 +180,7 @@ func (b *Bot) Run() {
 
 	// Register the slash commands
 	for _, slashCmd := range slashCmds {
-		_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "843575000987336755", slashCmd)
+		_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", slashCmd)
 		if err != nil {
 			l.Errorf("Could not register slash command: %v", err)
 		}
