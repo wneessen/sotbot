@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/ryanbradynd05/go-tmdb"
 	log "github.com/sirupsen/logrus"
@@ -9,6 +10,7 @@ import (
 	"github.com/wneessen/sotbot/audio"
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/httpclient"
+	"github.com/wneessen/sotbot/random"
 	"gorm.io/gorm"
 	"net/http"
 	"os"
@@ -152,16 +154,19 @@ func (b *Bot) Run() {
 		l.Errorf("Error opening discord session: %v", err)
 		return
 	}
-	defer func() { _ = b.Session.Close() }()
 
 	// Register the slash commands
 	for _, slashCmd := range b.SlashCmdList() {
 		go func(s *discordgo.ApplicationCommand) {
-			time.Sleep(time.Millisecond * 500)
+			randNum, _ := random.Number(2000)
+			randNum = +1000
+			randDelay, _ := time.ParseDuration(fmt.Sprintf("%dms", randNum))
+			time.Sleep(randDelay)
 			l.Debugf("[%v] Registering...", s.Name)
 			_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", s)
 			if err != nil {
-				l.Errorf("Could not register %q slash command: %v", s.Name, err)
+				l.Errorf("[%v] Registration failed: %v", s.Name, err)
+				return
 			}
 			l.Debugf("[%v] Registration completed", s.Name)
 		}(slashCmd)
@@ -184,7 +189,7 @@ func (b *Bot) Run() {
 				rs == syscall.SIGABRT ||
 				rs == syscall.SIGINT ||
 				rs == syscall.SIGTERM {
-				l.Infof("received %q signal. Exiting.", rs)
+				l.Warnf("received %q signal. Exiting.", rs)
 
 				// Cleanly close down the Discord session.
 				if err := b.Session.Close(); err != nil {

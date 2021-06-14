@@ -100,63 +100,96 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		err := handler.PlaySound(guildObj.VoiceStates, s, *b.Audio[soundName].Buffer, userObj.AuthorId, guildObj.ID)
 		if err != nil {
 			l.Errorf("An error occured when playing sound: %v", err)
-			if err := s.InteractionResponseDelete(s.State.User.ID, i.Interaction); err != nil {
-				l.Errorf("Failed to delete interaction response: %v", err)
-				return
-			}
+			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
 		b.AudioMutex.Unlock()
-		if err := s.InteractionResponseDelete(s.State.User.ID, i.Interaction); err != nil {
-			l.Errorf("Failed to delete interaction response: %v", err)
-			return
-		}
+		response.SlashCmdDel(s, i.Interaction)
 		return
 
 	// SoT: Tell the requester about the currently active daily deed in SoT
 	case cmdName == "dailydeed":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
 		if !userObj.IsRegistered() {
+			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
 		if !userObj.HasRatCookie() {
+			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
-		response.SlashCmdResponseDeferred(s, i.Interaction)
 		em, err := handler.GetDailyDeed(b.HttpClient, userObj, b.Db)
 		if err != nil {
-			if err := s.InteractionResponseDelete(s.State.User.ID, i.Interaction); err != nil {
-				l.Errorf("Failed to delete interaction response: %v", err)
-				return
-			}
+			response.SlashCmdDel(s, i.Interaction)
 			response.SlashCmdResponse(s, i.Interaction, userObj,
 				fmt.Sprintf("An error occured fetching the daily deed: %v", err), true)
 			return
 		}
-
 		response.SlashCmdEmbedDeferred(s, i, em)
 		return
 
 	// SoT: Reply with the requester's latest achievement in SoT
 	case cmdName == "achievement":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
 		if !userObj.IsRegistered() {
+			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
 		if !userObj.HasRatCookie() {
+			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
-		response.SlashCmdResponseDeferred(s, i.Interaction)
 		em, err := handler.GetSotAchievement(b.HttpClient, userObj)
 		if err != nil {
-			if err := s.InteractionResponseDelete(s.State.User.ID, i.Interaction); err != nil {
-				l.Errorf("Failed to delete interaction response: %v", err)
-				return
-			}
+			response.SlashCmdDel(s, i.Interaction)
 			response.SlashCmdResponse(s, i.Interaction, userObj,
 				fmt.Sprintf("An error occured fetching the latest achievement: %v", err), true)
 			return
 		}
-
 		response.SlashCmdEmbedDeferred(s, i, em)
+		return
+
+	// SoT: Retrieve the current user balance from the SoT API
+	case cmdName == "balance":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.HasRatCookie() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		re, err := handler.GetSotBalance(b.Db, b.HttpClient, userObj)
+		if err != nil {
+			response.SlashCmdDel(s, i.Interaction)
+			re = fmt.Sprintf("An error occurred checking your SoT balance: %v", err)
+			response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		return
+
+	// SoT: Retrieve user reputation with a specific faction/company
+	case cmdName == "reputation":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.HasRatCookie() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		repFaction := i.Data.Options[0].StringValue()
+		re, err := handler.GetSotReputation(b.HttpClient, userObj, repFaction)
+		if err != nil {
+			response.SlashCmdDel(s, i.Interaction)
+			re = fmt.Sprintf("An error occurred checking your SoT reputation: %v", err)
+			response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 		return
 	}
 }

@@ -62,6 +62,36 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			Name:        "achievement",
 			Description: "Let SoTBot tell you about your latest achievement in SoT",
 		},
+
+		// SoT: Get the users current SoT balance
+		{
+			Name:        "balance",
+			Description: "Let SoTBot tell you your current SoT balance",
+		},
+
+		// SoT: Get users faction/company reputation
+		{
+			Name:        "reputation",
+			Description: "Let SoTBot tell you your current SoT reputation with a specific faction/company",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "faction",
+					Description: "Name of the faction/company",
+					Required:    true,
+					Choices: []*discordgo.ApplicationCommandOptionChoice{
+						{Name: "Athena's Fortune", Value: "athena"},
+						{Name: "Bilge Rats", Value: "bilge"},
+						{Name: "Gold Hoarder", Value: "hoarder"},
+						{Name: "Hunter's Call", Value: "hunter"},
+						{Name: "Merchang Alliance", Value: "merchant"},
+						{Name: "Order of Souls", Value: "order"},
+						{Name: "Reaper's Bone", Value: "reaper"},
+						{Name: "Sea Dogs", Value: "seadog"},
+					},
+				},
+			},
+		},
 	}
 
 	return slashCmds

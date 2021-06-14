@@ -118,6 +118,29 @@ present you with your latest completed achievement.
 Example:
 ![Screenshot /achievement](documentation/achievement.png)
 
+#### User balance
+With the `/balance` slash command, the Bot will query you current balance of Gold, Ancient Coins and Doubloons
+from the API and will output it to you in the channel you requested it.
+
+Example:
+![Screenshot !balance](documentation/balance.png)
+
+#### Faction/Company reputation
+The `/reputation` slash command, followed by one of the supported faction names, will let the bot fetch
+your current reputation and XP level with the requested faction/company.
+
+Supported factions:
+* athena
+* bilge
+* hoarder
+* hunter
+* merchant
+* order
+* reaper
+* seadog
+
+Example:
+![Screenshot !rep merchant](documentation/reputation.png)
 
 ## Commands
 SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. A couple of its commands are SoT-themed, but
@@ -184,13 +207,6 @@ has likely expired and you need to renew it. Once done, it will not notify you a
 flag is set, the bot will also not try to access the API anymore to avoid too many failed requests until the 
 "notifed" flag was removed.
 
-#### User balance
-With the `!balance` or `!bal` command, the Bot will query you current balance of Gold, Ancient Coins and Doubloons 
-from the API and will output it to you in the channel you requested it.
-
-Example:
-![Screenshot !balance](documentation/balance.png)
-
 #### Automatic user balance tracking
 The bot is able to track the users presence state. If a registered user has their "Currently playing" feature
 associated with Discord and starts playing "Sea of Thieves", the bot will automagically fetch the users current
@@ -208,23 +224,6 @@ summary of it.
 
 Example:
 ![Screenshot !season](documentation/season.png)
-
-#### Faction/Company reputation
-The `!reputation` or `!rep` command, followed by one of the supported faction names, will let the bot fetch 
-your current reputation and XP level with the requested faction/company.
-
-Supported factions:
-  * athena
-  * bilge
-  * hoarder
-  * hunter
-  * merchant
-  * order 
-  * reaper
-  * seadog
-
-Example:
-![Screenshot !rep merchant](documentation/reputation.png)
 
 #### Faction/company ledger stats
 With the `!ledger` or `!led` command, followed by one of the supported faction names, the bot fetch
