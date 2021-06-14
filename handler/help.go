@@ -19,7 +19,6 @@ func Help() []string {
    [!unregister|!unreg] <@nick>  - Delete <@nick> from registered user's database
    [!memory|!mem]                - Show some memory usage information`, `Sea of Thieves specific commands:
    !code                         - Replies with a random SoT pirate code article
-   [!ledger|!led] <fac.>         - Replies with your current ledger position/rank in the requested faction[1][2]
    !season                       - Replies with your current SoT season progress[1][2]
    !tr                           - Replies with the current traderoutes from rarethief
    [!setrat|!rat] <cookie>       - Set/update your SoT RAT cookie in the bot's DB[1][3]

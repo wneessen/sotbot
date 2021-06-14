@@ -142,6 +142,28 @@ Supported factions:
 Example:
 ![Screenshot !rep merchant](documentation/reputation.png)
 
+#### Faction/company ledger stats
+With the `/ledger` or slash command, followed by one of the supported faction names, the bot fetch
+your current position in the factions ledger, together with the rank and the amount of poins missing, to level
+up to the next rank.
+
+Supported factions:
+* athena
+* hoarder
+* merchant
+* order
+* reaper
+
+Example:
+![Screenshot !rep ledger](documentation/ledger.png)
+
+#### General statistics
+The `/stats` slash command will provide you with some general stats about your SoT travels
+
+Example:
+![Screenshot !stats](documentation/stats.png)
+
+
 ## Commands
 SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. A couple of its commands are SoT-themed, but
 there are couple of fun non SoT-related commands as well.
@@ -225,33 +247,12 @@ summary of it.
 Example:
 ![Screenshot !season](documentation/season.png)
 
-#### Faction/company ledger stats
-With the `!ledger` or `!led` command, followed by one of the supported faction names, the bot fetch
-your current position in the factions ledger, together with the rank and the amount of poins missing, to level
-up to the next rank.
-
-Supported factions:
-* athena
-* hoarder
-* merchant
-* order
-* reaper
-
-Example:
-![Screenshot !rep ledger](documentation/ledger.png)
-
 #### The pirate code
 When you issue a `!code` in the channel, the bot will present you with a random article from the SoT's pirate
 code.
 
 Example:
 ![Screenshot !code](documentation/code.png)
-
-#### General statistics
-The `!stats` or `!stat` command will provide you with some general stats about your SoT travels
-
-Example:
-![Screenshot !stats](documentation/stats.png)
 
 #### Traderoutes
 Get the current Traderoutes from rarethief.com with `!tr`

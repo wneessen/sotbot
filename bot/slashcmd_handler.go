@@ -191,5 +191,48 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 		return
+
+	// SoT: Retrieve user ledger position with a specific faction/company
+	case cmdName == "ledger":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.HasRatCookie() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		ledFaction := i.Data.Options[0].StringValue()
+		re, err := handler.GetSotLedger(b.HttpClient, userObj, ledFaction)
+		if err != nil {
+			response.SlashCmdDel(s, i.Interaction)
+			re = fmt.Sprintf("An error occurred checking your SoT ledger: %v", err)
+			response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		return
+
+	// SoT: Retrieve user ledger position with a specific faction/company
+	case cmdName == "stats":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.HasRatCookie() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		re, err := handler.GetSotStats(b.HttpClient, userObj)
+		if err != nil {
+			response.SlashCmdDel(s, i.Interaction)
+			re = fmt.Sprintf("An error occurred checking your SoT user stats: %v", err)
+			response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		return
 	}
 }

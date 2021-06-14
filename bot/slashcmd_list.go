@@ -92,6 +92,33 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 				},
 			},
 		},
+
+		// SoT: Get users overall ledger position for a specific faction/company
+		{
+			Name:        "ledger",
+			Description: "Let SoTBot tell you your current SoT ledger position with a specific faction/company",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "faction",
+					Description: "Name of the faction/company",
+					Required:    true,
+					Choices: []*discordgo.ApplicationCommandOptionChoice{
+						{Name: "Athena's Fortune", Value: "athena"},
+						{Name: "Gold Hoarder", Value: "hoarder"},
+						{Name: "Merchang Alliance", Value: "merchant"},
+						{Name: "Order of Souls", Value: "order"},
+						{Name: "Reaper's Bone", Value: "reaper"},
+					},
+				},
+			},
+		},
+
+		// SoT: Get the users stats
+		{
+			Name:        "stats",
+			Description: "Let SoTBot tell you some SoT user stats",
+		},
 	}
 
 	return slashCmds
