@@ -82,6 +82,25 @@ The config currently supports the following format:
 * `owm_api_key`: For the weather commands to work, you need to have a valid OWM API token. For more details
   check the [OWM API documentation](https://openweathermap.org/appid)
 
+## Slash Commands
+Since Discord introduced slash commands, SoTBot is gradually transforming some it's legacy !commands into slash
+commands.
+
+### Help
+The `/help` slash command will DM you a list of available commands
+
+### Play sound feature
+With the `/play` feature, when you are active in a voice channel, you can have the bot join and play a predefined
+sound. The bot is "shipped" with predefined sounds in the config (see `audiofiles` in `sotbot.json`). So using
+the command `/play airhorn` will have your bot look up, which voice chat you are currently in, try to join the
+voice chat and play that sound. Then immediately leave the voice chat again.
+
+### Version
+When requested the `/version` command, the bot will respond with it's current version and some build information.
+
+Example:
+![Screenshot !version](documentation/version.png)
+
 ## Commands
 SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. A couple of its commands are SoT-themed, but
 there are couple of fun non SoT-related commands as well.
@@ -236,12 +255,6 @@ Get the current Traderoutes from rarethief.com with `!tr`
 Example:
 ![Screenshot !tr](documentation/traderoutes.png)
 
-### Play sound feature
-With the `!play` feature, when you are active in a voice channel, you can have the bot join and play a predefined
-sound. The bot is "shipped" with predefined sounds in the config (see `audiofiles` in `sotbot.json`). So using 
-the command `!play airhorn` will have your bot look up, which voice chat you are currently in, try to join the
-voice chat and play that sound. Then immediately leave the voice chat again.
-
 ### Time feature
 Using the `!time` command, the bot will present you with the current date and time.
 
@@ -283,12 +296,6 @@ error will be returned from the bot.
 
 Example:
 ![Screenshot !weather](documentation/weather.png)
-
-### Version
-When requested the `!version` command, the bot will respond with it's current version and some build information.
-
-Example:
-![Screenshot !version](documentation/version.png)
 
 ## Helpful stuff
 ### Converting a MP3 file to a bot-compatible DCA file
