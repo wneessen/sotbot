@@ -56,19 +56,13 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Placeholder for the legacy !airhorn command
 	case command == "!airhorn" && cmdNum == 1:
-		re := "The !airhorn command has been renamed to `!play <soundname>`. Try `!play airhorn` instead"
+		re := "The !airhorn command is now a slash-command. Try `/play airhorn` instead"
 		response.AnswerUser(s, m, re, true)
 		return
 
 	// Tell us the current time
 	case command == "!time" && cmdNum == 1:
 		re := handler.TellTime()
-		response.AnswerUser(s, m, re, true)
-		return
-
-	// Version information
-	case (command == "!version" || command == "!ver") && cmdNum == 1:
-		re := handler.TellVersion()
 		response.AnswerUser(s, m, re, true)
 		return
 
@@ -88,14 +82,6 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			re = fmt.Sprintf("Sorry, an error occurred calculating the uptime: %v", err)
 		}
 		response.AnswerUser(s, m, re, true)
-		return
-
-	// Reply with a help text in the DMs
-	case command == "!help" && cmdNum == 1:
-		re := handler.Help()
-		for _, msgText := range re {
-			response.DmUser(s, userObj, "`"+msgText+"`", false, true)
-		}
 		return
 
 	// Reply with random useless fact
@@ -467,39 +453,5 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			response.AnswerUser(s, m, re, true)
 			return
 		}
-
-	// Play a registered sound in a voice chat
-	case command == "!play":
-		if cmdNum != 2 {
-			re := "Usage: `!play <soundname>`"
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		soundName := msgArray[1]
-		var guildObj *discordgo.Guild
-		if chanInfo != nil {
-			guildObj, err = s.State.Guild(chanInfo.GuildID)
-			if err != nil {
-				l.Errorf("Could not find guild of channel %q: %v", chanInfo.GuildID, err)
-			}
-		}
-		if guildObj != nil && b.Audio[soundName].Buffer != nil {
-			b.AudioMutex.Lock()
-			err := handler.PlaySound(guildObj.VoiceStates, s, *b.Audio[soundName].Buffer, userObj.AuthorId, guildObj.ID)
-			if err != nil {
-				re := fmt.Sprintf("An error occurred when playing the sound: %v", err.Error())
-				response.AnswerUser(s, m, re, true)
-			}
-			b.AudioMutex.Unlock()
-			return
-		}
-		re := fmt.Sprintf("I don't have a registered sound file named %q", soundName)
-		response.AnswerUser(s, m, re, true)
-		return
-
-	default:
-		re := "Unknown command. See !help for more information"
-		response.AnswerUser(s, m, re, true)
-		return
 	}
 }

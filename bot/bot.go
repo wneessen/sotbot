@@ -136,36 +136,31 @@ func (b *Bot) Run() {
 	// Add handlers
 	b.Session.AddHandler(b.BotReadyHandler)
 	b.Session.AddHandler(b.CommandHandler)
+	b.Session.AddHandler(b.SlashCmdHandler)
 	b.Session.AddHandler(b.UserPlaysSot)
 
-	// Slash commands#
-	commandHandlers := map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"basic-command": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionApplicationCommandResponseData{
-					Content: "Hey there! Congratulations, you just executed your first slash command",
-				},
-			})
-		},
-	}
-	b.Session.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		if h, ok := commandHandlers[i.Data.Name]; ok {
-			h(s, i)
-		}
-	})
-	foo := []*discordgo.ApplicationCommand{
+	// List of slash commands and descriptions
+	slashCmds := []*discordgo.ApplicationCommand{
 		{
-			Name:        "basic-command",
-			Description: "This is a slash command",
+			Name:        "help",
+			Description: "Let SoTBot DM you a list of all available commands",
 		},
-	}
-
-	for _, v := range foo {
-		_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", v)
-		if err != nil {
-			l.Errorf("Cannot create slash command: %v", err)
-		}
+		{
+			Name:        "version",
+			Description: "Let SoTBot tell you some details about itself",
+		},
+		{
+			Name:        "play",
+			Description: "Let SoTBot join the voice channel you are currently in an play a sound",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "sound-name",
+					Description: "Name of the sound to play",
+					Required:    true,
+				},
+			},
+		},
 	}
 
 	// What events do we wanna see?
@@ -180,6 +175,15 @@ func (b *Bot) Run() {
 	if err != nil {
 		l.Errorf("Error opening discord session: %v", err)
 		return
+	}
+	defer func() { _ = b.Session.Close() }()
+
+	// Register the slash commands
+	for _, slashCmd := range slashCmds {
+		_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "843575000987336755", slashCmd)
+		if err != nil {
+			l.Errorf("Could not register slash command: %v", err)
+		}
 	}
 
 	// We need a signal channel
