@@ -119,6 +119,20 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			},
 		},
 
+		// UserMgmt/SoT: Store RAT cookie in bot DB
+		{
+			Name:        "setrat",
+			Description: "Provide your RAT cookie to the SoTBot",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "rat-cookie",
+					Description: "Full RAT cookie string as provided by the SoT-RAT-Extractor",
+					Required:    true,
+				},
+			},
+		},
+
 		// Let the bot tell you how late it is with /time
 		{
 			Name:        "time",

@@ -54,27 +54,6 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	l.Debugf("Received a %q command from %v", command, userObj.AuthorName)
 	switch {
 
-	// SoT: Set RAT cookie
-	case (command == "!setrat" || command == "!rat"):
-		if chanInfo.Type != discordgo.ChannelTypeDM {
-			re := "You exposed your RAT cookie to a public channel. Please change your password immediately."
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		if cmdNum != 2 {
-			re := "The !setrat command requires you to provide a cookie. Usage `!setrat <cookie>`"
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		re, err := handler.UserSetRatCookie(b.Db, b.Config, userObj, msgArray[1])
-		if err != nil {
-			re := fmt.Sprintf("An error occurred setting/updating your RAT cookie: %v", err)
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		response.AnswerUser(s, m, re, true)
-		return
-
 	// User management: Tell the user if they are registered
 	case (command == "!userinfo" || command == "!info") && cmdNum == 1:
 		re := handler.UserIsRegistered(userObj)

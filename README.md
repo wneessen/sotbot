@@ -200,6 +200,22 @@ Example:
 Only registered users will be able to use the SoT specific bot features, as this requires API access, which
 needs to be assigned to users.
 
+#### RAT Cookie registration
+Once you have you user registered and obtained a valid cookie using the `SoT-RAT-Extractor`, you have to store it in the
+bot's database. To do so, you have to issue the `/setrat` slash command followed by the extracted cookie. The command
+will be handled as ephemeral message and is only visable to you and the bot.
+
+Example:
+![Screenshot /setrat](documentation/ratcookie.png)
+
+**Note:** As mentioned already, the cookie situation is not perfect and the cookie will expire after 14 days. This
+means that after 14 days, the bot will not be able to access the API anymore until you update your cookie. When
+the bot runs into 3 continous failed API request, the bot will notify you in a DM about the fact that your cookie
+has likely expired and you need to renew it. Once done, it will not notify you anymore unless you used the
+`/setrat` command again to update your cookie. This will reset the "notified" flag for the user. When the "notified"
+flag is set, the bot will also not try to access the API anymore to avoid too many failed requests until the
+"notifed" flag was removed.
+
 #### Daily deeds
 With the `/dailydeed` slash command, you can ask the bot to fetch the currently active "daily deed" in SoT
 
@@ -300,22 +316,6 @@ Admins can also delete users from the database again, using the `!unregister` or
 Example: `!unregister @johndoe`
 
 
-#### RAT Cookie registration
-Once you have you user registered and obtained a valid cookie using the `SoT-RAT-Extractor`, you have to store
-it in the bot's database. To do so, you have to DM the bot and use the `!setrat` or `!rat` command followed by the 
-extracted cookie. Please keep in mind that this only works in the DMs and will not work in a public channel
-for security reasons.
-
-Example:
-![Screenshot !setrat](documentation/ratcookie.png)
-
-**Note:** As mentioned already, the cookie situation is not perfect and the cookie will expire after 14 days. This
-means that after 14 days, the bot will not be able to access the API anymore until you update your cookie. When
-the bot runs into 3 continous failed API request, the bot will notify you in a DM about the fact that your cookie
-has likely expired and you need to renew it. Once done, it will not notify you anymore unless you used the 
-`!setrat` command again to update your cookie. This will reset the "notified" flag for the user. When the "notified"
-flag is set, the bot will also not try to access the API anymore to avoid too many failed requests until the 
-"notifed" flag was removed.
 
 ## Helpful stuff
 ### Converting a MP3 file to a bot-compatible DCA file

@@ -55,7 +55,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 	// DM the commands help to the user
 	case cmdName == "help":
 		helpTexts := handler.Help()
-		response.SlashCmdResponse(s, i.Interaction, userObj, "Please check your DMs.", true)
+		response.SlashCmdResponseMention(s, i.Interaction, userObj, "Please check your DMs.")
 		for _, textPart := range helpTexts {
 			response.DmUser(s, userObj, "`"+textPart+"`", false, true)
 		}
@@ -64,13 +64,13 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 	// Reply with the version string of the bot
 	case cmdName == "version":
 		re := handler.TellVersion()
-		response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+		response.SlashCmdResponseMention(s, i.Interaction, userObj, re)
 		return
 
 	// Tell the current time
 	case cmdName == "time":
 		re := handler.TellTime()
-		response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+		response.SlashCmdResponseMention(s, i.Interaction, userObj, re)
 		return
 
 	// Tell the bot's uptime
@@ -112,8 +112,8 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 	case cmdName == "play":
 		soundName := i.Data.Options[0].StringValue()
 		if b.Audio[soundName].Buffer == nil {
-			response.SlashCmdResponse(s, i.Interaction, userObj,
-				fmt.Sprintf("I don't have a registered sound file call %v", soundName), true)
+			response.SlashCmdResponseMention(s, i.Interaction, userObj,
+				fmt.Sprintf("I don't have a registered sound file call %v", soundName))
 			return
 		}
 
@@ -125,8 +125,8 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			}
 		}
 		if guildObj == nil {
-			response.SlashCmdResponse(s, i.Interaction, userObj, "You are not part of a voice channel right now.",
-				true)
+			response.SlashCmdResponseMention(s, i.Interaction, userObj,
+				"You are not part of a voice channel right now.")
 			return
 		}
 
@@ -389,6 +389,24 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			return
 		}
 		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
+		return
+
+	// UserMgmt/SoT: Store the RAT cookie in the Bot DB
+	case cmdName == "setrat":
+		response.SlashCmdResponseDeferredEphemeral(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			re := "Sorry, but you are not a registered user. Please contact a admin to get registered."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		ratCookie := i.Data.Options[0].StringValue()
+		re, err := handler.UserSetRatCookie(b.Db, b.Config, userObj, ratCookie)
+		if err != nil {
+			re = fmt.Sprintf("An error occurred storing your RAT cookie: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 		return
 	}
 }
