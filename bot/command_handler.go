@@ -54,17 +54,6 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	l.Debugf("Received a %q command from %v", command, userObj.AuthorName)
 	switch {
 
-	// Reply with random useless fact
-	case command == "!fact" && cmdNum == 1:
-		re, err := handler.RandomFact(b.HttpClient)
-		if err != nil {
-			re = fmt.Sprintf("An error occurred while fetching the random fact API: %v", err)
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		response.AnswerUser(s, m, re, true)
-		return
-
 	// Check Urban dictionary
 	case command == "!ud" || command == "!urban":
 		if cmdNum == 1 {
@@ -238,28 +227,5 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		response.AnswerUser(s, m, re, true)
 		return
-
-	// OWM: Current weather
-	case command == "!weather":
-		if cmdNum == 1 {
-			re := "You need to tell me a location as well. Usage: `!weather <location>`"
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		if cmdNum > 1 {
-			if b.OwmClient == nil {
-				re := "You haven't specified a OpenWeatherMap API key in your config file."
-				response.AnswerUser(s, m, re, true)
-				return
-			}
-			re, err := handler.GetCurrentWeather(b.OwmClient, msgArray[1:])
-			if err != nil {
-				re := fmt.Sprintf("An error occurred fetching OWM weather data: %v", err)
-				response.AnswerUser(s, m, re, true)
-				return
-			}
-			response.AnswerUser(s, m, re, true)
-			return
-		}
 	}
 }

@@ -140,7 +140,7 @@ voice chat and play that sound. Then immediately leave the voice chat again.
 When requested the `/version` command, the bot will respond with it's current version and some build information.
 
 Example:
-![Screenshot !version](documentation/version.png)
+![Screenshot /version](documentation/version.png)
 
 ### Time
 Using the `/time` slash command, will ask the bot to present you with the current date and time.
@@ -159,6 +159,23 @@ With the `/memory` slash command, a admin user can get some memory usage statist
 
 Example:
 ![Screenshot /memory](documentation/memory.png)
+
+### Useless facts
+The `/fact` slash command will have the bot fetch a random useless fact from the uselessfacts API and respond with it
+back to you.
+
+Example:
+![Screenshot /fact](documentation/fact.png)
+
+### Open Weather Map
+By issuing the `/weather` command, you can have the bot look up the current weather in a provided location.
+
+For this feature to work, you need a valid API key for the OWM API. If no API key is found in the config file, an
+error will be returned from the bot.
+
+Example:
+![Screenshot /weather](documentation/weather.png)
+
 
 ### Sea of Thieves related commands
 Only registered users will be able to use the SoT specific bot features, as this requires API access, which
@@ -281,13 +298,6 @@ has likely expired and you need to renew it. Once done, it will not notify you a
 flag is set, the bot will also not try to access the API anymore to avoid too many failed requests until the 
 "notifed" flag was removed.
 
-### Useless facts
-The `!fact` command will have the bot fetch a random useless fact from the uselessfacts API and respond with it
-back to you.
-
-Example:
-![Screenshot !fact](documentation/fact.png)
-
 ### Urban dictionary
 To query the Urban Dictionary, you can use the `!urban` or `!ud` command. If used without any arguments, a random
 term will be looked up. If followed by a term, the actual term will be looked up and the first result presented to
@@ -307,15 +317,6 @@ error will be returned from the bot.
 
 Example:
 ![Screenshot !movie](documentation/tmdb_movie.png)
-
-### Open Weather Map
-By issuing the `!weather` command, you can have the bot look up the current weather in a provided location.
-
-For this feature to work, you need a valid API key for the OWM API. If no API key is found in the config file, an
-error will be returned from the bot.
-
-Example:
-![Screenshot !weather](documentation/weather.png)
 
 ## Helpful stuff
 ### Converting a MP3 file to a bot-compatible DCA file

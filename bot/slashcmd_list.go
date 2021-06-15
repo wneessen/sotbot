@@ -41,6 +41,26 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			Description: "Let SoTBot tell you a bit about it's memory usage",
 		},
 
+		// Return a random useless fact
+		{
+			Name:        "fact",
+			Description: "Let SoTBot tell you a random useless fact",
+		},
+
+		// Return the weather in the requested location
+		{
+			Name:        "weather",
+			Description: "Let SoTBot tell you the current weather conditions in a specific location",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "location",
+					Description: "Location you'd like to know the weather of",
+					Required:    true,
+				},
+			},
+		},
+
 		// With /play you can have the bot join a voice channel and play
 		// a pre-defined audio file
 		{

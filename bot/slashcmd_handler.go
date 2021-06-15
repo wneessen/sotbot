@@ -96,6 +96,18 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 		return
 
+	// Return a random useless fact
+	case cmdName == "fact":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		re, err := handler.RandomFact(b.HttpClient)
+		if err != nil {
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
+				fmt.Sprintf("An error occured fetching a useless fact: %v", err), true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		return
+
 	// Play a sound in the voice channel the requesting user is in
 	case cmdName == "play":
 		soundName := i.Data.Options[0].StringValue()
@@ -289,6 +301,24 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		re, err := handler.GetSotSeasonProgress(b.HttpClient, userObj)
 		if err != nil {
 			re = fmt.Sprintf("An error occurred checking your SoT season progress: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		return
+
+	// OWM: Return the weather conditions in a specific location
+	case cmdName == "weather":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if b.OwmClient == nil {
+			re := "You haven't specified a OpenWeatherMap API key in your config file."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		weatherLoc := i.Data.Options[0].StringValue()
+		re, err := handler.GetCurrentWeather(b.OwmClient, weatherLoc)
+		if err != nil {
+			re = fmt.Sprintf("An error occurred fetching weather information: %v", err)
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
