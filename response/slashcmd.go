@@ -64,14 +64,14 @@ func SlashCmdResponseEdit(s *discordgo.Session, i *discordgo.Interaction, u *use
 	}
 }
 
-func SlashCmdEmbed(s *discordgo.Session, i *discordgo.InteractionCreate, em *discordgo.MessageEmbed) {
+func SlashCmdEmbed(s *discordgo.Session, i *discordgo.Interaction, em *discordgo.MessageEmbed) {
 	l := log.WithFields(log.Fields{
 		"action": "response.SlashCmdEmbed",
 	})
 
 	emArr := make([]*discordgo.MessageEmbed, 0)
 	emArr = append(emArr, em)
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	err := s.InteractionRespond(i, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionApplicationCommandResponseData{
 			Embeds: emArr,

@@ -15,6 +15,8 @@ BUILDDATE   := -X github.com/wneessen/sotbot/version.BuildDate=$(subst $(SPACE),
 BUILDBRANCH	:= -X github.com/wneessen/sotbot/version.BuildBranch=$(subst $(SPACE),_,$(CURBRANCH))
 VEROS		:= -X github.com/wneessen/sotbot/version.BuildOs=$(subst $(SPACE),_,$(CUROS))
 VERARCH		:= -X github.com/wneessen/sotbot/version.BuildArch=$(subst $(SPACE),_,$(CURARCH))
+DEVGUILD	:= 843575000987336755
+GUILDID		:= -X github.com/wneessen/sotbot/bot.GuildID=$(DEVGUILD)
 OUTFILE 	:= sotbot_$(CUROS)_$(CURARCH)_v$(CURVER)
 TARGETS		:= clean build
 
@@ -25,8 +27,8 @@ test:
 
 release: clean build release clean
 
-run:
-	/usr/bin/env CGO_ENABLED=1 go run -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER) $(BUILDBRANCH) $(VERARCH) $(VEROS)" $(MODNAME)/cmd/sotbot
+dev:
+	/usr/bin/env CGO_ENABLED=1 go run -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER) $(BUILDBRANCH) $(VERARCH) $(VEROS) $(GUILDID)" $(MODNAME)/cmd/sotbot
 
 build:
 	/usr/bin/env CGO_ENABLED=1 go build -o $(BUILDDIR)/v$(CURVER)/$(CUROS)/$(CURARCH)/sotbot -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER) $(BUILDBRANCH) $(VERARCH) $(VEROS)" $(MODNAME)/cmd/sotbot

@@ -235,17 +235,6 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		response.AnswerUser(s, m, re, true)
 		return
 
-	// SoT: Quote a random SoT pirate code article
-	case command == "!code" && cmdNum == 1:
-		em, err := handler.GetSotRandomCode()
-		if err != nil {
-			re := fmt.Sprintf("An error occurred quoting the SoT pirate code: %v", err)
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		response.Embed(s, m.ChannelID, em)
-		return
-
 	// SoT: Set RAT cookie
 	case (command == "!setrat" || command == "!rat"):
 		if chanInfo.Type != discordgo.ChannelTypeDM {

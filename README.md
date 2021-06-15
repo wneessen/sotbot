@@ -123,7 +123,7 @@ With the `/balance` slash command, the Bot will query you current balance of Gol
 from the API and will output it to you in the channel you requested it.
 
 Example:
-![Screenshot !balance](documentation/balance.png)
+![Screenshot /balance](documentation/balance.png)
 
 #### Faction/Company reputation
 The `/reputation` slash command, followed by one of the supported faction names, will let the bot fetch
@@ -140,7 +140,7 @@ Supported factions:
 * seadog
 
 Example:
-![Screenshot !rep merchant](documentation/reputation.png)
+![Screenshot /reputation](documentation/reputation.png)
 
 #### Faction/company ledger stats
 With the `/ledger` or slash command, followed by one of the supported faction names, the bot fetch
@@ -155,13 +155,20 @@ Supported factions:
 * reaper
 
 Example:
-![Screenshot !rep ledger](documentation/ledger.png)
+![Screenshot /ledger](documentation/ledger.png)
 
 #### General statistics
 The `/stats` slash command will provide you with some general stats about your SoT travels
 
 Example:
-![Screenshot !stats](documentation/stats.png)
+![Screenshot /stats](documentation/stats.png)
+
+#### The pirate code
+When you issue a `/code` in the channel, the bot will present you with a random article from the SoT's pirate
+code.
+
+Example:
+![Screenshot /code](documentation/code.png)
 
 
 ## Commands
@@ -246,13 +253,6 @@ summary of it.
 
 Example:
 ![Screenshot !season](documentation/season.png)
-
-#### The pirate code
-When you issue a `!code` in the channel, the bot will present you with a random article from the SoT's pirate
-code.
-
-Example:
-![Screenshot !code](documentation/code.png)
 
 #### Traderoutes
 Get the current Traderoutes from rarethief.com with `!tr`

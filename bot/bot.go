@@ -155,21 +155,36 @@ func (b *Bot) Run() {
 		return
 	}
 
-	// Register the slash commands
+	// Get list of registered slash commands
+	registeredCmds, err := b.Session.ApplicationCommands(b.Session.State.User.ID, GuildID)
+	if err != nil {
+		l.Errorf("Failed to read slash command list from Discord server: %v", err)
+	}
+
+	// Register the slash commands (if not already registered)
 	for _, slashCmd := range b.SlashCmdList() {
-		go func(s *discordgo.ApplicationCommand) {
-			randNum, _ := random.Number(2000)
-			randNum += 1000
-			randDelay, _ := time.ParseDuration(fmt.Sprintf("%dms", randNum))
-			time.Sleep(randDelay)
-			l.Debugf("[%v] Registering...", s.Name)
-			_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, "", s)
-			if err != nil {
-				l.Errorf("[%v] Registration failed: %v", s.Name, err)
-				return
+		isNew := true
+		for _, regCmd := range registeredCmds {
+			if slashCmd.Name == regCmd.Name {
+				l.Debugf("Slash command %q already registered. Skipping.", slashCmd.Name)
+				isNew = false
 			}
-			l.Debugf("[%v] Registration completed", s.Name)
-		}(slashCmd)
+		}
+		if isNew {
+			go func(s *discordgo.ApplicationCommand) {
+				randNum, _ := random.Number(2000)
+				randNum += 1000
+				randDelay, _ := time.ParseDuration(fmt.Sprintf("%dms", randNum))
+				time.Sleep(randDelay)
+				l.Debugf("[%v] Registering slash command...", s.Name)
+				_, err = b.Session.ApplicationCommandCreate(b.Session.State.User.ID, GuildID, s)
+				if err != nil {
+					l.Errorf("[%v] Registration failed: %v", s.Name, err)
+					return
+				}
+				l.Debugf("[%v] Registration completed", s.Name)
+			}(slashCmd)
+		}
 	}
 
 	// We need a signal channel
