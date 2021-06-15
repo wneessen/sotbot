@@ -193,13 +193,13 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
-		re, err := handler.GetSotBalance(b.Db, b.HttpClient, userObj)
+		em, err := handler.GetSotBalance(b.Db, b.HttpClient, userObj)
 		if err != nil {
-			re = fmt.Sprintf("An error occurred checking your SoT balance: %v", err)
+			re := fmt.Sprintf("An error occurred checking your SoT balance: %v", err)
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
-		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
 		return
 
 	// SoT: Retrieve user reputation with a specific faction/company
