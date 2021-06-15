@@ -30,7 +30,7 @@ release: clean build release clean
 dev:
 	/usr/bin/env CGO_ENABLED=1 go run -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER) $(BUILDBRANCH) $(VERARCH) $(VEROS) $(GUILDID)" $(MODNAME)/cmd/sotbot
 
-reset:
+reset-dev:
 	/usr/bin/env CGO_ENABLED=1 go run -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER) $(BUILDBRANCH) $(VERARCH) $(VEROS) $(GUILDID)" $(MODNAME)/cmd/sotbot -r
 
 reset-global:
