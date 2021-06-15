@@ -75,6 +75,34 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			},
 		},
 
+		// Return TMDB information about a random (or specific) movie
+		{
+			Name:        "movie",
+			Description: "Let SoTBot provide you with details about a specific or random movie",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "title",
+					Description: "Movie title to look up. If empty a random movie is fetched",
+					Required:    false,
+				},
+			},
+		},
+
+		// Return TMDB information about a random (or specific) tv show
+		{
+			Name:        "tv",
+			Description: "Let SoTBot provide you with details about a specific or random TV show",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "title",
+					Description: "TV show to look up. If empty a random movie is fetched",
+					Required:    false,
+				},
+			},
+		},
+
 		// With /play you can have the bot join a voice channel and play
 		// a pre-defined audio file
 		{

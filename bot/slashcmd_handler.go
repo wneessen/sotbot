@@ -340,5 +340,55 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
 		return
+
+	// TMDB: Return the details of a random or specific movie
+	case cmdName == "movie":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if b.TMDb == nil {
+			re := "You haven't specified a TMDB API key in your config file."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		var em *discordgo.MessageEmbed
+		var err error
+		if len(i.Data.Options) != 1 {
+			em, err = handler.TMDbRandMovie(b.TMDb)
+		}
+		if len(i.Data.Options) == 1 {
+			movieTitle := i.Data.Options[0].StringValue()
+			em, err = handler.TMDbSearchMovie(b.TMDb, movieTitle)
+		}
+		if err != nil {
+			re := fmt.Sprintf("An error occurred fetching result from TMDB: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
+		return
+
+	// TMDB: Return the details of a random or specific TV show
+	case cmdName == "tv":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if b.TMDb == nil {
+			re := "You haven't specified a TMDB API key in your config file."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		var em *discordgo.MessageEmbed
+		var err error
+		if len(i.Data.Options) != 1 {
+			em, err = handler.TMDbRandTvShow(b.TMDb)
+		}
+		if len(i.Data.Options) == 1 {
+			showTitle := i.Data.Options[0].StringValue()
+			em, err = handler.TMDbSearchTvShow(b.TMDb, showTitle)
+		}
+		if err != nil {
+			re := fmt.Sprintf("An error occurred fetching result from TMDB: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
+		return
 	}
 }

@@ -7,16 +7,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func TMDbSearchMovie(t *tmdb.TMDb, q []string) (*discordgo.MessageEmbed, error) {
+func TMDbSearchMovie(t *tmdb.TMDb, q string) (*discordgo.MessageEmbed, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.TMDbSearchMovie",
 	})
 
-	var searchString string
-	for _, keyWord := range q {
-		searchString = fmt.Sprintf("%v %v", searchString, keyWord)
-	}
-	movieResult, err := t.SearchMovie(searchString, nil)
+	movieResult, err := t.SearchMovie(q, nil)
 	if err != nil {
 		l.Errorf("Failed to look up TMDB: %v", err)
 		return &discordgo.MessageEmbed{}, err
@@ -41,23 +37,19 @@ func TMDbSearchMovie(t *tmdb.TMDb, q []string) (*discordgo.MessageEmbed, error) 
 
 	return responseEmbed, nil
 }
-func TMDbSearchTvSeries(t *tmdb.TMDb, q []string) (*discordgo.MessageEmbed, error) {
+func TMDbSearchTvShow(t *tmdb.TMDb, q string) (*discordgo.MessageEmbed, error) {
 	l := log.WithFields(log.Fields{
-		"action": "handler.TMDbSearchTvSeries",
+		"action": "handler.TMDbSearchTvShow",
 	})
 
-	var searchString string
-	for _, keyWord := range q {
-		searchString = fmt.Sprintf("%v %v", searchString, keyWord)
-	}
-	tvSeriesResult, err := t.SearchTv(searchString, nil)
+	tvSeriesResult, err := t.SearchTv(q, nil)
 	if err != nil {
 		l.Errorf("Failed to look up TMDB: %v", err)
 		return &discordgo.MessageEmbed{}, err
 	}
 
 	if len(tvSeriesResult.Results) == 0 {
-		return &discordgo.MessageEmbed{}, fmt.Errorf("No matching TV series found")
+		return &discordgo.MessageEmbed{}, fmt.Errorf("No matching TV show found")
 	}
 
 	randTvSeries := tvSeriesResult.Results[0]

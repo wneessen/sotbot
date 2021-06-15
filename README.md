@@ -184,6 +184,17 @@ the requester.
 Example:
 ![Screenshot /urban](documentation/urban.png)
 
+### The Movie Database
+With the `/movie` command, you can have the bot look up a random movie from [The Movie Database](https://themoviedb.org)
+(TMDb). If the command is followed by movie title, the title will be used as search string.
+
+The same applies to `/tv`, but instead of movies it will look up TV series.
+
+For this feature to work, you need a valid API key for the TMDb API. If no API key is found in the config file, an
+error will be returned from the bot.
+
+Example:
+![Screenshot /movie](documentation/tmdb_movie.png)
 
 ### Sea of Thieves related commands
 Only registered users will be able to use the SoT specific bot features, as this requires API access, which
@@ -305,18 +316,6 @@ has likely expired and you need to renew it. Once done, it will not notify you a
 `!setrat` command again to update your cookie. This will reset the "notified" flag for the user. When the "notified"
 flag is set, the bot will also not try to access the API anymore to avoid too many failed requests until the 
 "notifed" flag was removed.
-
-### The Movie Database
-With the `!movie` command, you can have the bot look up a random movie from [The Movie Database](https://themoviedb.org) 
-(TMDb). If the command is followed by arguments, the arguments will be used as search string.
-
-The same applies to `!tv`, but instead of movies it will look up TV series.
-
-For this feature to work, you need a valid API key for the TMDb API. If no API key is found in the config file, an
-error will be returned from the bot.
-
-Example:
-![Screenshot !movie](documentation/tmdb_movie.png)
 
 ## Helpful stuff
 ### Converting a MP3 file to a bot-compatible DCA file

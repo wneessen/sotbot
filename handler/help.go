@@ -4,10 +4,6 @@ package handler
 func Help() []string {
 	helpMsg := make([]string, 0)
 	helpMsg = append(helpMsg, `General channel commands:
-   !movie <query>                - Look up the <query> in the TMDb movie database. If <query> is omitted, a
-                                   random movie is chosen
-   !tv <query>                   - Look up the <query> in the TMDb TV series database. If <query> is omitted, a
-                                   random TV series is chosen
    [!userinfo|!info]             - Tells you, if you are registered with the myself
    [!register|!reg] <@nick>      - Registers <@nick> as user in the bot's database for them to access
                                    some advances features (like the SoT commands)
