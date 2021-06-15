@@ -8,8 +8,6 @@ func Help() []string {
                                    random movie is chosen
    !tv <query>                   - Look up the <query> in the TMDb TV series database. If <query> is omitted, a
                                    random TV series is chosen
-   [!urban|!ud] <term>           - Looks up the <term> in Urban Dictionary. If <term> is omitted, a random
-                                   term is chosen
    [!userinfo|!info]             - Tells you, if you are registered with the myself
    [!register|!reg] <@nick>      - Registers <@nick> as user in the bot's database for them to access
                                    some advances features (like the SoT commands)

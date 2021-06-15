@@ -168,13 +168,21 @@ Example:
 ![Screenshot /fact](documentation/fact.png)
 
 ### Open Weather Map
-By issuing the `/weather` command, you can have the bot look up the current weather in a provided location.
+By issuing the `/weather` slash command, you can have the bot look up the current weather in a provided location.
 
 For this feature to work, you need a valid API key for the OWM API. If no API key is found in the config file, an
 error will be returned from the bot.
 
 Example:
 ![Screenshot /weather](documentation/weather.png)
+
+### Urban dictionary
+To query the Urban Dictionary, you can use the `/urban` slash command. If used without an arguments, a random
+term will be looked up. If followed by a term, the actual term will be looked up and the first result presented to
+the requester.
+
+Example:
+![Screenshot /urban](documentation/urban.png)
 
 
 ### Sea of Thieves related commands
@@ -297,14 +305,6 @@ has likely expired and you need to renew it. Once done, it will not notify you a
 `!setrat` command again to update your cookie. This will reset the "notified" flag for the user. When the "notified"
 flag is set, the bot will also not try to access the API anymore to avoid too many failed requests until the 
 "notifed" flag was removed.
-
-### Urban dictionary
-To query the Urban Dictionary, you can use the `!urban` or `!ud` command. If used without any arguments, a random
-term will be looked up. If followed by a term, the actual term will be looked up and the first result presented to
-the requester.
-
-Example:
-![Screenshot !ud](documentation/urban.png)
 
 ### The Movie Database
 With the `!movie` command, you can have the bot look up a random movie from [The Movie Database](https://themoviedb.org) 

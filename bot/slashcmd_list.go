@@ -61,6 +61,20 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			},
 		},
 
+		// Return a random (or specific) explanation from urban dictionary
+		{
+			Name:        "urban",
+			Description: "Let SoTBot explain to you what a random or specific term means according to urban dictionary",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "term",
+					Description: "Term to look up. If empty a random term is fetched",
+					Required:    false,
+				},
+			},
+		},
+
 		// With /play you can have the bot join a voice channel and play
 		// a pre-defined audio file
 		{

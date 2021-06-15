@@ -324,5 +324,21 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 		return
+
+	// UD: Return the explanation of a random or specific term from UD
+	case cmdName == "urban":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		udTerm := ""
+		if len(i.Data.Options) == 1 {
+			udTerm = i.Data.Options[0].StringValue()
+		}
+		em, err := handler.UrbanDict(b.HttpClient, udTerm)
+		if err != nil {
+			re := fmt.Sprintf("An error occurred fetching term from UD: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
+		return
 	}
 }

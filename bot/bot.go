@@ -164,10 +164,20 @@ func (b *Bot) Run() {
 	// Register the slash commands (if not already registered)
 	for _, slashCmd := range b.SlashCmdList() {
 		isNew := true
+		hasChanged := false
 		for _, regCmd := range registeredCmds {
-			if slashCmd.Name == regCmd.Name {
-				l.Debugf("Slash command %q already registered. Skipping.", slashCmd.Name)
+			if slashCmd.Name == regCmd.Name && slashCmd.Description == regCmd.Description {
+				l.Debugf("Slash command %q already registered. Skipping.", regCmd.Name)
 				isNew = false
+				hasChanged = false
+				break
+			}
+			if slashCmd.Name == regCmd.Name && slashCmd.Description != regCmd.Description {
+				l.Debugf("Slash command %q changed. Editing...", regCmd.Name)
+				isNew = false
+				hasChanged = true
+				slashCmd.ID = regCmd.ID
+				break
 			}
 		}
 		if isNew {
@@ -183,6 +193,21 @@ func (b *Bot) Run() {
 					return
 				}
 				l.Debugf("[%v] Registration completed", s.Name)
+			}(slashCmd)
+		}
+		if hasChanged {
+			go func(s *discordgo.ApplicationCommand) {
+				randNum, _ := random.Number(2000)
+				randNum += 1000
+				randDelay, _ := time.ParseDuration(fmt.Sprintf("%dms", randNum))
+				time.Sleep(randDelay)
+				l.Debugf("[%v] Updating slash command...", s.Name)
+				_, err = b.Session.ApplicationCommandEdit(b.Session.State.User.ID, GuildID, s.ID, s)
+				if err != nil {
+					l.Errorf("[%v] Update failed: %v", s.Name, err)
+					return
+				}
+				l.Debugf("[%v] Update completed", s.Name)
 			}(slashCmd)
 		}
 	}
@@ -217,4 +242,54 @@ func (b *Bot) Run() {
 			go b.CheckSotAuth()
 		}
 	}
+}
+
+func (b *Bot) ResetSlashCmds() {
+	l := log.WithFields(log.Fields{
+		"action": "bot.ResetSlashCmds",
+	})
+	l.Infof("Initializing bot for 'reset all slash commands' run...")
+
+	discordObj, err := discordgo.New("Bot " + b.AuthToken)
+	if err != nil {
+		l.Errorf("Error creating discord session: %v", err)
+		return
+	}
+	b.Session = discordObj
+
+	// What events do we wanna see?
+	b.Session.Identify.Intents = discordgo.IntentsGuilds |
+		discordgo.IntentsGuildMessages |
+		discordgo.IntentsGuildVoiceStates |
+		discordgo.IntentsDirectMessages |
+		discordgo.IntentsGuildPresences
+
+	// Open the websocket and begin listening.
+	err = b.Session.Open()
+	if err != nil {
+		l.Errorf("Error opening discord session: %v", err)
+		return
+	}
+
+	// Get list of registered slash commands
+	registeredCmds, err := b.Session.ApplicationCommands(b.Session.State.User.ID, GuildID)
+	if err != nil {
+		l.Errorf("Failed to read slash command list from Discord server: %v", err)
+	}
+
+	// Delete all registerd slash commands
+	for _, regCmd := range registeredCmds {
+		l.Debugf("Removing slash command %q...", regCmd.Name)
+		err = b.Session.ApplicationCommandDelete(b.Session.State.User.ID, GuildID, regCmd.ID)
+		if err != nil {
+			l.Errorf("Failed to delete slash command: %v", err)
+			continue
+		}
+		l.Debugf("Slash command %q successfully removed...", regCmd.Name)
+	}
+
+	if err := b.Session.Close(); err != nil {
+		l.Errorf("Failed to close discord connection: %v", err)
+	}
+	os.Exit(0)
 }
