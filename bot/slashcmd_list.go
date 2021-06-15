@@ -29,6 +29,18 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			Description: "Let SoTBot tell you some details about itself",
 		},
 
+		// Report the bots uptime
+		{
+			Name:        "uptime",
+			Description: "Let SoTBot tell you how long it's running so far",
+		},
+
+		// Report the bots memory usage
+		{
+			Name:        "memory",
+			Description: "Let SoTBot tell you a bit about it's memory usage",
+		},
+
 		// With /play you can have the bot join a voice channel and play
 		// a pre-defined audio file
 		{
@@ -124,6 +136,12 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 		{
 			Name:        "code",
 			Description: "Let SoTBot tell you a random article from the SoT pirate code",
+		},
+
+		// SoT: Show season progress
+		{
+			Name:        "season",
+			Description: "Let SoTBot tell you your current progress in the running SoT season",
 		},
 
 		// SoT/Rarethief: Annouce the currently active trading routes

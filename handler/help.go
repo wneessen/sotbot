@@ -12,13 +12,10 @@ func Help() []string {
    [!urban|!ud] <term>           - Looks up the <term> in Urban Dictionary. If <term> is omitted, a random
                                    term is chosen
    !weather <location>           - Look up the current weather in <location> and provide it to the user
-   [!uptime|!up]                 - Will show you my current uptime
    [!userinfo|!info]             - Tells you, if you are registered with the myself
    [!register|!reg] <@nick>      - Registers <@nick> as user in the bot's database for them to access
                                    some advances features (like the SoT commands)
    [!unregister|!unreg] <@nick>  - Delete <@nick> from registered user's database
-   [!memory|!mem]                - Show some memory usage information`, `Sea of Thieves specific commands:
-   !season                       - Replies with your current SoT season progress[1][2]
    [!setrat|!rat] <cookie>       - Set/update your SoT RAT cookie in the bot's DB[1][3]
 
 Note about the RAT cookie:

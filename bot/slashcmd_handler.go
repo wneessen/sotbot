@@ -63,14 +63,37 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 
 	// Reply with the version string of the bot
 	case cmdName == "version":
-		versionString := handler.TellVersion()
-		response.SlashCmdResponse(s, i.Interaction, userObj, versionString, true)
+		re := handler.TellVersion()
+		response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
 		return
 
 	// Tell the current time
 	case cmdName == "time":
-		timeString := handler.TellTime()
-		response.SlashCmdResponse(s, i.Interaction, userObj, timeString, true)
+		re := handler.TellTime()
+		response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+		return
+
+	// Tell the bot's uptime
+	case cmdName == "uptime":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		re, err := handler.Uptime(b.StartTime)
+		if err != nil {
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
+				fmt.Sprintf("An error occured calculating the bots uptime: %v", err), true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		return
+
+	// Tell the bot's memory usage
+	case cmdName == "memory":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if !userObj.IsAdmin() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		re := handler.TellMemUsage()
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 		return
 
 	// Play a sound in the voice channel the requesting user is in
@@ -250,6 +273,26 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			return
 		}
 		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
+		return
+
+	// SoT: Retrieve the users season progress
+	case cmdName == "season":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.HasRatCookie() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		re, err := handler.GetSotSeasonProgress(b.HttpClient, userObj)
+		if err != nil {
+			re = fmt.Sprintf("An error occurred checking your SoT season progress: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 		return
 	}
 }

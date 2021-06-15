@@ -54,36 +54,6 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	l.Debugf("Received a %q command from %v", command, userObj.AuthorName)
 	switch {
 
-	// Placeholder for the legacy !airhorn command
-	case command == "!airhorn" && cmdNum == 1:
-		re := "The !airhorn command is now a slash-command. Try `/play airhorn` instead"
-		response.AnswerUser(s, m, re, true)
-		return
-
-	// Tell us the current time
-	case command == "!time" && cmdNum == 1:
-		re := handler.TellTime()
-		response.AnswerUser(s, m, re, true)
-		return
-
-	// Show some memory statistics
-	case (command == "!memory" || command == "!mem") && cmdNum == 1:
-		if !userObj.IsAdmin() {
-			return
-		}
-		re := handler.TellMemUsage()
-		response.AnswerUser(s, m, re, false)
-		return
-
-	// Show bot's uptime
-	case (command == "!uptime" || command == "!up") && cmdNum == 1:
-		re, err := handler.Uptime(b.StartTime)
-		if err != nil {
-			re = fmt.Sprintf("Sorry, an error occurred calculating the uptime: %v", err)
-		}
-		response.AnswerUser(s, m, re, true)
-		return
-
 	// Reply with random useless fact
 	case command == "!fact" && cmdNum == 1:
 		re, err := handler.RandomFact(b.HttpClient)
@@ -193,47 +163,6 @@ func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 			response.Embed(s, chanInfo.ID, em)
 			return
 		}
-
-	// SoT: Show user's balance
-	case (command == "!balance" || command == "!bal") && cmdNum == 1:
-		if !userObj.IsRegistered() {
-			return
-		}
-		if !userObj.HasRatCookie() {
-			return
-		}
-		re, err := handler.GetSotBalance(b.Db, b.HttpClient, userObj)
-		if err != nil {
-			if err.Error() == "notify" {
-				dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
-					"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
-					"update your cookie.")
-				response.DmUser(s, userObj, dmMsg, true, false)
-			} else {
-				re = fmt.Sprintf("An error occurred checking your SoT balance: %v", err)
-				response.AnswerUser(s, m, re, true)
-				return
-			}
-		}
-		response.AnswerUser(s, m, re, true)
-		return
-
-	// SoT: Show user's season progress
-	case command == "!season" && cmdNum == 1:
-		if !userObj.IsRegistered() {
-			return
-		}
-		if !userObj.HasRatCookie() {
-			return
-		}
-		re, err := handler.GetSotSeasonProgress(b.HttpClient, userObj)
-		if err != nil {
-			re = fmt.Sprintf("An error occurred checking your SoT season progress: %v", err)
-			response.AnswerUser(s, m, re, true)
-			return
-		}
-		response.AnswerUser(s, m, re, true)
-		return
 
 	// SoT: Set RAT cookie
 	case (command == "!setrat" || command == "!rat"):
