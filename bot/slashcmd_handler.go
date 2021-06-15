@@ -120,12 +120,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		em, err := handler.GetDailyDeed(b.HttpClient, userObj, b.Db)
 		if err != nil {
-			response.SlashCmdDel(s, i.Interaction)
-			response.SlashCmdResponse(s, i.Interaction, userObj,
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
 				fmt.Sprintf("An error occured fetching the daily deed: %v", err), true)
 			return
 		}
-		response.SlashCmdEmbedDeferred(s, i, em)
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
 		return
 
 	// SoT: Reply with the requester's latest achievement in SoT
@@ -141,12 +140,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		em, err := handler.GetSotAchievement(b.HttpClient, userObj)
 		if err != nil {
-			response.SlashCmdDel(s, i.Interaction)
-			response.SlashCmdResponse(s, i.Interaction, userObj,
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
 				fmt.Sprintf("An error occured fetching the latest achievement: %v", err), true)
 			return
 		}
-		response.SlashCmdEmbedDeferred(s, i, em)
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
 		return
 
 	// SoT: Retrieve the current user balance from the SoT API
@@ -162,9 +160,8 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		re, err := handler.GetSotBalance(b.Db, b.HttpClient, userObj)
 		if err != nil {
-			response.SlashCmdDel(s, i.Interaction)
 			re = fmt.Sprintf("An error occurred checking your SoT balance: %v", err)
-			response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
@@ -184,9 +181,8 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		repFaction := i.Data.Options[0].StringValue()
 		re, err := handler.GetSotReputation(b.HttpClient, userObj, repFaction)
 		if err != nil {
-			response.SlashCmdDel(s, i.Interaction)
 			re = fmt.Sprintf("An error occurred checking your SoT reputation: %v", err)
-			response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
@@ -206,9 +202,8 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		ledFaction := i.Data.Options[0].StringValue()
 		re, err := handler.GetSotLedger(b.HttpClient, userObj, ledFaction)
 		if err != nil {
-			response.SlashCmdDel(s, i.Interaction)
 			re = fmt.Sprintf("An error occurred checking your SoT ledger: %v", err)
-			response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
@@ -227,9 +222,8 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		re, err := handler.GetSotStats(b.HttpClient, userObj)
 		if err != nil {
-			response.SlashCmdDel(s, i.Interaction)
 			re = fmt.Sprintf("An error occurred checking your SoT user stats: %v", err)
-			response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
@@ -240,10 +234,22 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		em, err := handler.GetSotRandomCode()
 		if err != nil {
 			re := fmt.Sprintf("An error occurred checking your SoT user stats: %v", err.Error())
-			response.SlashCmdResponse(s, i.Interaction, userObj, re, true)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
 		response.SlashCmdEmbed(s, i.Interaction, em)
+		return
+
+	// RareThief/SoT: Fetch and announce the currently active SoT trade routes
+	case cmdName == "traderoutes":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		em, err := handler.GetTraderoutes(b.HttpClient, b.Db)
+		if err != nil {
+			re := fmt.Sprintf("An error occurred retrieving the trade routes: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
 		return
 	}
 }

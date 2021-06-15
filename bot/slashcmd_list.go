@@ -125,6 +125,12 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			Name:        "code",
 			Description: "Let SoTBot tell you a random article from the SoT pirate code",
 		},
+
+		// SoT/Rarethief: Annouce the currently active trading routes
+		{
+			Name:        "traderoutes",
+			Description: "Let SoTBot tell you the currently active trade routes in SoT",
+		},
 	}
 
 	return slashCmds

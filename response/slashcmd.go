@@ -82,14 +82,14 @@ func SlashCmdEmbed(s *discordgo.Session, i *discordgo.Interaction, em *discordgo
 	}
 }
 
-func SlashCmdEmbedDeferred(s *discordgo.Session, i *discordgo.InteractionCreate, em *discordgo.MessageEmbed) {
+func SlashCmdEmbedDeferred(s *discordgo.Session, i *discordgo.Interaction, em *discordgo.MessageEmbed) {
 	l := log.WithFields(log.Fields{
 		"action": "response.SlashCmdEmbed",
 	})
 
 	emArr := make([]*discordgo.MessageEmbed, 0)
 	emArr = append(emArr, em)
-	err := s.InteractionResponseEdit(s.State.User.ID, i.Interaction, &discordgo.WebhookEdit{
+	err := s.InteractionResponseEdit(s.State.User.ID, i, &discordgo.WebhookEdit{
 		Embeds: emArr,
 	})
 	if err != nil {

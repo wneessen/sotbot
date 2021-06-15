@@ -31,7 +31,7 @@ Please make sure to verify the signature before using any binary release.
 There is a `Makefile` included in the project. Just run `make` and your Bot binary will be built in
 as `./bin/sotbot`
 
-## Dicord bot token
+## Discord bot token
 You need to create a Discord bot in the Discord developer portal and then invite the bot to your discord 
 server. For the bot to work properly, it needs to have a specific set of permissions. This is the minimal set
 of permissions the bot requires:
@@ -82,9 +82,50 @@ The config currently supports the following format:
 * `owm_api_key`: For the weather commands to work, you need to have a valid OWM API token. For more details
   check the [OWM API documentation](https://openweathermap.org/appid)
 
+## Encryption at rest
+As of version 1.4.4, the bot supports encryption at rest in the database using AES256. For this a randomly generated
+encryption key is set on first startup and stored in the $HOME directory of the user running the bot as
+`$HOME/.sotbot_enc_key` file. At next start time, the key file is read and the key is stored in memory. This way, in
+the SQLite database file, your RAT cookie is not stored in plain text anymore. The secret key is shared for all users
+and is meant as general encryption key for any bot operation that might benefit from encryption.
+
+**Please note**: The encryption key file is still stored on the file system, near to the actual SQLite database file.
+Therefore the encryption only help if your SQLite gets unauthorized access only. If the unauthorized person is able
+to access all files, the bot is able to access, chances are high, that the attacker also accessed the encryption key
+and therefore is able to decrypt the encrypted values in the database as well.
+
+## Sea of Thieves specific commands
+Any SoT related bot command is only available to registered users, as it requires the bot to access the SoT API with a
+user specific remote access token (`RAT`). This token has to be stored in the bot's database and has to be renewed
+about every 14 days.
+
+### Getting access to the API
+Unfortunately the SoT API does not offer any kind of OAuth2 for authentication, hence we have to use
+a kind of hackish way to get your access cookie from the Microsoft Live login. You can use Simon's
+[SoT-RAT-Extractor](https://github.com/echox/sot-rat-extractor) (please read the notes in the project before using
+it) to get a current cookie and store it in the database of the bot. Unfortunately the cookie is only valid for
+14 days, so you'll have to renew it every now and then.
+
+### The `RAT` cookie
+The RAT cookie grants full access to your SoT account page. Therefore, even though the cookie is encrypted at rest,
+before storing your cookie in the bot's DB, please make sure that you know what you are doing. Maybe at some time, RARE
+decides to offer an API which offers OAuth2, so we can allow the bot having access to the API data without having to
+store/renew the cookie.
+
+## Automatic user balance tracking
+The bot is able to track the users presence state. If a registered user has their "Currently playing" feature
+associated with Discord and starts playing "Sea of Thieves", the bot will automagically fetch the users current
+balance and once the user stops playing, repeat the process. The before and after values are then compared and
+announced in the official announcement channel of the server (if that feature is enabled in the config and the
+bot has text permissions in that channel). The bot can also send the user an automatic DM when they stopped playing
+with the current balance - this is also configurable.
+
+Example:
+![Screenshot auto_balance](documentation/auto_balance.png)
+
 ## Slash Commands
-Since Discord introduced slash commands, SoTBot is gradually transforming some it's legacy !commands into slash
-commands.
+Since version 1.4.6 SoTBot fully supports slash commands. All operations which were previously available as
+`!command` have been transformed into slash commands. Here is a list of supported commands:
 
 ### Help
 The `/help` slash command will DM you a list of available commands
@@ -100,6 +141,12 @@ When requested the `/version` command, the bot will respond with it's current ve
 
 Example:
 ![Screenshot !version](documentation/version.png)
+
+### Time
+Using the `/time` slash command, will ask the bot to present you with the current date and time.
+
+Example:
+![Screenshot /time](documentation/time.png)
 
 ### Sea of Thieves related slash commands
 Only registered users will be able to use the SoT specific bot features, as this requires API access, which
@@ -170,6 +217,11 @@ code.
 Example:
 ![Screenshot /code](documentation/code.png)
 
+#### Traderoutes
+Get the current SoT trade routes from rarethief.com with the `/traderoutes` slash command
+
+Example:
+![Screenshot /traderoutes](documentation/traderoutes.png)
 
 ## Commands
 SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. A couple of its commands are SoT-themed, but
@@ -191,33 +243,6 @@ Example: `!register @johndoe`
 Admins can also delete users from the database again, using the `!unregister` or `!unreg` command. \
 Example: `!unregister @johndoe`
 
-### Sea of Thieves related commands
-Only registered users will be able to use the SoT specific bot features, as this requires API access, which
-needs to be assigned to users.
-
-#### Getting access to the API
-Unfortunately the SoT API does not offer any kind of OAuth2 for authentication, hence we have to use
-a kind of hackish way to get your access cookie from the Microsoft Live login. You can use Simon's
-[SoT-RAT-Extractor](https://github.com/echox/sot-rat-extractor) (please read the notes in the project before using
-it) to get a current cookie and store it in the database of the bot. Unfortunately the cookie is only valid for 
-14 days, so you'll have to renew it every now and then.
-
-#### Important security note
-The RAT cookie gives full access to your SoT account page and the bot does not store the cookie in any 
-encrypted way. Therefore, before storing your cookie in the bot's DB, please make sure that you know what
-you are doing. Maybe at some time, RARE decides to offer an API which offers OAuth2, so we can allow the bot
-having access to the API data without having to store/renew the cookie.
-
-*Update:* As of v1.4.4-RC3 supports encryption at rest in the database using AES256. For this a randomly generated
-encryption key is set on first startup and stored in the $HOME directory of the user running the bot as 
-`$HOME/.sotbot_enc_key` file. At next start time, the key file is read and the key is stored in memory. This way, in 
-the SQLite database file, your RAT cookie is not stored in plain text anymore. The secret key is shared for all users 
-and is meant as general encryption key for any bot operation that might benefit from encryption. 
-
-**Please note**: The encryption key file is still stored on the file system, near to the actual SQLite database file.
-Therefore the encryption only help if your SQLite gets unauthorized access only. If the unauthorized person is able
-to access all files, the bot is able to access, chances are high, that the attacker also accessed the encryption key
-and therefore is able to decrypt the encrypted values in the database as well.
 
 #### RAT Cookie registration
 Once you have you user registered and obtained a valid cookie using the `SoT-RAT-Extractor`, you have to store
@@ -236,35 +261,12 @@ has likely expired and you need to renew it. Once done, it will not notify you a
 flag is set, the bot will also not try to access the API anymore to avoid too many failed requests until the 
 "notifed" flag was removed.
 
-#### Automatic user balance tracking
-The bot is able to track the users presence state. If a registered user has their "Currently playing" feature
-associated with Discord and starts playing "Sea of Thieves", the bot will automagically fetch the users current
-balance and once the user stops playing, repeat the process. The before and after values are then compared and 
-announced in the official announcement channel of the server (if that feature is enabled in the config and the
-bot has text permissions in that channel). The bot can also send the user an automatic DM when they stopped playing
-with the current balance - this is also configurable.
-
-Example:
-![Screenshot auto_balance](documentation/auto_balance.png)
-
 #### Season progress
 When you enter the `!season` command, the bot will fetch your season progress and present you with a little 
 summary of it.
 
 Example:
 ![Screenshot !season](documentation/season.png)
-
-#### Traderoutes
-Get the current Traderoutes from rarethief.com with `!tr`
-
-Example:
-![Screenshot !tr](documentation/traderoutes.png)
-
-### Time feature
-Using the `!time` command, the bot will present you with the current date and time.
-
-Example:
-![Screenshot !time](documentation/time.png)
 
 ### Useless facts
 The `!fact` command will have the bot fetch a random useless fact from the uselessfacts API and respond with it

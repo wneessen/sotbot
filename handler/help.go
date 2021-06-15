@@ -19,9 +19,7 @@ func Help() []string {
    [!unregister|!unreg] <@nick>  - Delete <@nick> from registered user's database
    [!memory|!mem]                - Show some memory usage information`, `Sea of Thieves specific commands:
    !season                       - Replies with your current SoT season progress[1][2]
-   !tr                           - Replies with the current traderoutes from rarethief
    [!setrat|!rat] <cookie>       - Set/update your SoT RAT cookie in the bot's DB[1][3]
-   [!stats|!stat]                - Provides some general SoT stats for your user (killed kraken, sold chests, etc.)[1][2]
 
 Note about the RAT cookie:
 To extract your cookie for the API, you need the SoT-RAT-Extractor (https://github.com/echox/sot-rat-extractor).
