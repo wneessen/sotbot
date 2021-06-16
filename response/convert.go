@@ -10,7 +10,7 @@ func Icon(i string) string {
 		"AncientCoin": "💰",
 		"Kraken":      "🐙",
 		"Megalodon":   "🦈",
-		"Chest":       "🎁",
+		"Chest":       "🗝️",
 		"Ship":        "⛵",
 		"Vomit":       "🤮",
 	}

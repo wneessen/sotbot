@@ -91,22 +91,39 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 	// User might have stopped an activity
 	if len(m.Activities) == 0 {
 		userWasPlaying := database.UserGetPrefString(b.Db, userObj.UserInfo.ID, "playing_sot")
-		if userWasPlaying != "" {
-			l.Debugf("%v stopped playing SoT. Updating balance...", discordUser.Username)
-			voyageStats := make(map[string]int64, 0)
-			// TODO: This has still to be figured out
-			/*
-				userStartedPlaying, err := time.Parse(time.RFC3339, userWasPlaying)
-				if err != nil {
-					l.Errorf("Could not parse user start playing-time. Skipping announcement.")
-					return
-				}
-			*/
-			_ = userObj.UpdateSotBalance(b.Db, b.HttpClient)
+		if err := database.UserDelPref(b.Db, userObj.UserInfo.ID, "playing_sot"); err != nil {
+			l.Errorf("Failed to delete user status in database: %v", err)
+		}
+		if userWasPlaying == "" {
+			return
+		}
 
+		// Wait for some time to present the voyage statistics
+		go func(t time.Time) {
+			time.Sleep(time.Minute * 1)
+			userIsPlaying := database.UserGetPrefString(b.Db, userObj.UserInfo.ID, "playing_sot")
+			if userIsPlaying != "" {
+				l.Debugf("%v apparently resumed playing...", discordUser.Username)
+				return
+			}
+			l.Debugf("%v stopped playing SoT...", discordUser.Username)
 			if err := database.UserDelPref(b.Db, userObj.UserInfo.ID, "playing_sot"); err != nil {
 				l.Errorf("Failed to delete user status in database: %v", err)
 			}
+
+			voyageStats := make(map[string]int64, 0)
+			userStartedPlaying, err := time.Parse(time.RFC3339, userWasPlaying)
+			if err != nil {
+				l.Errorf("Could not parse user start playing-time. Skipping announcement.")
+				return
+			}
+			playTime := t.Unix() - userStartedPlaying.Unix()
+			if playTime < 5 {
+				l.Debugf("%v played less than 3 minutes (%v seconds). There is no chance of any change.",
+					discordUser.Username, playTime)
+				return
+			}
+			_ = userObj.UpdateSotBalance(b.Db, b.HttpClient)
 
 			// Compare balance
 			var oldBalance api.UserBalance
@@ -125,8 +142,8 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				}
 			}
 			voyageStats["1_Gold"] = int64(userBalance.Gold) - int64(oldBalance.Gold)
-			voyageStats["2_AncientCoin"] = int64(userBalance.AncientCoins) - int64(oldBalance.AncientCoins)
-			voyageStats["3_Doubloon"] = int64(userBalance.Doubloons) - int64(oldBalance.Doubloons)
+			voyageStats["2_Doubloon"] = int64(userBalance.Doubloons) - int64(oldBalance.Doubloons)
+			voyageStats["3_AncientCoin"] = int64(userBalance.AncientCoins) - int64(oldBalance.AncientCoins)
 
 			// Compare user stats
 			var oldStats api.UserStats
@@ -170,13 +187,15 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				}
 			}
 
-			// Response with the Embed
-			responseEmbed := &discordgo.MessageEmbed{
-				Type:   discordgo.EmbedTypeRich,
-				Title:  fmt.Sprintf("Sea of Thieves voyage summary for @%v", discordUser.Username),
-				Fields: emFields,
+			if len(emFields) > 0 {
+				// Response with the Embed
+				responseEmbed := &discordgo.MessageEmbed{
+					Type:   discordgo.EmbedTypeRich,
+					Title:  fmt.Sprintf("Sea of Thieves voyage summary for @%v", discordUser.Username),
+					Fields: emFields,
+				}
+				response.Embed(s, b.AnnounceChan.ID, responseEmbed)
 			}
-			response.Embed(s, b.AnnounceChan.ID, responseEmbed)
-		}
+		}(time.Now())
 	}
 }
