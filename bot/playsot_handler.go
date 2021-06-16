@@ -8,10 +8,10 @@ import (
 	"github.com/wneessen/sotbot/cache"
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/response"
-	"github.com/wneessen/sotbot/tools"
 	"github.com/wneessen/sotbot/user"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
+	"sort"
 	"time"
 )
 
@@ -41,12 +41,31 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 		return
 	}
 
+	// Only track if we have an announce channel set
+	if !b.Config.GetBool("sot_play_announce") || b.AnnounceChan == nil {
+		l.Debugf("No SoT announce channel set or feature disabled")
+		return
+	}
+
 	// User started an activity, SoT maybe?
 	if len(m.Activities) > 0 {
 		for _, curActivity := range m.Activities {
 			if curActivity.Name == "Sea of Thieves" {
 				l.Debugf("%v started playing SoT. Updating balance...", discordUser.Username)
-				_ = userObj.UpdateSotBalance(b.Db, b.HttpClient)
+				userBalance, err := api.GetBalance(b.HttpClient, userObj.RatCookie)
+				if err == nil {
+					balBase64, err := cache.SerializeObj(userBalance)
+					if err != nil {
+						l.Errorf("Failed to serialize user stats: %v", err)
+					}
+					if err == nil {
+						if err := database.UserSetPref(b.Db, userObj.UserInfo.ID, "sot_balance",
+							balBase64); err != nil {
+							l.Errorf("Failed to store user stats in DB: %v", err)
+						}
+					}
+				}
+
 				userStats, err := api.GetStats(b.HttpClient, userObj.RatCookie)
 				if err == nil {
 					statsBase64, err := cache.SerializeObj(userStats)
@@ -74,88 +93,90 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 		userWasPlaying := database.UserGetPrefString(b.Db, userObj.UserInfo.ID, "playing_sot")
 		if userWasPlaying != "" {
 			l.Debugf("%v stopped playing SoT. Updating balance...", discordUser.Username)
-			userStartedPlaying, err := time.Parse(time.RFC3339, userWasPlaying)
-			if err != nil {
-				l.Errorf("Could not parse user start playing-time. Skipping announcement.")
-				return
-			}
+			voyageStats := make(map[string]int64, 0)
+			// TODO: This has still to be figured out
+			/*
+				userStartedPlaying, err := time.Parse(time.RFC3339, userWasPlaying)
+				if err != nil {
+					l.Errorf("Could not parse user start playing-time. Skipping announcement.")
+					return
+				}
+			*/
 			_ = userObj.UpdateSotBalance(b.Db, b.HttpClient)
 
 			if err := database.UserDelPref(b.Db, userObj.UserInfo.ID, "playing_sot"); err != nil {
 				l.Errorf("Failed to delete user status in database: %v", err)
 			}
 
+			// Compare balance
+			var oldBalance api.UserBalance
 			userBalance, err := database.GetBalance(b.Db, userObj.UserInfo.ID)
 			if err != nil {
-				l.Errorf("Failed to read user balance from DB: %v", err)
-				return
+				l.Errorf("Failed to fetch SoT user balance: %v", err)
 			}
+			oldBalanceObjBase64 := database.UserGetPrefString(b.Db, userObj.UserInfo.ID, "sot_balance")
+			if err := database.UserDelPref(b.Db, userObj.UserInfo.ID, "sot_balance"); err != nil {
+				l.Errorf("Failed to delete user balance in database: %v", err)
+			}
+			if oldBalanceObjBase64 != "" {
+				if err := cache.DeserializeObj(oldBalanceObjBase64, &oldBalance); err != nil {
+					l.Errorf("Failed to deserialize old user stats: %v", err)
+					return
+				}
+			}
+			voyageStats["1_Gold"] = int64(userBalance.Gold) - int64(oldBalance.Gold)
+			voyageStats["2_AncientCoin"] = int64(userBalance.AncientCoins) - int64(oldBalance.AncientCoins)
+			voyageStats["3_Doubloon"] = int64(userBalance.Doubloons) - int64(oldBalance.Doubloons)
 
+			// Compare user stats
+			var oldStats api.UserStats
 			userStats, err := api.GetStats(b.HttpClient, userObj.RatCookie)
 			if err != nil {
 				l.Errorf("Failed to fetch user stats from SoT API: %v", err)
-				return
 			}
-
-			statsChanged := false
-			var oldStats api.UserStats
 			oldStatsObjBase64 := database.UserGetPrefString(b.Db, userObj.UserInfo.ID, "sot_stats")
 			if err := database.UserDelPref(b.Db, userObj.UserInfo.ID, "sot_stats"); err != nil {
 				l.Errorf("Failed to delete user stats in database: %v", err)
 			}
-			if oldStatsObjBase64 != "" {
+			if oldBalanceObjBase64 != "" {
 				if err := cache.DeserializeObj(oldStatsObjBase64, &oldStats); err != nil {
 					l.Errorf("Failed to deserialize old user stats: %v", err)
 					return
 				}
-				statsChanged = tools.CompareSotStats(userStats, oldStats)
 			}
+			voyageStats["4_Kraken"] = int64(userStats.KrakenDefeated) - int64(oldStats.KrakenDefeated)
+			voyageStats["5_Megalodon"] = int64(userStats.MegalodonEncounters) - int64(oldStats.MegalodonEncounters)
+			voyageStats["6_Chest"] = int64(userStats.ChestsHandedIn) - int64(oldStats.ChestsHandedIn)
+			voyageStats["7_Ship"] = int64(userStats.ShipsSunk) - int64(oldStats.ShipsSunk)
+			voyageStats["8_Vomit"] = int64(userStats.VomitedTotal) - int64(oldStats.VomitedTotal)
 
-			if userBalance.LastUpdated <= userStartedPlaying.Unix() && !statsChanged {
-				l.Debugf("User balance seems to not have changed during game play")
-				return
-			}
-
+			// Prepare the output
 			p := message.NewPrinter(language.German)
-			if b.Config.GetBool("sot_play_announce") && b.AnnounceChan != nil {
-				balDiff := database.GetBalanceDifference(b.Db, userObj.UserInfo.ID)
-				balMsg := fmt.Sprintf("earned/spent: %v gold, %v doubloons and %v ancient coins.",
-					p.Sprintf("%d", balDiff.Gold), p.Sprintf("%d", balDiff.Doubloons),
-					p.Sprintf("%d", balDiff.AncientCoins))
-				statMsg := fmt.Sprintf("defeated %v Kraken, encountered %v Megalodon(s), handed in %v chest(s), "+
-					"sank %v ship(s) and vomited %v time(s)",
-					p.Sprintf("%d", userStats.KrakenDefeated-oldStats.KrakenDefeated),
-					p.Sprintf("%d", userStats.MegalodonEncounters-oldStats.MegalodonEncounters),
-					p.Sprintf("%d", userStats.ChestsHandedIn-oldStats.ChestsHandedIn),
-					p.Sprintf("%d", userStats.ShipsSunk-oldStats.ShipsSunk),
-					p.Sprintf("%d", userStats.VomitedTotal-oldStats.VomitedTotal))
-
-				var msg string
-				if userBalance.LastUpdated >= userStartedPlaying.Unix() && statsChanged {
-					if balDiff.Gold != 0 || balDiff.AncientCoins != 0 || balDiff.Doubloons != 0 {
-						msg = fmt.Sprintf("On their last trip to the Sea of Thieves, %v %v"+
-							"They also %v", userObj.Mention, balMsg, statMsg)
-					} else {
-						msg = fmt.Sprintf("On their last trip to the Sea of Thieves, %v didn't change "+
-							"their balance, but %v", userObj.Mention, statMsg)
-					}
-				}
-				if userBalance.LastUpdated >= userStartedPlaying.Unix() && !statsChanged {
-					if balDiff.Gold != 0 || balDiff.AncientCoins != 0 || balDiff.Doubloons != 0 {
-						msg = fmt.Sprintf("On their last trip to the Sea of Thieves, %v %v",
-							userObj.Mention, balMsg)
-					}
-				}
-				if userBalance.LastUpdated <= userStartedPlaying.Unix() && statsChanged {
-					if balDiff.Gold != 0 || balDiff.AncientCoins != 0 || balDiff.Doubloons != 0 {
-						msg = fmt.Sprintf("On their last trip to the Sea of Thieves, %v %v",
-							userObj.Mention, statMsg)
-					}
-				}
-				if msg != "" {
-					response.Announce(s, b.AnnounceChan.ID, msg)
+			var emFields []*discordgo.MessageEmbedField
+			var keyNames []string
+			for k := range voyageStats {
+				keyNames = append(keyNames, k)
+			}
+			sort.Strings(keyNames)
+			for _, k := range keyNames {
+				v := voyageStats[k]
+				if v != 0 {
+					emFields = append(emFields, &discordgo.MessageEmbedField{
+						Name: fmt.Sprintf("%v %v", response.Icon(k), response.IconKey(k)),
+						Value: fmt.Sprintf("%v**%v** %v", response.BalanceIcon(k, v),
+							p.Sprintf("%d", v), response.IconValue(k)),
+						Inline: true,
+					})
 				}
 			}
+
+			// Response with the Embed
+			responseEmbed := &discordgo.MessageEmbed{
+				Type:   discordgo.EmbedTypeRich,
+				Title:  fmt.Sprintf("Sea of Thieves voyage summary for @%v", discordUser.Username),
+				Fields: emFields,
+			}
+			response.Embed(s, b.AnnounceChan.ID, responseEmbed)
 		}
 	}
 }
