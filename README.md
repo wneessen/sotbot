@@ -128,7 +128,7 @@ Since version 1.4.6 SoTBot fully supports slash commands. All operations which w
 `!command` have been transformed into slash commands. Here is a list of supported commands:
 
 ### Help
-The `/help` points you to this page
+The `/help` slash command points you to this page
 
 ### User management
 SoTBot has very minimalistic user management built in, so it can keep track of some user specific settings.
@@ -318,6 +318,11 @@ You first need to install [ffmpeg](https://ffmpeg.org/) and [dca](https://github
 ```shell
 $ ffmpeg -i file.mp3 -f s16le pipe:1 | dca >./media/audio/file.dca
 ```
+
+## Contributors
+Thanks to the following people for contributing code to SoTBot:
+* [Simon](https://github.com/echox)
+* [silsha fux](https://github.com/silsha)
 
 ## Attribution
 The sounds that are provided in this repository are by the following people:
