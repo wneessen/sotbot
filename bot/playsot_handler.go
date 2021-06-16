@@ -111,7 +111,7 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 				l.Errorf("Failed to delete user status in database: %v", err)
 			}
 
-			voyageStats := make(map[string]int64, 0)
+			voyageStats := make(map[string]int64)
 			userStartedPlaying, err := time.Parse(time.RFC3339, userWasPlaying)
 			if err != nil {
 				l.Errorf("Could not parse user start playing-time. Skipping announcement.")
