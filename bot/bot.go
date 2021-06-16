@@ -137,7 +137,6 @@ func (b *Bot) Run() {
 
 	// Add handlers
 	b.Session.AddHandler(b.BotReadyHandler)
-	b.Session.AddHandler(b.CommandHandler)
 	b.Session.AddHandler(b.SlashCmdHandler)
 	b.Session.AddHandler(b.UserPlaysSot)
 

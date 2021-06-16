@@ -12,10 +12,15 @@ func SlashCmdResponse(s *discordgo.Session, i *discordgo.Interaction, u *user.Us
 	slashCmdResponse(s, i, u, msg, false, false, false)
 }
 
+*/
+
 func SlashCmdResponseEphemeral(s *discordgo.Session, i *discordgo.Interaction, u *user.User, msg string) {
 	slashCmdResponse(s, i, u, msg, false, false, true)
 }
-*/
+
+func SlashCmdResponseEphemeralMention(s *discordgo.Session, i *discordgo.Interaction, u *user.User, msg string) {
+	slashCmdResponse(s, i, u, msg, true, false, true)
+}
 
 func SlashCmdResponseMention(s *discordgo.Session, i *discordgo.Interaction, u *user.User, msg string) {
 	slashCmdResponse(s, i, u, msg, true, false, false)

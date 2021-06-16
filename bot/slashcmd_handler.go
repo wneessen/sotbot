@@ -54,11 +54,8 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 	switch {
 	// DM the commands help to the user
 	case cmdName == "help":
-		helpTexts := handler.Help()
-		response.SlashCmdResponseMention(s, i.Interaction, userObj, "Please check your DMs.")
-		for _, textPart := range helpTexts {
-			response.DmUser(s, userObj, "`"+textPart+"`", false, true)
-		}
+		response.SlashCmdResponseEphemeral(s, i.Interaction, userObj,
+			"Please see https://github.com/wneessen/sotbot/blob/main/README.md#slash-commands for details.")
 		return
 
 	// Reply with the version string of the bot
@@ -93,6 +90,49 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			return
 		}
 		re := handler.TellMemUsage()
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		return
+
+	// UserMgmt: Tell the user if they are registered
+	case cmdName == "userinfo":
+		re := "You are registered."
+		if !userObj.IsRegistered() {
+			re = "You are not registered."
+		}
+		response.SlashCmdResponseEphemeralMention(s, i.Interaction, userObj, re)
+		return
+
+	// UserMgmt: Register with the bot
+	case cmdName == "register":
+		response.SlashCmdResponseDeferredEphemeral(s, i.Interaction)
+		if userObj.IsRegistered() {
+			re := "Sorry, you are already registered."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		if err := handler.RegisterUser(b.Db, userObj.AuthorId); err != nil {
+			re := fmt.Sprintf("An error occurred registering you: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		re := "You've been successfully registered."
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		return
+
+	// UserMgmt: Unregister with the bot
+	case cmdName == "unregister":
+		response.SlashCmdResponseDeferredEphemeral(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			re := "Sorry, you are not registered."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		if err := handler.UnregisterUser(b.Db, userObj.AuthorId); err != nil {
+			re := fmt.Sprintf("An error occurred unregistering you: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		re := "You've been successfully unregistered."
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 		return
 

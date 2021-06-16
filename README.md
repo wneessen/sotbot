@@ -128,7 +128,25 @@ Since version 1.4.6 SoTBot fully supports slash commands. All operations which w
 `!command` have been transformed into slash commands. Here is a list of supported commands:
 
 ### Help
-The `/help` slash command will DM you a list of available commands
+The `/help` points you to this page
+
+### User management
+SoTBot has very minimalistic user management built in, so it can keep track of some user specific settings.
+User information is based on your discord userid and will be stored in a SQLite database on the server running
+the bot.
+
+#### User registration
+For the bot to use some specific commands (especially the SoT-themed commands), users need to be registered.
+To register yourself with the bot, use the `/register` slash command
+
+Example:
+![Screenshot /register](documentation/register.png)
+
+#### User unregistration
+You can also delete your registration again. Simply use the `/unregister` slash command.
+
+Example:
+![Screenshot /unregister](documentation/unregister.png)
 
 ### Play sound feature
 With the `/play` feature, when you are active in a voice channel, you can have the bot join and play a predefined
@@ -293,29 +311,6 @@ summary of it.
 
 Example:
 ![Screenshot /season](documentation/season.png)
-
-
-## Commands
-SoTBot is heavily influenced by the Eggdrop bots of the olden IRC days. A couple of its commands are SoT-themed, but
-there are couple of fun non SoT-related commands as well.
-
-### User management
-SoTBot has very minimalistic user management built in, so it can keep track of some user specific settings.
-User information is based on your discord userid and will be stored in a SQLite database on the server running
-the bot.
-
-#### User registration
-For the bot to use some specific commands (especially the SoT-themed commands), users need to be registered. 
-Only users with discord admin permission can "register" users with the bot.
-
-To register a user, use the `!register` or `!reg` command. \
-Example: `!register @johndoe`
-
-#### User unregistration
-Admins can also delete users from the database again, using the `!unregister` or `!unreg` command. \
-Example: `!unregister @johndoe`
-
-
 
 ## Helpful stuff
 ### Converting a MP3 file to a bot-compatible DCA file

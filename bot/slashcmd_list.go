@@ -119,6 +119,24 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			},
 		},
 
+		// UserMgmt: Tell a user if they are registered
+		{
+			Name:        "userinfo",
+			Description: "Tells you wether you are registered with the SoTBot",
+		},
+
+		// UserMgmt: Register with the bot
+		{
+			Name:        "register",
+			Description: "Tells SoTBot that you'd like to be a registered user",
+		},
+
+		// UserMgmt: Unregister from the bot
+		{
+			Name:        "unregister",
+			Description: "Tells SoTBot that you no longer like to be a registered user",
+		},
+
 		// UserMgmt/SoT: Store RAT cookie in bot DB
 		{
 			Name:        "setrat",
