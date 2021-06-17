@@ -109,6 +109,10 @@ func slashCmdResponse(s *discordgo.Session, i *discordgo.Interaction, u *user.Us
 		}
 	}
 
+	if len(m) > 2048 {
+		m = m[:2040]
+	}
+
 	resType := discordgo.InteractionResponseChannelMessageWithSource
 	if d {
 		resType = discordgo.InteractionResponseDeferredChannelMessageWithSource
