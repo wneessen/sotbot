@@ -53,30 +53,34 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 			if curActivity.Name == "Sea of Thieves" {
 				l.Debugf("%v started playing SoT. Updating balance...", discordUser.Username)
 				userBalance, err := api.GetBalance(b.HttpClient, userObj.RatCookie)
+				if err != nil {
+					l.Errorf("Failed to fetch user balance: %v", err)
+					return
+				}
+				balBase64, err := cache.SerializeObj(userBalance)
+				if err != nil {
+					l.Errorf("Failed to serialize user stats: %v", err)
+				}
 				if err == nil {
-					balBase64, err := cache.SerializeObj(userBalance)
-					if err != nil {
-						l.Errorf("Failed to serialize user stats: %v", err)
-					}
-					if err == nil {
-						if err := database.UserSetPref(b.Db, userObj.UserInfo.ID, "sot_balance",
-							balBase64); err != nil {
-							l.Errorf("Failed to store user stats in DB: %v", err)
-						}
+					if err := database.UserSetPref(b.Db, userObj.UserInfo.ID, "sot_balance",
+						balBase64); err != nil {
+						l.Errorf("Failed to store user stats in DB: %v", err)
 					}
 				}
 
 				userStats, err := api.GetStats(b.HttpClient, userObj.RatCookie)
+				if err != nil {
+					l.Errorf("Failed to fetch user stats: %v", err)
+					return
+				}
+				statsBase64, err := cache.SerializeObj(userStats)
+				if err != nil {
+					l.Errorf("Failed to serialize user stats: %v", err)
+				}
 				if err == nil {
-					statsBase64, err := cache.SerializeObj(userStats)
-					if err != nil {
-						l.Errorf("Failed to serialize user stats: %v", err)
-					}
-					if err == nil {
-						if err := database.UserSetPref(b.Db, userObj.UserInfo.ID, "sot_stats",
-							statsBase64); err != nil {
-							l.Errorf("Failed to store user stats in DB: %v", err)
-						}
+					if err := database.UserSetPref(b.Db, userObj.UserInfo.ID, "sot_stats",
+						statsBase64); err != nil {
+						l.Errorf("Failed to store user stats in DB: %v", err)
 					}
 				}
 
