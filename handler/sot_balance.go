@@ -48,6 +48,13 @@ func GetSotBalance(d *gorm.DB, h *http.Client, u *user.User) (*discordgo.Message
 			})
 		}
 	}
+	for len(emFields)%3 != 0 {
+		emFields = append(emFields, &discordgo.MessageEmbedField{
+			Value:  "\U0000FEFF",
+			Name:   "\U0000FEFF",
+			Inline: true,
+		})
+	}
 	responseEmbed := &discordgo.MessageEmbed{
 		Type:   discordgo.EmbedTypeRich,
 		Title:  fmt.Sprintf("Current Sea of Thieves balance of user @%v", u.AuthorName),

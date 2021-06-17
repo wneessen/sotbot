@@ -295,13 +295,13 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
-		re, err := handler.GetSotStats(b.HttpClient, userObj)
+		em, err := handler.GetSotStats(b.HttpClient, userObj)
 		if err != nil {
-			re = fmt.Sprintf("An error occurred checking your SoT user stats: %v", err)
+			re := fmt.Sprintf("An error occurred checking your SoT user stats: %v", err)
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
-		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
 		return
 
 	// SoT: Retrieve user ledger position with a specific faction/company

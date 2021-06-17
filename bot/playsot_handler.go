@@ -192,6 +192,13 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 			}
 
 			if len(emFields) > 0 {
+				for len(emFields)%3 != 0 {
+					emFields = append(emFields, &discordgo.MessageEmbedField{
+						Value:  "\U0000FEFF",
+						Name:   "\U0000FEFF",
+						Inline: true,
+					})
+				}
 				// Response with the Embed
 				responseEmbed := &discordgo.MessageEmbed{
 					Type:   discordgo.EmbedTypeRich,
