@@ -51,9 +51,9 @@ func TMDbRandMovie(t *tmdb.TMDb) (*discordgo.MessageEmbed, error) {
 	return responseEmbed, nil
 }
 
-func TMDbRandTvSeries(t *tmdb.TMDb) (*discordgo.MessageEmbed, error) {
+func TMDbRandTvShow(t *tmdb.TMDb) (*discordgo.MessageEmbed, error) {
 	l := log.WithFields(log.Fields{
-		"action": "handler.TMDbRandTvSeries",
+		"action": "handler.TMDbRandTvShow",
 	})
 
 	randPage, err := random.Number(500)

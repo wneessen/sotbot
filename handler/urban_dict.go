@@ -27,7 +27,7 @@ func UrbanDict(h *http.Client, w string) (*discordgo.MessageEmbed, error) {
 
 	responseEmbed := &discordgo.MessageEmbed{
 		Title:       urbanDict.Word,
-		Description: fmt.Sprintf("%v\n\nExample:\n`%v`", urbanDict.Definition, urbanDict.Example),
+		Description: fmt.Sprintf("%v\n\nExample:\n`%v`", urbanDict.Definition[:1800], urbanDict.Example),
 		Type:        discordgo.EmbedTypeArticle,
 		URL:         urbanDict.PermaLink,
 	}

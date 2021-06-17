@@ -23,19 +23,31 @@ type EventDataComponent struct {
 }
 
 type EventDataComponentData struct {
-	BountyList []BountyList `json:"BountyList"`
+	BountyList []BountyListApi `json:"BountyList"`
+}
+
+type BountyListApi struct {
+	Type                      string          `json:"#Type"`
+	Title                     string          `json:"Title"`
+	BodyText                  string          `json:"BodyText"`
+	StartDateApi              *ApiTimeRFC3339 `json:"StartDate,omitempty"`
+	EndDateApi                *ApiTimeRFC3339 `json:"EndDate,omitempty"`
+	CompletedAtApi            *ApiTimeRFC3339 `json:"CompletedAt,omitempty"`
+	Image                     DailyDeedImg    `json:"Image"`
+	EntitlementRewardValue    int             `json:"EntitlementRewardValue"`
+	EntitlementRewardCurrency string          `json:"EntitlementRewardCurrency"`
 }
 
 type BountyList struct {
-	Type                      string         `json:"#Type"`
-	Title                     string         `json:"Title"`
-	BodyText                  string         `json:"BodyText"`
-	StartDate                 ApiTimeRFC3339 `json:"StartDate"`
-	EndDate                   ApiTimeRFC3339 `json:"EndDate"`
-	CompletedAt               ApiTimeRFC3339 `json:"CompletedAt"`
-	Image                     DailyDeedImg   `json:"Image"`
-	EntitlementRewardValue    int            `json:"EntitlementRewardValue"`
-	EntitlementRewardCurrency string         `json:"EntitlementRewardCurrency"`
+	Type                      string
+	Title                     string
+	BodyText                  string
+	StartDate                 time.Time
+	EndDate                   time.Time
+	CompletedAt               time.Time
+	Image                     DailyDeedImg
+	EntitlementRewardValue    int
+	EntitlementRewardCurrency string
 }
 
 type DailyDeedImg struct {
@@ -68,8 +80,25 @@ func GetDailyDeed(hc *http.Client, rc string) (BountyList, error) {
 		nowTime := time.Now().Unix()
 		for _, curComp := range apiResponse.Data.Components {
 			for _, curBounty := range curComp.Data.BountyList {
-				if curBounty.StartDate.Time().Unix() <= nowTime && curBounty.EndDate.Time().Unix() >= nowTime {
-					return curBounty, nil
+				if curBounty.StartDateApi.Time().Unix() <= nowTime && curBounty.EndDateApi.Time().Unix() >= nowTime {
+					returnBounty := BountyList{
+						Type:                      curBounty.Type,
+						Title:                     curBounty.Title,
+						BodyText:                  curBounty.BodyText,
+						Image:                     curBounty.Image,
+						EntitlementRewardValue:    curBounty.EntitlementRewardValue,
+						EntitlementRewardCurrency: curBounty.EntitlementRewardCurrency,
+					}
+					if curBounty.StartDateApi != nil {
+						returnBounty.StartDate = curBounty.StartDateApi.Time()
+					}
+					if curBounty.EndDateApi != nil {
+						returnBounty.EndDate = curBounty.EndDateApi.Time()
+					}
+					if curBounty.CompletedAtApi != nil {
+						returnBounty.CompletedAt = curBounty.CompletedAtApi.Time()
+					}
+					return returnBounty, nil
 				}
 			}
 		}

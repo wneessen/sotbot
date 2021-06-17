@@ -21,6 +21,7 @@ func init() {
 func main() {
 	flag.Usage = printHelp
 	confDir := flag.String("c", "", "Add custom config path for bot.json file")
+	resetSlashCmds := flag.Bool("r", false, "Delete all registered slash cmds for a fresh start")
 	flag.Parse()
 
 	botConf := viper.New()
@@ -40,5 +41,10 @@ func main() {
 	bot.SetLogLevel(botConf.GetString("loglevel"))
 
 	botObj := bot.NewBot(botConf)
-	botObj.Run()
+	switch {
+	case *resetSlashCmds:
+		botObj.ResetSlashCmds()
+	default:
+		botObj.Run()
+	}
 }

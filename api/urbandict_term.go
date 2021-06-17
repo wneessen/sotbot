@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/wneessen/sotbot/httpclient"
 	"net/http"
+	"net/url"
 )
 
 type UrbanDictEntry struct {
@@ -31,6 +32,7 @@ func GetUrbanDict(hc *http.Client, w string) (UrbanDictEntry, error) {
 		apiUrl = "https://api.urbandictionary.com/v0/random"
 	}
 	if w != "" {
+		w = url.PathEscape(w)
 		apiUrl = fmt.Sprintf("https://api.urbandictionary.com/v0/define?term=%v", w)
 	}
 

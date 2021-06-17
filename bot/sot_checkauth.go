@@ -47,7 +47,7 @@ func (b *Bot) CheckSotAuth() {
 				if needsNotify {
 					userObj.RatCookie = ""
 					dmMsg := fmt.Sprintf("The last 3 attempts to communicate with the SoT API failed. " +
-						"This likely means, that your RAT cookie has expired. Please use the !setrat function to " +
+						"This likely means, that your RAT cookie has expired. Please use the /setrat command to " +
 						"update your cookie.")
 					response.DmUser(b.Session, userObj, dmMsg, true, false)
 				}

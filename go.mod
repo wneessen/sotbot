@@ -3,7 +3,7 @@ module github.com/wneessen/sotbot
 go 1.16
 
 require (
-	github.com/bwmarrin/discordgo v0.23.2
+	github.com/bwmarrin/discordgo v0.23.3-0.20210529215543-f5bb723db8d9
 	github.com/kylelemons/go-gypsy v1.0.0 // indirect
 	github.com/ryanbradynd05/go-tmdb v0.0.0-20201006144520-c0566c3d1506
 	github.com/sirupsen/logrus v1.8.1

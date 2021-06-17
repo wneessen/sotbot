@@ -7,7 +7,7 @@ import (
 
 func AnswerUser(s *discordgo.Session, m *discordgo.MessageCreate, msg string, mention bool) {
 	l := log.WithFields(log.Fields{
-		"action": "bot.AnswerUser",
+		"action": "response.AnswerUser",
 	})
 	if mention {
 		_, err := s.ChannelMessageSend(m.ChannelID, RandomArrr()+" "+m.Author.Mention()+"! "+msg)

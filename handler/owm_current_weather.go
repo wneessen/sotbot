@@ -6,25 +6,13 @@ import (
 	"github.com/vascocosta/owm"
 )
 
-func GetCurrentWeather(o *owm.Client, loc []string) (string, error) {
+func GetCurrentWeather(o *owm.Client, loc string) (string, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.GetCurrentWeather",
 	})
 
-	// Bot ist located in Cologne, Germany... so that's a default
-	var weatherLoc string
-	if len(loc) > 0 {
-		weatherLoc = ""
-		for i, loctext := range loc {
-			if i > 0 {
-				weatherLoc = fmt.Sprintf("%v %v", weatherLoc, loctext)
-			} else {
-				weatherLoc = loctext
-			}
-		}
-	}
-
-	curWeather, err := o.WeatherByName(weatherLoc, "metric")
+	l.Debugf("Trying to fetch weather conditions for: %v", loc)
+	curWeather, err := o.WeatherByName(loc, "metric")
 	if err != nil {
 		l.Errorf("Failed to look up weather data: %v", err)
 		return "", err
