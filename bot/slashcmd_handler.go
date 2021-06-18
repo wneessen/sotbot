@@ -233,7 +233,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
-		em, err := handler.GetSotBalance(b.Db, b.HttpClient, userObj)
+		em, err := handler.GetSotBalance(b.HttpClient, userObj)
 		if err != nil {
 			re := fmt.Sprintf("An error occurred checking your SoT balance: %v", err)
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
