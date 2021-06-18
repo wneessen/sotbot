@@ -233,7 +233,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
-		em, err := handler.GetSotBalance(b.Db, b.HttpClient, userObj)
+		em, err := handler.GetSotBalance(b.HttpClient, userObj)
 		if err != nil {
 			re := fmt.Sprintf("An error occurred checking your SoT balance: %v", err)
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
@@ -298,6 +298,26 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		em, err := handler.GetSotStats(b.HttpClient, userObj)
 		if err != nil {
 			re := fmt.Sprintf("An error occurred checking your SoT user stats: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
+		return
+
+	// SoT: Provide daily summary to the user
+	case cmdName == "summary":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.HasRatCookie() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		em, err := handler.GetSotSummary(b.HttpClient, userObj, b.Db)
+		if err != nil {
+			re := fmt.Sprintf("An error occurred checking your SoT daily summary: %v", err)
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}

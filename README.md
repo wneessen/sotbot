@@ -298,6 +298,13 @@ The `/stats` slash command will provide you with some general stats about your S
 Example:
 ![Screenshot /stats](documentation/stats.png)
 
+#### Daily summary
+The daily summary feature let's the bot collect your current balance and stats once a day. If the `/summary` slash 
+command is issued, the bot will create a summary of how the numbers changed since yesterday.
+
+Example:
+![Screenshot /summary](documentation/summary.png)
+
 #### The pirate code
 When you issue a `/code` in the channel, the bot will present you with a random article from the SoT's pirate
 code.

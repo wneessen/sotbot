@@ -10,30 +10,6 @@ import (
 	"time"
 )
 
-func (u *User) UpdateSotBalance(d *gorm.DB, h *http.Client) error {
-	l := log.WithFields(log.Fields{
-		"action": "user.UpdateSotBalance",
-	})
-
-	l.Debugf("Checking if user %q has a RAT cookie set...", u.UserInfo.UserId)
-	if !u.HasRatCookie() {
-		l.Debugf("User %q has no cookie set.", u.UserInfo.UserId)
-		return nil
-	}
-
-	userBalance, err := api.GetBalance(h, u.RatCookie)
-	if err != nil {
-		l.Errorf("Failed to fetch user balance from API: %v", err)
-		return nil
-	}
-
-	if err := database.UpdateBalance(d, u.UserInfo.ID, &userBalance); err != nil {
-		l.Errorf("Balance database update failed: %v", err)
-	}
-
-	return nil
-}
-
 func (u *User) UserNeedsNotifyFailedToken(d *gorm.DB) bool {
 	l := log.WithFields(log.Fields{
 		"action": "user.UserNeedsNotifyFailedToken",
