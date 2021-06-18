@@ -7,10 +7,7 @@ import (
 	"github.com/wneessen/sotbot/api"
 	"github.com/wneessen/sotbot/response"
 	"github.com/wneessen/sotbot/user"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 	"net/http"
-	"sort"
 )
 
 // Get current SoT balance
@@ -29,30 +26,7 @@ func GetSotBalance(h *http.Client, u *user.User) (*discordgo.MessageEmbed, error
 	balanceData["2_Doubloon"] = int64(userBalance.Doubloons)
 	balanceData["3_AncientCoin"] = int64(userBalance.AncientCoins)
 
-	p := message.NewPrinter(language.German)
-	var emFields []*discordgo.MessageEmbedField
-	var keyNames []string
-	for k := range balanceData {
-		keyNames = append(keyNames, k)
-	}
-	sort.Strings(keyNames)
-	for _, k := range keyNames {
-		v := balanceData[k]
-		if v != 0 {
-			emFields = append(emFields, &discordgo.MessageEmbedField{
-				Name:   fmt.Sprintf("%v %v", response.Icon(k), response.IconKey(k)),
-				Value:  fmt.Sprintf("**%v** %v", p.Sprintf("%d", v), response.IconValue(k)),
-				Inline: true,
-			})
-		}
-	}
-	for len(emFields)%3 != 0 {
-		emFields = append(emFields, &discordgo.MessageEmbedField{
-			Value:  "\U0000FEFF",
-			Name:   "\U0000FEFF",
-			Inline: true,
-		})
-	}
+	emFields := response.FormatEmFields(balanceData)
 	responseEmbed := &discordgo.MessageEmbed{
 		Type:   discordgo.EmbedTypeRich,
 		Title:  fmt.Sprintf("Current Sea of Thieves balance of user @%v", u.AuthorName),

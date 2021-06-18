@@ -7,10 +7,7 @@ import (
 	"github.com/wneessen/sotbot/api"
 	"github.com/wneessen/sotbot/response"
 	"github.com/wneessen/sotbot/user"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 	"net/http"
-	"sort"
 )
 
 // Just a test handler
@@ -30,30 +27,7 @@ func GetSotStats(h *http.Client, u *user.User) (*discordgo.MessageEmbed, error) 
 	statsData["4_Ship"] = int64(userStats.ShipsSunk)
 	statsData["5_Vomit"] = int64(userStats.VomitedTotal)
 
-	p := message.NewPrinter(language.German)
-	var emFields []*discordgo.MessageEmbedField
-	var keyNames []string
-	for k := range statsData {
-		keyNames = append(keyNames, k)
-	}
-	sort.Strings(keyNames)
-	for _, k := range keyNames {
-		v := statsData[k]
-		if v != 0 {
-			emFields = append(emFields, &discordgo.MessageEmbedField{
-				Name:   fmt.Sprintf("%v %v", response.Icon(k), response.IconKey(k)),
-				Value:  fmt.Sprintf("**%v** %v", p.Sprintf("%d", v), response.IconValue(k)),
-				Inline: true,
-			})
-		}
-	}
-	for len(emFields)%3 != 0 {
-		emFields = append(emFields, &discordgo.MessageEmbedField{
-			Value:  "\U0000FEFF",
-			Name:   "\U0000FEFF",
-			Inline: true,
-		})
-	}
+	emFields := response.FormatEmFields(statsData)
 	responseEmbed := &discordgo.MessageEmbed{
 		Type:   discordgo.EmbedTypeRich,
 		Title:  fmt.Sprintf("Current Sea of Thieves stats of user @%v", u.AuthorName),

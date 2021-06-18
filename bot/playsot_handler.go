@@ -9,9 +9,6 @@ import (
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/response"
 	"github.com/wneessen/sotbot/user"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
-	"sort"
 	"time"
 )
 
@@ -170,34 +167,8 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 			voyageStats["7_Ship"] = int64(userStats.ShipsSunk) - int64(oldStats.ShipsSunk)
 			voyageStats["8_Vomit"] = int64(userStats.VomitedTotal) - int64(oldStats.VomitedTotal)
 
-			// Prepare the output
-			p := message.NewPrinter(language.German)
-			var emFields []*discordgo.MessageEmbedField
-			var keyNames []string
-			for k := range voyageStats {
-				keyNames = append(keyNames, k)
-			}
-			sort.Strings(keyNames)
-			for _, k := range keyNames {
-				v := voyageStats[k]
-				if v != 0 {
-					emFields = append(emFields, &discordgo.MessageEmbedField{
-						Name: fmt.Sprintf("%v %v", response.Icon(k), response.IconKey(k)),
-						Value: fmt.Sprintf("%v**%v** %v", response.BalanceIcon(k, v),
-							p.Sprintf("%d", v), response.IconValue(k)),
-						Inline: true,
-					})
-				}
-			}
-
+			emFields := response.FormatEmFields(voyageStats)
 			if len(emFields) > 0 {
-				for len(emFields)%3 != 0 {
-					emFields = append(emFields, &discordgo.MessageEmbedField{
-						Value:  "\U0000FEFF",
-						Name:   "\U0000FEFF",
-						Inline: true,
-					})
-				}
 				// Response with the Embed
 				responseEmbed := &discordgo.MessageEmbed{
 					Type:   discordgo.EmbedTypeRich,

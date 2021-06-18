@@ -243,6 +243,12 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			Name:        "traderoutes",
 			Description: "Let SoTBot tell you the currently active trade routes in SoT",
 		},
+
+		// SoT: Daily summary
+		{
+			Name:        "summary",
+			Description: "Let SoTBot tell you your daily summary",
+		},
 	}
 
 	return slashCmds
