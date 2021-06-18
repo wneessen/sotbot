@@ -4,26 +4,24 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
-	"github.com/wneessen/sotbot/database"
+	"github.com/wneessen/sotbot/api"
 	"github.com/wneessen/sotbot/response"
 	"github.com/wneessen/sotbot/user"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
-	"gorm.io/gorm"
 	"net/http"
 	"sort"
 )
 
 // Get current SoT balance
-func GetSotBalance(d *gorm.DB, h *http.Client, u *user.User) (*discordgo.MessageEmbed, error) {
+func GetSotBalance(h *http.Client, u *user.User) (*discordgo.MessageEmbed, error) {
 	l := log.WithFields(log.Fields{
 		"action": "handler.GetSotBalance",
 	})
 
-	_ = u.UpdateSotBalance(d, h)
-	userBalance, err := database.GetBalance(d, u.UserInfo.ID)
+	userBalance, err := api.GetBalance(h, u.RatCookie)
 	if err != nil {
-		l.Errorf("Database SoT balance lookup failed: %v", err)
+		l.Errorf("Failed to fetch user balance from API: %v", err)
 		return &discordgo.MessageEmbed{}, err
 	}
 	balanceData := make(map[string]int64)

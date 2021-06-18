@@ -219,6 +219,8 @@ func (b *Bot) Run() {
 	// We want timed events as well
 	checkAuthTimer := time.NewTicker(time.Hour)
 	defer checkAuthTimer.Stop()
+	summaryTimer := time.NewTicker(time.Minute * 30)
+	defer summaryTimer.Stop()
 
 	// Wait here until CTRL-C or other term signal is received.
 	l.Infof("Bot is ready and connected. Press CTRL-C to exit.")
@@ -240,6 +242,9 @@ func (b *Bot) Run() {
 			}
 		case <-checkAuthTimer.C:
 			go b.CheckSotAuth()
+
+		case <-summaryTimer.C:
+			go b.CollectSummaryData()
 		}
 	}
 }

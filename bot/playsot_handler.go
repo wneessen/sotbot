@@ -127,11 +127,10 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 					discordUser.Username, playTime)
 				return
 			}
-			_ = userObj.UpdateSotBalance(b.Db, b.HttpClient)
 
 			// Compare balance
 			var oldBalance api.UserBalance
-			userBalance, err := database.GetBalance(b.Db, userObj.UserInfo.ID)
+			userBalance, err := api.GetBalance(b.HttpClient, userObj.RatCookie)
 			if err != nil {
 				l.Errorf("Failed to fetch SoT user balance: %v", err)
 			}
