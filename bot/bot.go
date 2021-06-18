@@ -282,7 +282,7 @@ func (b *Bot) ResetSlashCmds() {
 		l.Errorf("Failed to read slash command list from Discord server: %v", err)
 	}
 
-	// Delete all registerd slash commands
+	// Delete all registered slash commands
 	for _, regCmd := range registeredCmds {
 		l.Debugf("Removing slash command %q...", regCmd.Name)
 		err = b.Session.ApplicationCommandDelete(b.Session.State.User.ID, GuildID, regCmd.ID)

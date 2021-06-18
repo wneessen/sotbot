@@ -76,7 +76,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		re, err := handler.Uptime(b.StartTime)
 		if err != nil {
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
-				fmt.Sprintf("An error occured calculating the bots uptime: %v", err), true)
+				fmt.Sprintf("An error occurred calculating the bots uptime: %v", err), true)
 			return
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
@@ -142,7 +142,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		re, err := handler.RandomFact(b.HttpClient)
 		if err != nil {
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
-				fmt.Sprintf("An error occured fetching a useless fact: %v", err), true)
+				fmt.Sprintf("An error occurred fetching a useless fact: %v", err), true)
 			return
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
@@ -174,7 +174,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		b.AudioMutex.Lock()
 		err := handler.PlaySound(guildObj.VoiceStates, s, *b.Audio[soundName].Buffer, userObj.AuthorId, guildObj.ID)
 		if err != nil {
-			l.Errorf("An error occured when playing sound: %v", err)
+			l.Errorf("An error occurred when playing sound: %v", err)
 			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
@@ -196,7 +196,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		em, err := handler.GetDailyDeed(b.HttpClient, userObj, b.Db)
 		if err != nil {
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
-				fmt.Sprintf("An error occured fetching the daily deed: %v", err), true)
+				fmt.Sprintf("An error occurred fetching the daily deed: %v", err), true)
 			return
 		}
 		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
@@ -216,7 +216,7 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		em, err := handler.GetSotAchievement(b.HttpClient, userObj)
 		if err != nil {
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
-				fmt.Sprintf("An error occured fetching the latest achievement: %v", err), true)
+				fmt.Sprintf("An error occurred fetching the latest achievement: %v", err), true)
 			return
 		}
 		response.SlashCmdEmbedDeferred(s, i.Interaction, em)

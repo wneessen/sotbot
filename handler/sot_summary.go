@@ -53,7 +53,7 @@ func GetSotSummary(h *http.Client, u *user.User, d *gorm.DB) (*discordgo.Message
 	responseEmbed := &discordgo.MessageEmbed{
 		Type:        discordgo.EmbedTypeRich,
 		Title:       fmt.Sprintf("Daily Sea of Thieves summary for @%v", u.AuthorName),
-		Description: "No changes happend since yesterday",
+		Description: "No changes happened since yesterday",
 	}
 
 	if len(emFields) > 0 {
