@@ -1,12 +1,21 @@
 package handler
 
 import (
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/user"
 	"gorm.io/gorm"
+	"strconv"
 )
+
+type UserRat struct {
+	Value      string `json:"Value"`
+	Expiration int64  `json:"Expiration"`
+}
 
 // Set a SoT RAT cookie
 func UserSetRatCookie(d *gorm.DB, c *viper.Viper, u *user.User, r string) (string, error) {
@@ -14,7 +23,24 @@ func UserSetRatCookie(d *gorm.DB, c *viper.Viper, u *user.User, r string) (strin
 		"action": "handler.UserSetRatCookie",
 	})
 
-	if err := database.UserSetPrefEnc(d, c, u.UserInfo.ID, "rat_cookie", r); err != nil {
+	var ratCookieObj UserRat
+	ratCookieBase64, err := base64.StdEncoding.DecodeString(r)
+	steURL := "https://github.com/wneessen/sotbot-token-extrator"
+	if err != nil {
+		l.Errorf("Failed to decode base64: %v", err)
+		return "", fmt.Errorf("Invalid input format. Please use the SoTBot Token Extractor at %v", steURL)
+	}
+	if err := json.Unmarshal([]byte(ratCookieBase64), &ratCookieObj); err != nil {
+		l.Errorf("Failed to unmarshal API response: %v", err)
+		return "", fmt.Errorf("Invalid input format. Please use the SoTBot Token Extractor at %v", steURL)
+	}
+
+	if err := database.UserSetPrefEnc(d, c, u.UserInfo.ID, "rat_cookie", ratCookieObj.Value); err != nil {
+		l.Errorf("Failed to store RAT cookie in DB: %v", err)
+		return "", err
+	}
+	expTimeString := strconv.FormatInt(ratCookieObj.Expiration, 10)
+	if err := database.UserSetPrefEnc(d, c, u.UserInfo.ID, "rat_cookie_expire", expTimeString); err != nil {
 		l.Errorf("Failed to store RAT cookie in DB: %v", err)
 		return "", err
 	}
