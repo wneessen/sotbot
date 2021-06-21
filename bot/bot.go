@@ -217,8 +217,6 @@ func (b *Bot) Run() {
 	signal.Notify(sc)
 
 	// We want timed events as well
-	checkAuthTimer := time.NewTicker(time.Hour)
-	defer checkAuthTimer.Stop()
 	summaryTimer := time.NewTicker(time.Minute * 30)
 	defer summaryTimer.Stop()
 
@@ -240,9 +238,6 @@ func (b *Bot) Run() {
 
 				os.Exit(0)
 			}
-		case <-checkAuthTimer.C:
-			go b.CheckSotAuth()
-
 		case <-summaryTimer.C:
 			go b.CollectSummaryData()
 		}

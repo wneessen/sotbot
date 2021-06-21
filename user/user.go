@@ -8,6 +8,8 @@ import (
 	"github.com/wneessen/sotbot/database"
 	"github.com/wneessen/sotbot/database/models"
 	"gorm.io/gorm"
+	"strconv"
+	"time"
 )
 
 // User is a struct of user object. Each incoming message in the command_handler
@@ -18,6 +20,7 @@ type User struct {
 	ChanPermission int64
 	Mention        string
 	RatCookie      string
+	RatExpire      time.Time
 	UserInfo       *models.RegisteredUser
 }
 
@@ -37,6 +40,13 @@ func NewUser(d *gorm.DB, c *viper.Viper, i string) (*User, error) {
 	if dbUser.ID > 0 {
 		userRatCookie := database.UserGetPrefEncString(d, c, dbUser.ID, "rat_cookie")
 		userObj.RatCookie = userRatCookie
+
+		userRatCookieExpireString := database.UserGetPrefEncString(d, c, dbUser.ID, "rat_cookie_expire")
+		userRatCookieExpireInt, err := strconv.ParseInt(userRatCookieExpireString, 10, 64)
+		if err != nil {
+			l.Errorf("Failed to convert string to int64: %v", err)
+		}
+		userObj.RatExpire = time.Unix(userRatCookieExpireInt, 0)
 	}
 
 	return &userObj, nil
@@ -51,6 +61,11 @@ func (u *User) IsRegistered() bool {
 // the database
 func (u *User) HasRatCookie() bool {
 	return u.RatCookie != ""
+}
+
+// RatIsValid returns true when the RAT cookie of *User is still valid
+func (u *User) RatIsValid() bool {
+	return u.RatExpire.Unix() > time.Now().Unix()
 }
 
 // IsAdmin returns true when *User has channel admin permission

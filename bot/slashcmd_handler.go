@@ -193,6 +193,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
 		em, err := handler.GetDailyDeed(b.HttpClient, userObj, b.Db)
 		if err != nil {
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
@@ -211,6 +216,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		if !userObj.HasRatCookie() {
 			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
 		em, err := handler.GetSotAchievement(b.HttpClient, userObj)
@@ -233,6 +243,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
 		em, err := handler.GetSotBalance(b.HttpClient, userObj)
 		if err != nil {
 			re := fmt.Sprintf("An error occurred checking your SoT balance: %v", err)
@@ -251,6 +266,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		if !userObj.HasRatCookie() {
 			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
 		repFaction := i.Data.Options[0].StringValue()
@@ -274,6 +294,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
 		ledFaction := i.Data.Options[0].StringValue()
 		re, err := handler.GetSotLedger(b.HttpClient, userObj, ledFaction)
 		if err != nil {
@@ -295,6 +320,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			response.SlashCmdDel(s, i.Interaction)
 			return
 		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
 		em, err := handler.GetSotStats(b.HttpClient, userObj)
 		if err != nil {
 			re := fmt.Sprintf("An error occurred checking your SoT user stats: %v", err)
@@ -313,6 +343,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		if !userObj.HasRatCookie() {
 			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
 		em, err := handler.GetSotSummary(b.HttpClient, userObj, b.Db)
@@ -356,6 +391,11 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		if !userObj.HasRatCookie() {
 			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
 		re, err := handler.GetSotSeasonProgress(b.HttpClient, userObj)
