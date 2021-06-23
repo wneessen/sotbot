@@ -53,6 +53,10 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 	}
 
 	if playingSot && userObj.RatIsValid() {
+		userIsPlaying := database.UserGetPrefString(b.Db, userObj.UserInfo.ID, "playing_sot")
+		if userIsPlaying != "" {
+			return
+		}
 		l.Debugf("%v started playing SoT. Updating balance...", discordUser.Username)
 		userBalance, err := api.GetBalance(b.HttpClient, userObj.RatCookie)
 		if err != nil {
