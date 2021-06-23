@@ -42,11 +42,13 @@ func NewUser(d *gorm.DB, c *viper.Viper, i string) (*User, error) {
 		userObj.RatCookie = userRatCookie
 
 		userRatCookieExpireString := database.UserGetPrefEncString(d, c, dbUser.ID, "rat_cookie_expire")
-		userRatCookieExpireInt, err := strconv.ParseInt(userRatCookieExpireString, 10, 64)
-		if err != nil {
-			l.Errorf("Failed to convert string to int64: %v", err)
+		if userRatCookieExpireString != "" {
+			userRatCookieExpireInt, err := strconv.ParseInt(userRatCookieExpireString, 10, 64)
+			if err != nil {
+				l.Errorf("Failed to convert string to int64: %v", err)
+			}
+			userObj.RatExpire = time.Unix(userRatCookieExpireInt, 0)
 		}
-		userObj.RatExpire = time.Unix(userRatCookieExpireInt, 0)
 	}
 
 	return &userObj, nil
