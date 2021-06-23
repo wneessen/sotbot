@@ -15,20 +15,6 @@ func (b *Bot) CollectSummaryData() {
 		"action": "bot.CollectSummaryData",
 	})
 
-	var lastCheck time.Time
-	if err := cache.Read("summary_update", &lastCheck, b.Db); err != nil {
-		l.Errorf("Failed to read last summary update time from cache. Assuming first ever run.")
-	}
-	if time.Now().Unix()-lastCheck.Unix() < 86400 {
-		l.Debugf("Last collection run was %v (less than 24h ago). Skipping for now.", lastCheck.String())
-		return
-	}
-
-	l.Debugf("Collecting data...")
-	if err := cache.Store("summary_update", time.Now(), b.Db); err != nil {
-		l.Errorf("Failed to store/update collection time in DB")
-	}
-
 	userList, err := database.GetUsers(b.Db)
 	if err != nil {
 		l.Errorf("Failed to fetch user list from DB: %v", err)
@@ -40,6 +26,20 @@ func (b *Bot) CollectSummaryData() {
 			l.Errorf("Failed to create user object: %v", err)
 			break
 		}
+
+		// Let's first check the last update time from the DB
+		var lastCheck time.Time
+		updateKey := fmt.Sprintf("summary_update_%v", userObj.UserInfo.UserId)
+		if err := cache.Read(updateKey, &lastCheck, b.Db); err != nil {
+			l.Errorf("Failed to read last summary update time for user %v from cache. Assuming first ever run.",
+				userObj.UserInfo.UserId)
+		}
+		if time.Now().Unix()-lastCheck.Unix() < 86400 {
+			l.Debugf("Last collection run for user %v was %v (less than 24h ago). Skipping for now.",
+				userObj.UserInfo.UserId, lastCheck.String())
+			return
+		}
+
 		if userObj.HasRatCookie() {
 			userBalance, err := api.GetBalance(b.HttpClient, userObj.RatCookie)
 			if err != nil {
@@ -59,7 +59,12 @@ func (b *Bot) CollectSummaryData() {
 					l.Errorf("Failed to store user stats in cache: %v", err)
 				}
 			}
+			if err := cache.Store(updateKey, time.Now(), b.Db); err != nil {
+				l.Errorf("Failed to store/update collection time in DB")
+			}
+			return
 		}
-
+		l.Errorf("User %v needs a summary update but seems to have no valid RAT cookie",
+			userObj.UserInfo.UserId)
 	}
 }
