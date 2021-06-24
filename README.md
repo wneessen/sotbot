@@ -105,11 +105,12 @@ user specific remote access token (`RAT`). This token has to be stored in the bo
 about every 14 days.
 
 ### Getting access to the API
-Unfortunately the SoT API does not offer any kind of OAuth2 for authentication, hence we have to use
-a kind of hackish way to get your access cookie from the Microsoft Live login. You can use Simon's
-[SoT-RAT-Extractor](https://github.com/echox/sot-rat-extractor) (please read the notes in the project before using
-it) to get a current cookie and store it in the database of the bot. Unfortunately the cookie is only valid for
-14 days, so you'll have to renew it every now and then.
+Unfortunately the SoT API does not offer any kind of OAuth2 for authentication, hence we have to use a kind of hackish
+way to get your access cookie from the Microsoft Live login. You can either use
+the [SoTBot-RAT-Chrome-Extension](https://github.com/wneessen/sotbot-rat-extension/tree/main/Chrome) or use the
+[SoTBot-Token-Extractor](https://github.com/wneessen/sotbot-token-extrator) (please read the notes in the project before
+using it) to get a current cookie and store it in the database of the bot. Unfortunately the cookie is only valid for 14
+days, so you'll have to renew it every now and then.
 
 ### The `RAT` cookie
 The RAT cookie grants full access to your SoT account page. Therefore, even though the cookie is encrypted at rest,
