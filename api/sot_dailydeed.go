@@ -80,6 +80,9 @@ func GetDailyDeed(hc *http.Client, rc string) (BountyList, error) {
 		nowTime := time.Now().Unix()
 		for _, curComp := range apiResponse.Data.Components {
 			for _, curBounty := range curComp.Data.BountyList {
+				if curBounty.StartDateApi == nil || curBounty.EndDateApi == nil {
+					continue
+				}
 				if curBounty.StartDateApi.Time().Unix() <= nowTime && curBounty.EndDateApi.Time().Unix() >= nowTime {
 					returnBounty := BountyList{
 						Type:                      curBounty.Type,
