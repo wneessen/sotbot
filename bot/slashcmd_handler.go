@@ -398,13 +398,13 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
-		re, err := handler.GetSotSeasonProgress(b.HttpClient, userObj)
+		em, err := handler.GetSotSeasonProgress(b.HttpClient, userObj)
 		if err != nil {
-			re = fmt.Sprintf("An error occurred checking your SoT season progress: %v", err)
+			re := fmt.Sprintf("An error occurred checking your SoT season progress: %v", err)
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
-		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
 		return
 
 	// OWM: Return the weather conditions in a specific location

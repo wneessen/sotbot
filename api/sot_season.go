@@ -8,11 +8,17 @@ import (
 )
 
 type SeasonProgress struct {
-	LevelProgress       float64 `json:"LevelProgress"`
-	Tier                int     `json:"Tier"`
-	SeasonTitle         string  `json:"Title"`
-	TotalChallenges     int     `json:"TotalChallenges"`
-	CompletedChallenges int     `json:"CompleteChallenges"`
+	LevelProgress       float64      `json:"LevelProgress"`
+	Tier                int          `json:"Tier"`
+	SeasonTitle         string       `json:"Title"`
+	TotalChallenges     int          `json:"TotalChallenges"`
+	CompletedChallenges int          `json:"CompleteChallenges"`
+	Tiers               []SeasonTier `json:"Tiers"`
+}
+
+type SeasonTier struct {
+	Number int    `json:"Number"`
+	Title  string `json:"Title"`
 }
 
 func GetSeasonProgress(hc *http.Client, rc string) (SeasonProgress, error) {
