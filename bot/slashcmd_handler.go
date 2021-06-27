@@ -274,13 +274,13 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			return
 		}
 		repFaction := i.Data.Options[0].StringValue()
-		re, err := handler.GetSotReputation(b.HttpClient, userObj, repFaction)
+		em, err := handler.GetSotReputation(b.HttpClient, userObj, repFaction)
 		if err != nil {
-			re = fmt.Sprintf("An error occurred checking your SoT reputation: %v", err)
+			re := fmt.Sprintf("An error occurred checking your SoT reputation: %v", err)
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
-		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
 		return
 
 	// SoT: Retrieve user ledger position with a specific faction/company
