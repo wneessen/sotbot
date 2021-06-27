@@ -61,6 +61,9 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 		userBalance, err := api.GetBalance(b.HttpClient, userObj.RatCookie)
 		if err != nil {
 			l.Errorf("Failed to fetch user balance: %v", err)
+			re := fmt.Sprintf("Sorry, but I wasn't able to fetch your user balance. I won't be able to "+
+				"present you with a game summary after your SoT session. Enjoy your game, though! - Error: %v", err)
+			response.DmUser(s, userObj, re, false, false)
 			return
 		}
 		balBase64, err := cache.SerializeObj(userBalance)
@@ -77,6 +80,9 @@ func (b *Bot) UserPlaysSot(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 		userStats, err := api.GetStats(b.HttpClient, userObj.RatCookie)
 		if err != nil {
 			l.Errorf("Failed to fetch user stats: %v", err)
+			re := fmt.Sprintf("Sorry, but I wasn't able to fetch your user stats. I won't be able to "+
+				"present you with a game summary after your SoT session. Enjoy your game, though! - Error: %v", err)
+			response.DmUser(s, userObj, re, false, false)
 			return
 		}
 		statsBase64, err := cache.SerializeObj(userStats)
