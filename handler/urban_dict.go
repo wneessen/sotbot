@@ -24,10 +24,14 @@ func UrbanDict(h *http.Client, w string) (*discordgo.MessageEmbed, error) {
 	urbanDict.Definition = strings.ReplaceAll(urbanDict.Definition, "]", "**")
 	urbanDict.Example = strings.ReplaceAll(urbanDict.Example, "[", "")
 	urbanDict.Example = strings.ReplaceAll(urbanDict.Example, "]", "")
+	defLength := len(urbanDict.Definition)
+	if defLength > 1800 {
+		defLength = 1800
+	}
 
 	responseEmbed := &discordgo.MessageEmbed{
 		Title:       urbanDict.Word,
-		Description: fmt.Sprintf("%v\n\nExample:\n`%v`", urbanDict.Definition[:1800], urbanDict.Example),
+		Description: fmt.Sprintf("%v\n\nExample:\n`%v`", urbanDict.Definition[:defLength], urbanDict.Example),
 		Type:        discordgo.EmbedTypeArticle,
 		URL:         urbanDict.PermaLink,
 	}
