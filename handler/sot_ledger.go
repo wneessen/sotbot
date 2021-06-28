@@ -73,7 +73,7 @@ func GetSotLedger(h *http.Client, u *user.User, f string) (*discordgo.MessageEmb
 		Title: fmt.Sprintf("Global ledger position for @%v", u.AuthorName),
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
 			URL: fmt.Sprintf("https://github.com/wneessen/sotbot/raw/main/assets/ledger/%s%d.png",
-				factionName, userLedger.Band+1),
+				factionName, 4-userLedger.Band),
 		},
 		Fields: emFields,
 	}
