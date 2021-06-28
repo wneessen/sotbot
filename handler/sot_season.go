@@ -15,6 +15,19 @@ func GetSotSeasonProgress(h *http.Client, u *user.User) (*discordgo.MessageEmbed
 		"action": "handler.GetSotSeasonProgress",
 	})
 
+	romanNumeral := map[int]string{
+		1:  "I",
+		2:  "II",
+		3:  "III",
+		4:  "IV",
+		5:  "V",
+		6:  "VI",
+		7:  "VII",
+		8:  "VIII",
+		9:  "IX",
+		10: "X",
+	}
+
 	userAchievement, err := api.GetSeasonProgress(h, u.RatCookie)
 	if err != nil {
 		l.Errorf("An error occurred fetching user progress: %v", err)
@@ -47,7 +60,11 @@ func GetSotSeasonProgress(h *http.Client, u *user.User) (*discordgo.MessageEmbed
 		Type:        discordgo.EmbedTypeRich,
 		Title:       fmt.Sprintf("Season summary for @%v", u.AuthorName),
 		Description: userAchievement.SeasonTitle,
-		Fields:      emFields,
+		Thumbnail: &discordgo.MessageEmbedThumbnail{
+			URL: fmt.Sprintf("https://github.com/wneessen/sotbot/raw/main/assets/numerals/%s.png",
+				romanNumeral[userAchievement.Tier]),
+		},
+		Fields: emFields,
 	}
 	return responseEmbed, nil
 }
