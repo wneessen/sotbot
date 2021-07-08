@@ -24,7 +24,7 @@ func (b *Bot) CollectSummaryData() {
 		userObj, err := user.NewUser(b.Db, b.Config, curUser.UserId)
 		if err != nil {
 			l.Errorf("Failed to create user object: %v", err)
-			break
+			continue
 		}
 
 		// Let's first check the last update time from the DB
@@ -37,7 +37,7 @@ func (b *Bot) CollectSummaryData() {
 		if time.Now().Unix()-lastCheck.Unix() < 86400 {
 			l.Debugf("Last collection run for user %v was %v (less than 24h ago). Skipping for now.",
 				userObj.UserInfo.UserId, lastCheck.String())
-			return
+			continue
 		}
 
 		if userObj.HasRatCookie() {
@@ -62,7 +62,6 @@ func (b *Bot) CollectSummaryData() {
 			if err := cache.Store(updateKey, time.Now(), b.Db); err != nil {
 				l.Errorf("Failed to store/update collection time in DB")
 			}
-			return
 		}
 		l.Errorf("User %v needs a summary update but seems to have no valid RAT cookie",
 			userObj.UserInfo.UserId)
