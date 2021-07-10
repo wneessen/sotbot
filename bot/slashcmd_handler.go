@@ -416,13 +416,13 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			return
 		}
 		weatherLoc := i.Data.Options[0].StringValue()
-		re, err := handler.GetCurrentWeather(b.OwmClient, weatherLoc)
+		em, err := handler.GetCurrentWeather(b.OwmClient, weatherLoc)
 		if err != nil {
-			re = fmt.Sprintf("An error occurred fetching weather information: %v", err)
+			re := fmt.Sprintf("An error occurred fetching weather information: %v", err)
 			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 			return
 		}
-		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
 		return
 
 	// UD: Return the explanation of a random or specific term from UD
