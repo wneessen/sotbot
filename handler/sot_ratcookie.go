@@ -55,5 +55,9 @@ func UserSetRatCookie(d *gorm.DB, c *viper.Viper, u *user.User, r string) (strin
 
 	u.RatCookie = r
 	responseMsg := "Thanks for setting/updating your RAT cookie."
+	if err := database.UserDelPref(d, u.UserInfo.ID, "rat_expire_notify"); err != nil {
+		l.Errorf("Failed to delete 'rat_expire_notify' user preference for user %q: %v", u.UserInfo.UserId,
+			err)
+	}
 	return responseMsg, nil
 }

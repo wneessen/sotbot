@@ -240,6 +240,7 @@ func (b *Bot) Run() {
 			}
 		case <-summaryTimer.C:
 			go b.CollectSummaryData()
+			go b.CheckRatCookies()
 		}
 	}
 }
