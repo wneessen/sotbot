@@ -249,6 +249,12 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			Name:        "summary",
 			Description: "Let SoTBot tell you your daily summary",
 		},
+
+		// SoT: Force summary data collection
+		{
+			Name:        "collectsummary",
+			Description: "Forces the SoTBot to collect the summary data for your user",
+		},
 	}
 
 	return slashCmds
