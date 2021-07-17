@@ -508,5 +508,31 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
 		return
+
+	// SoT: Force summary data collection for a specific user
+	case cmdName == "collectsummary":
+		response.SlashCmdResponseDeferredEphemeral(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			re := "Sorry, but you are not a registered user. Please contact a admin to get registered."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		if !userObj.HasRatCookie() {
+			re := "Sorry, but you seems to not have a RAT cookie registered with me. Please use `/setrat` to set one."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		if err := b.CollectSummaryData(userObj.UserInfo.UserId); err != nil {
+			re := fmt.Sprintf("An error occurred collecting your summary data: %v", err)
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		response.SlashCmdResponseEdit(s, i.Interaction, userObj, "Collection completed", true)
+		return
 	}
 }

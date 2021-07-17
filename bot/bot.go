@@ -239,7 +239,7 @@ func (b *Bot) Run() {
 				os.Exit(0)
 			}
 		case <-summaryTimer.C:
-			go b.CollectSummaryData()
+			go func() { _ = b.CollectSummaryData() }()
 			go b.CheckRatCookies()
 		}
 	}
