@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+type Seasons []SeasonProgress
+
 type SeasonProgress struct {
 	LevelProgress       float64      `json:"LevelProgress"`
 	Tier                int          `json:"Tier"`
@@ -28,15 +30,15 @@ func GetSeasonProgress(hc *http.Client, rc string) (SeasonProgress, error) {
 	apiUrl := "https://www.seaofthieves.com/api/profilev2/seasons-progress"
 
 	l.Debugf("Fetching user season progress from API...")
-	var userProgress SeasonProgress
+	var seasons Seasons
 	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, &rc, nil, false)
 	if err != nil {
-		return userProgress, err
+		return SeasonProgress{}, err
 	}
-	if err := json.Unmarshal(httpResp, &userProgress); err != nil {
+	if err := json.Unmarshal(httpResp, &seasons); err != nil {
 		l.Errorf("Failed to unmarshal API response: %v", err)
-		return userProgress, err
+		return SeasonProgress{}, err
 	}
 
-	return userProgress, nil
+	return seasons[len(seasons)-1], nil
 }
