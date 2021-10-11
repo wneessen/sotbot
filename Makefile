@@ -1,6 +1,6 @@
 MODNAME		:= github.com/wneessen/sotbot
 SPACE		:= $(null) $(null)
-CURVER		:= 1.4.8-DEV.3
+CURVER		:= 1.4.8
 CURARCH		:= $(shell uname -m | tr 'A-Z' 'a-z')
 CUROS		:= $(shell uname -s | tr 'A-Z' 'a-z')
 BUILDARCH	:= $(CUROS)_$(CURARCH)
@@ -23,7 +23,7 @@ all: $(TARGETS)
 test:
 	go test $(MODNAME)
 
-release: clean build release clean
+release: clean build release-pkg clean
 
 dev:
 	/usr/bin/env CGO_ENABLED=1 go run -ldflags="-s -w $(BUILDVER) $(BUILDDATE) $(BUILDUSER) $(VERARCH) $(VEROS) $(GUILDID)" $(MODNAME)/cmd/sotbot
@@ -44,7 +44,7 @@ clean:
 	rm -f $(BUILDDIR)/sotbot
 	rm -f releases/v$(CURVER)/$(OUTFILE).tar.gz releases/v$(CURVER)/$(OUTFILE).tar.gz.sha256
 
-release:
+release-pkg:
 	cp -r LICENSE README.md documentation media config bin/v$(CURVER)/$(CUROS)/$(CURARCH)/
 	mkdir -p releases/v$(CURVER)/
 	tar czf releases/v$(CURVER)/$(OUTFILE).tar.gz bin/v$(CURVER)/$(CUROS)/$(CURARCH)/
