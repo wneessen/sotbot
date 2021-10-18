@@ -190,7 +190,7 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 						{Name: "Bilge Rats", Value: "bilge"},
 						{Name: "Gold Hoarder", Value: "hoarder"},
 						{Name: "Hunter's Call", Value: "hunter"},
-						{Name: "Merchang Alliance", Value: "merchant"},
+						{Name: "Merchant Alliance", Value: "merchant"},
 						{Name: "Order of Souls", Value: "order"},
 						{Name: "Reaper's Bone", Value: "reaper"},
 						{Name: "Sea Dogs", Value: "seadog"},
@@ -212,7 +212,7 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 					Choices: []*discordgo.ApplicationCommandOptionChoice{
 						{Name: "Athena's Fortune", Value: "athena"},
 						{Name: "Gold Hoarder", Value: "hoarder"},
-						{Name: "Merchang Alliance", Value: "merchant"},
+						{Name: "Merchant Alliance", Value: "merchant"},
 						{Name: "Order of Souls", Value: "order"},
 						{Name: "Reaper's Bone", Value: "reaper"},
 					},
