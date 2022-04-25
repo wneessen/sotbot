@@ -1,6 +1,6 @@
 MODNAME		:= github.com/wneessen/sotbot
 SPACE		:= $(null) $(null)
-CURVER		:= 1.4.8
+CURVER		:= 1.4.9-DEV
 CURARCH		:= $(shell uname -m | tr 'A-Z' 'a-z')
 CUROS		:= $(shell uname -s | tr 'A-Z' 'a-z')
 BUILDARCH	:= $(CUROS)_$(CURARCH)
