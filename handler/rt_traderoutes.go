@@ -3,9 +3,10 @@ package handler
 import (
 	"fmt"
 	"github.com/wneessen/sotbot/cache"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"gorm.io/gorm"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -45,10 +46,19 @@ func GetTraderoutes(hc *http.Client, d *gorm.DB) (*discordgo.MessageEmbed, error
 	}
 
 	var respondOutposts []*discordgo.MessageEmbedField
+	c := cases.Title(language.English)
 	for _, v := range traderoutes.Routes {
+		sp := "Nothing"
+		sa := "Nothing"
+		if v.Surplus != nil {
+			sp = c.String(*v.Surplus)
+		}
+		if v.Sought != nil {
+			sa = c.String(*v.Sought)
+		}
 		respondOutposts = append(respondOutposts, &discordgo.MessageEmbedField{
 			Name:   v.Outpost,
-			Value:  fmt.Sprintf("⬆️ **%v** \n ⬇️ **%v**", strings.Title(v.Surplus), strings.Title(v.Sought)),
+			Value:  fmt.Sprintf("⬆️ **%s** \n ⬇️ **%s**", sp, sa),
 			Inline: true,
 		})
 	}
@@ -57,8 +67,10 @@ func GetTraderoutes(hc *http.Client, d *gorm.DB) (*discordgo.MessageEmbed, error
 		Type:        discordgo.EmbedTypeRich,
 		Title:       "Trade Routes",
 		Description: fmt.Sprintf("for %v", traderoutes.Dates),
-		Footer:      &discordgo.MessageEmbedFooter{Text: "Source http://maps.seaofthieves.rarethief.com/"},
-		Fields:      respondOutposts,
+		Footer: &discordgo.MessageEmbedFooter{
+			Text: "Source: https://maps.seaofthieves.rarethief.com/",
+		},
+		Fields: respondOutposts,
 	}
 	return &responseEmbed, nil
 }

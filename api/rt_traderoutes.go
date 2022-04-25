@@ -23,9 +23,9 @@ type Traderoutes struct {
 // Route defines the structure of the sub part of the API response that is
 // a actual route
 type Route struct {
-	Outpost string `json:"outpost"`
-	Sought  string `json:"sought_after"`
-	Surplus string `json:"surplus"`
+	Outpost string  `json:"outpost"`
+	Sought  *string `json:"sought_after,omitempty"`
+	Surplus *string `json:"surplus,omitempty"`
 }
 
 // GetTraderoutes fetches the currently active trading routes from the
@@ -67,5 +67,5 @@ func GetTraderoutes(hc *http.Client) (Traderoutes, error) {
 		return routes, nil
 	}
 
-	return Traderoutes{}, fmt.Errorf("No traderoutes found.")
+	return Traderoutes{}, fmt.Errorf("no traderoutes found")
 }
