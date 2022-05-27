@@ -255,6 +255,12 @@ func (b *Bot) SlashCmdList() []*discordgo.ApplicationCommand {
 			Name:        "collectsummary",
 			Description: "Forces the SoTBot to collect the summary data for your user",
 		},
+
+		// SoT: Get current Golden Sands status
+		{
+			Name:        "goldensands",
+			Description: "Shows the current status on the battle for Golden Sands",
+		},
 	}
 
 	return slashCmds

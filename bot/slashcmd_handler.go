@@ -534,5 +534,31 @@ func (b *Bot) SlashCmdHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 		response.SlashCmdResponseEdit(s, i.Interaction, userObj, "Collection completed", true)
 		return
+
+	// SoT: Reply with the current status on the battle of Golden Sands
+	case cmdName == "goldensands":
+		response.SlashCmdResponseDeferred(s, i.Interaction)
+		if !userObj.IsRegistered() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.HasRatCookie() {
+			response.SlashCmdDel(s, i.Interaction)
+			return
+		}
+		if !userObj.RatIsValid() {
+			re := "Sorry, but it seems that your RAT cookie in my database has expired. Please update."
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj, re, true)
+			return
+		}
+		em, err := handler.GetSotGoldenSands(b.HttpClient, userObj)
+		if err != nil {
+			response.SlashCmdResponseEdit(s, i.Interaction, userObj,
+				fmt.Sprintf("An error occurred fetching the latest achievement: %v", err), true)
+			return
+		}
+		response.SlashCmdEmbedDeferred(s, i.Interaction, em)
+
+		return
 	}
 }
