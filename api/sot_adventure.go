@@ -43,11 +43,11 @@ func GetAdventures(hc *http.Client, rc string) ([]Adventure, error) {
 	l.Debugf("Fetching adventures from API...")
 	httpResp, err := httpclient.HttpReqGet(apiUrl, hc, &rc, nil, false)
 	if err != nil {
-		return data[0].Adventures, err
+		return []Adventure{}, err
 	}
 	if err := json.Unmarshal(httpResp, &data); err != nil {
 		l.Errorf("Failed to unmarshal API response: %v", err)
-		return data[0].Adventures, err
+		return []Adventure{}, err
 	}
 
 	return data[0].Adventures, nil
