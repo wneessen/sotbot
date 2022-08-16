@@ -1,5 +1,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/wneessen/sotbot.svg)](https://pkg.go.dev/github.com/wneessen/sotbot) [![Go Report Card](https://goreportcard.com/badge/github.com/wneessen/sotbot)](https://goreportcard.com/report/github.com/wneessen/sotbot) [![Build Status](https://api.cirrus-ci.com/github/wneessen/sotbot.svg)](https://cirrus-ci.com/github/wneessen/sotbot) [![#sotbot on Discord](https://img.shields.io/badge/Discord-%23sotbot-blue.svg)](https://discord.gg/Z9kUtJnzR8)
 
+## This project has been archived and replaced by [ArrGo](https://github.com/wneessen/arrgo). No further updates will be provided. Please consider switching to ArrGo instead
+
 # SoTBot - Your humble SoT based Discord bot
 SoTBot is a Sea of Thieves themed Discord bot written in Go (Golang) and makes heavy use of the 
 fantastic [discordgo](https://github.com/bwmarrin/discordgo) library.
